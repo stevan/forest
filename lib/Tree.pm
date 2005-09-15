@@ -1,5 +1,5 @@
 
-package Tree::Simple;
+package Tree;
 
 use 5.6.0;
 
@@ -85,13 +85,13 @@ sub remove_child {
 }
 
 sub _null {
-    return Tree::Simple::Null->new;
+    return Tree::Null->new;
 }
 
-package Tree::Simple::Null;
+package Tree::Null;
 
 #XXX Add this in when appropriate.
-#our @ISA = qw( Tree::Simple );
+#our @ISA = qw( Tree );
 our $AUTOLOAD;
 
 use overload

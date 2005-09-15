@@ -3,7 +3,7 @@ use warnings;
 
 use Test::More tests => 5;
 
-my $CLASS = 'Tree::Simple';
+my $CLASS = 'Tree';
 use_ok( $CLASS );
 
 # Test plan:

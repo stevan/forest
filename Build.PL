@@ -6,8 +6,8 @@ use strict;
 use warnings;
 
 my $build = Module::Build->new(
-    module_name => 'Tree::Simple',
-    dist_version_from => 'lib/Tree/Simple.pm',
+    module_name => 'Tree',
+    dist_version_from => 'lib/Tree.pm',
     license => 'perl',
     requires => {
         'perl'         => '5.6.0',

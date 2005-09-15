@@ -3,7 +3,7 @@ use warnings;
 
 use Test::More tests => 6;
 
-my $CLASS = 'Tree::Simple';
+my $CLASS = 'Tree';
 use_ok( $CLASS )
     or Test::More->builder->BAILOUT( "Cannot load $CLASS" );
 
