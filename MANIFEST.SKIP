@@ -1,0 +1,11 @@
+^_build
+^Build$
+^Build\.PL$
+^Makefile\.PL$
+^blib
+~$
+\.bak$
+^MANIFEST\.SKIP$
+CVS
+\.svn
+\..*\.sw.?$
