@@ -28,7 +28,7 @@ my %methods = (
         height width
     )],
     private => [ qw(
-        _null _fix_width
+        _null _fix_width _fix_height
     )],
 #    book_keeping => [],
 );

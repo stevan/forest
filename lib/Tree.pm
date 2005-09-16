@@ -25,18 +25,12 @@ sub new {
 sub add_child {
     my $self = shift;
 
-    my $height = $self->height;
     for ( @_ ) {
         ${$_->parent} = $self;
         push @{$self->children}, $_;
-        my $temp_height = $_->height + 1;
-        $height = $temp_height if $height < $temp_height;
     }
 
-    #XXX This sucks - Contextual::Return::Value needs to change
-    # to walk though any nesting
-    ${$self->height} = $height + 0;
-
+    $self->_fix_height;
     $self->_fix_width;
 
     return $self;
@@ -52,13 +46,7 @@ sub remove_child {
         push @return, $old;
     }
 
-    my $max_height = 1;
-    foreach my $child (@{$self->children}) {
-        my $temp_height = $child->height + 1;
-        $max_height = $temp_height if $max_height < $temp_height;
-    }
-    ${$self->height} = $max_height;
-
+    $self->_fix_height;
     $self->_fix_width;
 
     return (
@@ -131,6 +119,24 @@ sub width {
 
 sub _null {
     return Tree::Null->new;
+}
+
+sub _fix_height {
+    my $self = shift;
+
+    my $height = 1;
+    for my $child (@{$self->children}) {
+        my $temp_height = $child->height + 1;
+        $height = $temp_height if $height < $temp_height;
+    }
+
+    #XXX This sucks - Contextual::Return::Value needs to change
+    # to walk though any nesting
+    ${$self->height} = $height + 0;
+
+    $self->parent->_fix_height;
+
+    return $self;
 }
 
 sub _fix_width {
