@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 53;
+use Test::More tests => 61;
 
 my $CLASS = 'Tree';
 use_ok( $CLASS );
@@ -81,8 +81,9 @@ ok( $root->width == 2, "The root's width is back to two." );
 ok( $child1->width == 1, "The child1's width is one." );
 ok( $child2->width == 1, "The child2's width is one." );
 
-#XXX Do some test on the returns here
-$root->remove_child( $child1, $child2 );
+my @removed = $root->remove_child( $child1, $child2 );
+is( $removed[0], $child1 );
+is( $removed[1], $child2 );
 ok( $root->children == 0, "remove_child(\@many) works" );
 
 ok( $root->height == 1, "The root's height is back to one." );
@@ -93,3 +94,24 @@ ok( $root->width == 1, "The root's width is now one (as a single-node tree)." );
 ok( $child1->width == 1, "The child1's width is one." );
 ok( $child2->width == 1, "The child2's width is one." );
 
+# Test various permutations of the return values from remove_child()
+{
+    $root->add_child( $child1, $child2 );
+    my @removed = $root->remove_child( $child2, $child1 );
+    is( $removed[0], $child2 );
+    is( $removed[1], $child1 );
+}
+
+{
+    $root->add_child( $child1, $child2 );
+    my @removed = @{$root->remove_child( $child2, $child1 )};
+    is( $removed[0], $child2 );
+    is( $removed[1], $child1 );
+}
+
+{
+    $root->add_child( $child1, $child2 );
+    my $removed = $root->remove_child( $child2, $child1 );
+    is( $removed->[0], $child2 );
+    is( $removed->[1], $child1 );
+}
