@@ -25,7 +25,7 @@ my %methods = (
         is_root is_leaf
         parent children
         add_child remove_child has_child
-        height
+        height width
     )],
     private => [ qw(
         _null

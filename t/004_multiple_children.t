@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 29;
+use Test::More tests => 53;
 
 my $CLASS = 'Tree';
 use_ok( $CLASS );
@@ -44,6 +44,14 @@ ok( $root->has_child( $child1 ), "The root has child1" );
 ok( $root->has_child( $child2 ), "The root has child2" );
 ok( $root->has_child( $child1, $child2 ), "The root has both children" );
 
+ok( $root->height == 2, "The root's height is two." );
+ok( $child1->height == 1, "The child1's height is one." );
+ok( $child2->height == 1, "The child2's height is one." );
+
+ok( $root->width == 2, "The root's width is two." );
+ok( $child1->width == 1, "The child1's width is one." );
+ok( $child2->width == 1, "The child2's width is one." );
+
 $root->remove_child( $child1 );
 ok( $root->children == 1, "After removing child1, the root has one child" );
 my @children = $root->children;
@@ -54,9 +62,34 @@ ok( $root->has_child( $child2 ), "The root has child2" );
 ok( !$root->has_child( $child1, $child2 ), "The root doesn't have both children" );
 ok( !$root->has_child( $child2, $child1 ), "The root doesn't have both children (reversed)" );
 
+ok( $root->height == 2, "The root's height is still two." );
+ok( $child1->height == 1, "The child1's height is still one." );
+ok( $child2->height == 1, "The child2's height is still one." );
+
+ok( $root->width == 1, "The root's width is now one." );
+ok( $child1->width == 1, "The child1's width is one." );
+ok( $child2->width == 1, "The child2's width is one." );
+
 $root->add_child( $child1 );
 ok( $root->children == 2, "Adding child1 back works as expected" );
+
+ok( $root->height == 2, "The root's height is still two. (" . $root->height . ")" );
+ok( $child1->height == 1, "The child1's height is still one." );
+ok( $child2->height == 1, "The child2's height is still one." );
+
+ok( $root->width == 2, "The root's width is back to two." );
+ok( $child1->width == 1, "The child1's width is one." );
+ok( $child2->width == 1, "The child2's width is one." );
 
 #XXX Do some test on the returns here
 $root->remove_child( $child1, $child2 );
 ok( $root->children == 0, "remove_child(\@many) works" );
+
+ok( $root->height == 1, "The root's height is back to one." );
+ok( $child1->height == 1, "The child1's height is still one." );
+ok( $child2->height == 1, "The child2's height is still one." );
+
+ok( $root->width == 1, "The root's width is now one (as a single-node tree)." );
+ok( $child1->width == 1, "The child1's width is one." );
+ok( $child2->width == 1, "The child2's width is one." );
+

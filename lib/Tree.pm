@@ -17,6 +17,7 @@ sub new {
         _children => [],
         _parent => $class->_null,
         _height => 1,
+        _width => 1,
     }, $class;
     return $self;
 }
@@ -71,7 +72,13 @@ sub add_child {
         $height = $temp_height if $height < $temp_height;
     }
 
-    ${$self->height} = $height;
+    #XXX This sucks - Contextual::Return needs to change somehow
+    ${$self->height} = $height + 0;
+
+    ${$self->width} = 0;
+    for my $child (@{$self->children}) {
+        ${$self->width} += $child->width;
+    }
 
     return $self;
 }
@@ -94,6 +101,12 @@ sub remove_child {
 
     ${$self->height} = $max_height;
 
+    ${$self->width} = 0;
+    for my $child (@{$self->children}) {
+        ${$self->width} += $child->width;
+    }
+    ${$self->width} ||= 1;
+
     return (
         LIST { @return }
         ARRAYREF { \@return }
@@ -106,6 +119,14 @@ sub height {
     return (
         SCALARREF { \($self->{_height}) }
         DEFAULT { $self->{_height} }
+    );
+}
+
+sub width {
+    my $self = shift;
+    return (
+        SCALARREF { \($self->{_width}) }
+        DEFAULT { $self->{_width} }
     );
 }
 
