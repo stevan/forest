@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 22;
+use Test::More tests => 26;
 
 my $CLASS = 'Tree';
 use_ok( $CLASS );
@@ -41,6 +41,9 @@ is( $child->parent, $tree, "The child's parent is also set correctly" );
 
 ok( $tree->has_child( $child ), "The tree has the child" );
 
+ok( $tree->height == 2, "The root's height is 2" );
+ok( $child->height == 1, "The child's height is 1" );
+
 is( $tree->remove_child( $child ), $child, "remove_child() returns the removed node" );
 
 ok( $tree->is_root, 'The root is still the root' );
@@ -50,3 +53,7 @@ ok( $child->is_root, 'The child is now a root' );
 ok( $child->is_leaf, 'The child is still a leaf' );
 
 ok( $tree->children == 0, "The root has no children" );
+
+ok( $tree->height == 1, "The root's height is now 1 again" );
+ok( $child->height == 1, "The child's height is still 1" );
+

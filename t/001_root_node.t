@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 5;
+use Test::More tests => 6;
 
 my $CLASS = 'Tree';
 use_ok( $CLASS );
@@ -18,5 +18,5 @@ ok( $tree->is_leaf, "Node without a child knows it's a leaf" );
 
 my $parent = $tree->parent;
 is( $parent, $tree->_null, "The root's parent is the null node" );
-#${$parent} = 5;
-#ok( $tree->parent == 5, "Oops!" );
+
+ok( $tree->height == 1, "A tree with just a root has a height of 1" );

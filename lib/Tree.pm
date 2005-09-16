@@ -16,6 +16,7 @@ sub new {
     my $self = bless {
         _children => [],
         _parent => $class->_null,
+        _height => 1,
     }, $class;
     return $self;
 }
@@ -61,10 +62,17 @@ sub children {
 
 sub add_child {
     my $self = shift;
+
+    my $height = $self->height;
     for ( @_ ) {
         ${$_->parent} = $self;
         push @{$self->children}, $_;
+        my $temp_height = $_->height + 1;
+        $height = $temp_height if $height < $temp_height;
     }
+
+    ${$self->height} = $height;
+
     return $self;
 }
 
@@ -78,9 +86,26 @@ sub remove_child {
         push @return, $old;
     }
 
+    my $max_height = 1;
+    foreach my $child (@{$self->children}) {
+        my $temp_height = $child->height + 1;
+        $max_height = $temp_height if $max_height < $temp_height;
+    }
+
+    ${$self->height} = $max_height;
+
     return (
         LIST { @return }
+        ARRAYREF { \@return }
         SCALAR { $return[0] }
+    );
+}
+
+sub height {
+    my $self = shift;
+    return (
+        SCALARREF { \($self->{_height}) }
+        DEFAULT { $self->{_height} }
     );
 }
 
@@ -105,7 +130,7 @@ use overload
     my %singletons;
     sub new {
         my $class = shift;
-        $singletons{$class} = bless {}, $class
+        $singletons{$class} = bless \my($x), $class
             unless exists $singletons{$class};
         return $singletons{$class};
     }
