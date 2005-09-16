@@ -1,7 +1,5 @@
 ^_build
 ^Build$
-^Build\.PL$
-^Makefile\.PL$
 ^blib
 ~$
 \.bak$

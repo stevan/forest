@@ -6,7 +6,7 @@ use strict;
 use warnings;
 
 my $build = Module::Build->new(
-    module_name => 'Tree',
+    dist_name => 'Forest',
     dist_version_from => 'lib/Tree.pm',
     license => 'perl',
     requires => {
@@ -20,6 +20,9 @@ my $build = Module::Build->new(
     },
     create_makefile_pl => 'traditional',
     recursive_test_files => 1,
+    add_to_cleanup => [
+        'META.yml', '*.bak', '*.gz',
+    ],
 );
 
 $build->create_build_script;

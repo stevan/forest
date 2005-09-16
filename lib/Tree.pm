@@ -6,9 +6,9 @@ use 5.6.0;
 use strict;
 use warnings;
 
-our $VERSION = '1.99_00';
+our $VERSION = '0.99_00';
 
-#use Scalar::Util qw(blessed weaken);
+use Scalar::Util qw( refaddr );
 use Contextual::Return;
 
 sub new {
@@ -33,10 +33,10 @@ sub is_leaf {
 sub has_child {
     my $self = shift;
 
-    my %temp = map { $_ => undef } @{$self->children};
+    my %temp = map { refaddr($_) => undef } @{$self->children};
 
     my $rv = 1;
-    $rv &&= exists $temp{$_}
+    $rv &&= exists $temp{refaddr($_)}
         for @_;
 
     return $rv;
@@ -45,8 +45,8 @@ sub has_child {
 sub parent { 
     my $self = shift;
     return (
-        DEFAULT { $self->{_parent} }
         SCALARREF { \($self->{_parent}) }
+        DEFAULT { $self->{_parent} }
     );
 }
 

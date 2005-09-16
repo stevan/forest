@@ -17,4 +17,6 @@ ok( $tree->is_root, "Node without a parent knows it's a root" );
 ok( $tree->is_leaf, "Node without a child knows it's a leaf" );
 
 my $parent = $tree->parent;
-isa_ok( $parent, 'Tree::Simple::Null' );
+is( $parent, $tree->_null, "The root's parent is the null node" );
+#${$parent} = 5;
+#ok( $tree->parent == 5, "Oops!" );
