@@ -244,6 +244,8 @@ This will remove all the @nodes from the children of $self.
 
 =head2 State Queries
 
+=over 4
+
 =item B<is_root()>
 
 This will return true is $self has no parent and false otherwise.
@@ -277,8 +279,6 @@ This will return the height of $self. A leaf has a height of 1. A parent has a h
 =item B<width()>
 
 This will return the width of $self. A leaf has a width of 1. A parent has a width equal to the sum of all the widths of its children.
-
-=over 4
 
 =back
 
