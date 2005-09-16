@@ -29,7 +29,7 @@ sub is_root {
 
 sub is_leaf {
     my $self = shift;
-    return !$self->children;
+    return $self->height == 1;
 }
 
 sub has_child {
