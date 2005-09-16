@@ -22,6 +22,54 @@ sub new {
     return $self;
 }
 
+sub add_child {
+    my $self = shift;
+
+    my $height = $self->height;
+    for ( @_ ) {
+        ${$_->parent} = $self;
+        push @{$self->children}, $_;
+        my $temp_height = $_->height + 1;
+        $height = $temp_height if $height < $temp_height;
+    }
+
+    #XXX This sucks - Contextual::Return::Value needs to change
+    # to walk though any nesting
+    ${$self->height} = $height + 0;
+
+    $self->_fix_width;
+
+    return $self;
+}
+
+sub remove_child {
+    my $self = shift;
+
+    my @return;
+    for my $old (@_) {
+        ${$old->parent} = $old->_null;
+        @{$self->children} = grep { $_ ne $old } @{$self->children};
+        push @return, $old;
+    }
+
+    my $max_height = 1;
+    foreach my $child (@{$self->children}) {
+        my $temp_height = $child->height + 1;
+        $max_height = $temp_height if $max_height < $temp_height;
+    }
+    ${$self->height} = $max_height;
+
+    $self->_fix_width;
+
+    return (
+        LIST { @return }
+        ARRAYREF { \@return }
+        SCALAR { $return[0] }
+    );
+}
+
+# These are the state-queries
+
 sub is_root {
     my $self = shift;
     return !$self->parent;
@@ -44,6 +92,8 @@ sub has_child {
     return $rv;
 }
 
+# These are the smart accessors
+
 sub parent { 
     my $self = shift;
     return (
@@ -58,59 +108,6 @@ sub children {
         LIST { @{$self->{_children}} }
         SCALAR { scalar @{$self->{_children}} }
         ARRAYREF { $self->{_children} }
-    );
-}
-
-sub add_child {
-    my $self = shift;
-
-    my $height = $self->height;
-    for ( @_ ) {
-        ${$_->parent} = $self;
-        push @{$self->children}, $_;
-        my $temp_height = $_->height + 1;
-        $height = $temp_height if $height < $temp_height;
-    }
-
-    #XXX This sucks - Contextual::Return needs to change somehow
-    ${$self->height} = $height + 0;
-
-    ${$self->width} = 0;
-    for my $child (@{$self->children}) {
-        ${$self->width} += $child->width;
-    }
-
-    return $self;
-}
-
-sub remove_child {
-    my $self = shift;
-
-    my @return;
-    for my $old (@_) {
-        ${$old->parent} = $old->_null;
-        @{$self->children} = grep { $_ ne $old } @{$self->children};
-        push @return, $old;
-    }
-
-    my $max_height = 1;
-    foreach my $child (@{$self->children}) {
-        my $temp_height = $child->height + 1;
-        $max_height = $temp_height if $max_height < $temp_height;
-    }
-
-    ${$self->height} = $max_height;
-
-    ${$self->width} = 0;
-    for my $child (@{$self->children}) {
-        ${$self->width} += $child->width;
-    }
-    ${$self->width} ||= 1;
-
-    return (
-        LIST { @return }
-        ARRAYREF { \@return }
-        SCALAR { $return[0] }
     );
 }
 
@@ -130,15 +127,37 @@ sub width {
     );
 }
 
+# These are private convenience methods
+
 sub _null {
     return Tree::Null->new;
 }
 
+sub _fix_width {
+    my $self = shift;
+
+    ${$self->width} = 0;
+    for my $child (@{$self->children}) {
+        ${$self->width} += $child->width;
+    }
+    ${$self->width} ||= 1;
+
+    return $self;
+}
+
 package Tree::Null;
 
-#XXX Add this in when appropriate.
+#XXX Add this in once it's been thought out
 #our @ISA = qw( Tree );
-our $AUTOLOAD;
+
+# There's a lot of choices that have been made to allow for
+# subclassing of this package. They are:
+# 1) overload uses method names and not subrefs
+# 2) new() accesses a hash of singletons, not just a scalar
+# 3) AUTOLOAD uses ref() instead of __PACKAGE__
+
+# You want to be able to interrogate the null object as to
+# its class, so we don't override isa() as we do can()
 
 use overload
     '""' => 'stringify',
@@ -158,12 +177,17 @@ use overload
 }
 
 # The null object can do anything
-sub can { 1 }
+sub can {
+    return 1;
+}
 
-sub AUTOLOAD {
-    no strict 'refs';
-    *{$AUTOLOAD} = sub { ref($_[0])->new };
-    goto &$AUTOLOAD;
+{
+    our $AUTOLOAD;
+    sub AUTOLOAD {
+        no strict 'refs';
+        *{$AUTOLOAD} = sub { ref($_[0])->new };
+        goto &$AUTOLOAD;
+    }
 }
 
 sub stringify { return ""; }
