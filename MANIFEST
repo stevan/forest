@@ -10,4 +10,5 @@ t/003_child_node.t
 t/004_multiple_children.t
 t/005_multilevel_tree.t
 t/006_memory_leak.t
+t/007_add_child.t
 META.yml

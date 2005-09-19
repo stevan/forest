@@ -8,7 +8,7 @@ use warnings;
 
 our $VERSION = '0.99_00';
 
-use Scalar::Util qw( refaddr );
+use Scalar::Util qw( blessed refaddr );
 use Contextual::Return;
 
 # These are the constructors
@@ -28,10 +28,32 @@ sub new {
 
 sub add_child {
     my $self = shift;
+    my @nodes = @_;
 
-    for ( @_ ) {
-        ${$_->parent} = $self;
-        push @{$self->children}, $_;
+    my $index;
+    if ( !blessed($nodes[0]) ) {
+        my ($at) = shift @nodes;
+        $index = shift @nodes;
+    }
+    elsif ( !blessed( $nodes[$#nodes - 1] ) ) {
+        $index = pop @nodes;
+        my ($at) = pop @nodes;
+    }
+
+    for my $node ( @nodes ) {
+        ${$node->parent} = $self;
+    }
+
+    if ( defined $index ) {
+        if ( $index ) {
+            splice @{$self->children}, $index, 0, @nodes;
+        }
+        else {
+            unshift @{$self->children}, @nodes;
+        }
+    }
+    else {
+        push @{$self->children}, @nodes;
     }
 
     $self->_fix_height;
@@ -42,12 +64,27 @@ sub add_child {
 
 sub remove_child {
     my $self = shift;
+    my @nodes = @_;
+
+    my @indices;
+    foreach my $proto (@nodes) {
+        if ( !blessed( $proto ) ) {
+            push @indices, $proto;
+        }
+        else {
+            push @indices, grep {
+                refaddr($self->children->[$_]) eq refaddr($proto)
+            } 0 .. $#{$self->children};
+        }
+    }
 
     my @return;
-    for my $old (@_) {
-        ${$old->parent} = $old->_null;
-        @{$self->children} = grep { $_ ne $old } @{$self->children};
-        push @return, $old;
+    for my $idx (sort { $b <=> $a } @indices) {
+
+        my $node = splice @{$self->children}, $idx, 1;
+        ${$node->parent} = $node->_null;
+
+        push @return, $node;
     }
 
     $self->_fix_height;
@@ -242,11 +279,11 @@ This will return a Tree object. It currently accepts no parameters.
 
 =item B<add_child(@nodes)>
 
-This will add all the @nodes as children of $self.
+This will add all the @nodes as children of $self. If the first two or last two parameters are of the form C<at =E<gt> $idx>, @nodes will be added starting at that index.
 
 =item B<remove_child(@nodes)>
 
-This will remove all the @nodes from the children of $self.
+This will remove all the @nodes from the children of $self. You can either pass in the actual child object you wish to remove, the index of the child you wish to remove, or a combination of both.
 
 =back
 
@@ -318,9 +355,10 @@ We use L<Devel::Cover> to test the code coverage of my tests, below is the L<Dev
 =head1 AUTHORS
 
 Rob Kinyon E<lt>rob.kinyon@iinteractive.comE<gt>
+
 Stevan Little E<lt>stevan.little@iinteractive.comE<gt>
 
-Thanks to Infinity Interactive for generously donating our time
+Thanks to Infinity Interactive for generously donating our time.
 
 =head1 COPYRIGHT AND LICENSE
 
@@ -328,8 +366,7 @@ Copyright 2004, 2005 by Infinity Interactive, Inc.
 
 L<http://www.iinteractive.com>
 
-This library is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself. 
+This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself. 
 
 =cut
 
