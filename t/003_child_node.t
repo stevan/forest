@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 30;
+use Test::More tests => 31;
 
 my $CLASS = 'Tree';
 use_ok( $CLASS );
@@ -37,6 +37,8 @@ my @children = $root->children;
 ok( @children == 1, "The list of children is still 1 long" );
 is( $children[0], $child, "The child is correct" );
 
+is( $root->children->[0], $child, "You can also access the children directly" );
+
 is( $child->parent, $root, "The child's parent is also set correctly" );
 
 ok( $root->has_child( $child ), "The tree has the child" );
@@ -62,4 +64,3 @@ ok( $child->height == 1, "The child's height is still 1" );
 
 ok( $root->width == 1, "The root's width is still 1" );
 ok( $child->width == 1, "The child's width is still 1" );
-

@@ -155,6 +155,14 @@ sub _fix_width {
     return $self;
 }
 
+sub DESTROY {
+    my $self = shift;
+
+    foreach my $child (grep { $_ } @{$self->children}) {
+        ${$child->parent} = undef;
+    }
+}
+
 package Tree::Null;
 
 #XXX Add this in once it's been thought out

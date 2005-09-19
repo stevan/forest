@@ -9,4 +9,5 @@ t/002_null_object.t
 t/003_child_node.t
 t/004_multiple_children.t
 t/005_multilevel_tree.t
+t/006_memory_leak.t
 META.yml

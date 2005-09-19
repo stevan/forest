@@ -30,7 +30,9 @@ my %methods = (
     private => [ qw(
         _null _fix_width _fix_height
     )],
-#    book_keeping => [],
+    book_keeping => [qw(
+        DESTROY
+    )],
 );
 
 # These are the class methods
