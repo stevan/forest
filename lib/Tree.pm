@@ -290,6 +290,8 @@ Tree - the basic implementation of a tree
 
 =head1 DESCRIPTION
 
+This is meant to be a full-featured replacement for L<Tree::Simple>.
+
 =head1 METHODS
 
 =head2 Constructor
@@ -356,6 +358,10 @@ This will return the width of $self. A leaf has a width of 1. A parent has a wid
 
 =back
 
+=head1 CIRCULAR REFERENCES
+
+Copy the text from L<Tree::Simple>, rewording appropriately.
+
 =head1 BUGS
 
 None that we are aware of.
@@ -369,9 +375,17 @@ We use L<Devel::Cover> to test the code coverage of my tests, below is the L<Dev
   ---------------------------- ------ ------ ------ ------ ------ ------ ------
   File                           stmt branch   cond    sub    pod   time  total
   ---------------------------- ------ ------ ------ ------ ------ ------ ------
-  blib/lib/Tree.pm              100.0  100.0  100.0  100.0  100.0  100.0  100.0
-  Total                         100.0  100.0  100.0  100.0  100.0  100.0  100.0
+  blib/lib/Tree.pm              100.0   95.5  100.0  100.0  100.0  100.0   99.6
+  Total                         100.0   95.5  100.0  100.0  100.0  100.0   99.6
   ---------------------------- ------ ------ ------ ------ ------ ------ ------
+
+=head1 MISSING TESTS
+
+=over 4
+
+=item * A test on import where something is passed in that isn't an expected value.
+
+=back
 
 =head1 ACKNOWLEDGEMENTS
 
