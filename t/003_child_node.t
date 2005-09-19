@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 31;
+use Test::More tests => 33;
 
 my $CLASS = 'Tree';
 use_ok( $CLASS );
@@ -33,11 +33,18 @@ ok( !$child->is_root, 'The child is no longer a root' );
 ok( $child->is_leaf, 'The child is still a leaf' );
 
 ok( $root->children == 1, "The root has one child" );
-my @children = $root->children;
-ok( @children == 1, "The list of children is still 1 long" );
-is( $children[0], $child, "The child is correct" );
+{
+    my @children = $root->children;
+    ok( @children == 1, "The list of children is still 1 long" );
+    is( $children[0], $child, "... and the child is correct" );
+}
 
-is( $root->children->[0], $child, "You can also access the children directly" );
+is( $root->children(0), $child, "You can also access the children by index" );
+{
+    my @children = $root->children(0);
+    cmp_ok( @children, '==', 1, "The list of children by index is still 1 long" );
+    is( $children[0], $child, "... and the child is correct" );
+}
 
 is( $child->parent, $root, "The child's parent is also set correctly" );
 

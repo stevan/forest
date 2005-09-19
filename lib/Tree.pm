@@ -150,11 +150,17 @@ sub parent {
 
 sub children {
     my $self = shift;
-    return (
-        DEFAULT { @{$self->{_children}} }
-        SCALAR { scalar @{$self->{_children}} }
-        ARRAYREF { $self->{_children} }
-    );
+    if ( @_ ) {
+        my @idx = @_;
+        return @{$self->{_children}}[@idx];
+    }
+    else {
+        return (
+            DEFAULT { @{$self->{_children}} }
+            SCALAR { scalar @{$self->{_children}} }
+            ARRAYREF { $self->{_children} }
+        );
+    }
 }
 
 sub height {
@@ -344,9 +350,11 @@ This will return true is $self has each of the @nodes as a child.
 
 This will return the parent of $self.
 
-=item B<children()>
+=item B<children( [ $idx, [$idx, ..] ] )>
 
 This will return the children of $self. If called in list context, it will return all the children. If called in scalar context, it will return the number of children.
+
+You may optionally pass in a list of indices to retrieve. This will return the children in the order you asked for them. This is very much like an arrayslice.
 
 =item B<height()>
 
@@ -375,8 +383,8 @@ We use L<Devel::Cover> to test the code coverage of my tests, below is the L<Dev
   ---------------------------- ------ ------ ------ ------ ------ ------ ------
   File                           stmt branch   cond    sub    pod   time  total
   ---------------------------- ------ ------ ------ ------ ------ ------ ------
-  blib/lib/Tree.pm              100.0   95.5  100.0  100.0  100.0  100.0   99.6
-  Total                         100.0   95.5  100.0  100.0  100.0  100.0   99.6
+  blib/lib/Tree.pm               96.1   95.8  100.0   95.5  100.0  100.0   96.2
+  Total                          96.1   95.8  100.0   95.5  100.0  100.0   96.2
   ---------------------------- ------ ------ ------ ------ ------ ------ ------
 
 =head1 MISSING TESTS
@@ -384,6 +392,8 @@ We use L<Devel::Cover> to test the code coverage of my tests, below is the L<Dev
 =over 4
 
 =item * A test on import where something is passed in that isn't an expected value.
+
+=item * For some reason, Deve::Cover is now counting lines as uncovered that were previously covered, like Tree::Null's can() and a commented-out mention of AUTOLOAD.
 
 =back
 

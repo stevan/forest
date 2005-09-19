@@ -90,52 +90,50 @@ use_ok( $CLASS, 'no_weak_refs' );
 }
 
 
-SKIP: { skip "Need to implement getChild()", 15;
-    { #diag "child connections are strong";
-        my $tree1 = $CLASS->new("1");
-        my $tree2_UID;
+{ #diag "child connections are strong";
+    my $tree1 = $CLASS->new("1");
+    my $tree2_string;
 
-        {
-            my $tree2 = $CLASS->new("2");
-            $tree1->add_child($tree2);
-            $tree2_UID = $tree2->getUID();
+    {
+        my $tree2 = $CLASS->new("2");
+        $tree1->add_child($tree2);
+        $tree2_string = $tree2 . "";
 
-            memory_cycle_exists($tree1, '... tree1 is connected to tree2');
-            memory_cycle_exists($tree2, '... tree2 is connected to tree1');
+        memory_cycle_exists($tree1, '... tree1 is connected to tree2');
+        memory_cycle_exists($tree2, '... tree2 is connected to tree1');
 
-            $tree2->DESTROY(); # this does not make sense to do
-        }
-
-        memory_cycle_exists($tree1, '... tree2 is still connected to tree1 because child connections are strong');
-        is($tree1->getChild(0)->getUID(), $tree2_UID, '... tree2 is still connected to tree1');
-        is($tree1->getChild(0)->get_parent(), $tree1, '... tree2s parent is tree1');
-        cmp_ok($tree1->children(), '==', 1, '... tree1 has a child count of 1');
+        $tree2->DESTROY(); # this does not make sense to do
     }
 
+    memory_cycle_exists($tree1, '... tree2 is still connected to tree1 because child connections are strong');
+    is($tree1->children(0) . "", $tree2_string, '... tree2 is still connected to tree1');
+    is($tree1->children(0)->parent(), $tree1, '... tree2s parent is tree1');
+    cmp_ok($tree1->children(), '==', 1, '... tree1 has a child count of 1');
+}
 
-    { #diag "expand upon this issue";
-        my $tree1 = $CLASS->new("1");
-        my $tree2_UID;
-        my $tree3 = $CLASS->new("3");
 
-        {
-            my $tree2 = $CLASS->new("2");
-            $tree1->add_child($tree2);
-            $tree2_UID = $tree2->getUID();
-            $tree2->add_child($tree3);
+{ #diag "expand upon this issue";
+    my $tree1 = $CLASS->new("1");
+    my $tree2_string;
+    my $tree3 = $CLASS->new("3");
 
-            memory_cycle_exists($tree1, '... tree1 is connected to tree2');
-            memory_cycle_exists($tree2, '... tree2 is connected to tree1');
-            memory_cycle_exists($tree3, '... tree3 is connected to tree2');
+    {
+        my $tree2 = $CLASS->new("2");
+        $tree1->add_child($tree2);
+        $tree2_string = $tree2 . "";
+        $tree2->add_child($tree3);
 
-            $tree2->DESTROY(); # this does not make sense to do
-        }
+        memory_cycle_exists($tree1, '... tree1 is connected to tree2');
+        memory_cycle_exists($tree2, '... tree2 is connected to tree1');
+        memory_cycle_exists($tree3, '... tree3 is connected to tree2');
 
-        memory_cycle_exists($tree1, '... tree2 is still connected to tree1 because child connections are strong');
-        is($tree1->getChild(0)->getUID(), $tree2_UID, '... tree2 is still connected to tree1');
-        is($tree1->getChild(0)->getParent(), $tree1, '... tree2s parent is tree1');
-        cmp_ok($tree1->children(), '==', 1, '... tree1 has a child count of 1');
-        cmp_ok($tree1->getChild(0)->children(), '==', 1, '... tree2 is still connected to tree3');
-        is($tree1->getChild(0)->getChild(0), $tree3, '... tree2 is still connected to tree3');
+        $tree2->DESTROY(); # this does not make sense to do
     }
+
+    memory_cycle_exists($tree1, '... tree2 is still connected to tree1 because child connections are strong');
+    is($tree1->children(0) . "", $tree2_string, '... tree2 is still connected to tree1');
+    is($tree1->children(0)->parent(), $tree1, '... tree2s parent is tree1');
+    cmp_ok($tree1->children(), '==', 1, '... tree1 has a child count of 1');
+    cmp_ok($tree1->children(0)->children(), '==', 1, '... tree2 is still connected to tree3');
+    is($tree1->children(0)->children(0), $tree3, '... tree2 is still connected to tree3');
 }

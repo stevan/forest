@@ -3,6 +3,8 @@ use warnings;
 
 use Test::More tests => 13;
 
+use Scalar::Util qw( refaddr );
+
 my $CLASS = 'Tree';
 use_ok( $CLASS );
 
@@ -21,21 +23,21 @@ TODO: {
     isa_ok( $obj, $CLASS );
 }
 
-ok( !$obj, "The null object is false" );
 TODO: {
     local $TODO = "Need to figure out a way to have an object evaluate as undef";
     ok( !defined $obj, " ... and undefined" );
 }
+ok( !$obj, "The null object is false" );
 ok( $obj eq "", " .. and stringifies to the empty string" );
 ok( $obj == 0, " ... and numifies to zero" );
 
 can_ok( $obj, 'some_random_method' );
 my $val = $obj->some_random_method;
-is( $val, $obj, "The return value of any method call on the null object is the null object" );
+is( refaddr($val), refaddr($obj), "The return value of any method call on the null object is the null object" );
 
-is( $obj->method1->method2, $obj, "Method chaining works" );
+is( refaddr($obj->method1->method2), refaddr($obj), "Method chaining works" );
 
-is( $CLASS->_null, $obj, "The _null method on $CLASS returns a null object" );
+is( refaddr($CLASS->_null), refaddr($obj), "The _null method on $CLASS returns a null object" );
 my $tree = $CLASS->new;
 isa_ok( $tree, $CLASS );
-is( $tree->_null, $obj, "The _null method on an object of $CLASS returns a null object" );
+is( refaddr($tree->_null), refaddr($obj), "The _null method on an object of $CLASS returns a null object" );

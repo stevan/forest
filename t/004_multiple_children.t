@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 61;
+use Test::More tests => 64;
 
 my $CLASS = 'Tree';
 use_ok( $CLASS );
@@ -51,6 +51,11 @@ ok( $child2->height == 1, "The child2's height is one." );
 ok( $root->width == 2, "The root's width is two." );
 ok( $child1->width == 1, "The child1's width is one." );
 ok( $child2->width == 1, "The child2's width is one." );
+
+my @v = $root->children(1, 0);
+cmp_ok( @v, '==', 2, "Accessing children() by index out of order gives both back" );
+is( $v[0], $child2, "... the first child is correct" );
+is( $v[1], $child1, "... the second child is correct" );
 
 $root->remove_child( $child1 );
 ok( $root->children == 1, "After removing child1, the root has one child" );
