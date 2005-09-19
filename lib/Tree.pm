@@ -8,8 +8,24 @@ use warnings;
 
 our $VERSION = '0.99_00';
 
-use Scalar::Util qw( blessed refaddr );
+use Scalar::Util qw( blessed refaddr weaken );
 use Contextual::Return;
+
+my %CONFIG = (
+    use_weak_refs => 1,
+);
+
+sub import {
+    shift;
+    for (@_) {
+        if ( lc($_) eq 'no_weak_refs' ) {
+            $CONFIG{ use_weak_refs } = 0;
+        }
+        elsif ( lc($_) eq 'use_weak_refs' ) {
+            $CONFIG{ use_weak_refs } = 1;
+        }
+    }
+}
 
 # These are the constructors
 
@@ -41,7 +57,8 @@ sub add_child {
     }
 
     for my $node ( @nodes ) {
-        ${$node->parent} = $self;
+        #${$node->parent} = $self;
+        $node->_set_parent( $self );
     }
 
     if ( defined $index ) {
@@ -80,9 +97,9 @@ sub remove_child {
 
     my @return;
     for my $idx (sort { $b <=> $a } @indices) {
-
         my $node = splice @{$self->children}, $idx, 1;
-        ${$node->parent} = $node->_null;
+        #${$node->parent} = $node->_null;
+        $node->_set_parent( $node->_null );
 
         push @return, $node;
     }
@@ -192,11 +209,23 @@ sub _fix_width {
     return $self;
 }
 
+sub _set_parent {
+    my $self = shift;
+    my ($value) = @_;
+
+    ${$self->parent} = $value;
+    weaken( $self->{_parent} ) if $CONFIG{ use_weak_refs };
+}
+
+# These are the book-keeping methods
+
 sub DESTROY {
     my $self = shift;
 
+    return if $CONFIG{ use_weak_refs };
+
     foreach my $child (grep { $_ } @{$self->children}) {
-        ${$child->parent} = undef;
+        ${$child->parent} = $child->_null;
     }
 }
 

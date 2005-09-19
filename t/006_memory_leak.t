@@ -9,7 +9,7 @@ plan skip_all => "Test::Memory::Cycle required for testing memory leaks" if $@;
 plan tests => 51;
 
 my $CLASS = 'Tree';
-use_ok( $CLASS );
+use_ok( $CLASS, 'no_weak_refs' );
 
 #diag "parental connections must be destroyed manually";
 
