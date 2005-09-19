@@ -21,7 +21,7 @@ my $build = Module::Build->new(
     create_makefile_pl => 'traditional',
     recursive_test_files => 1,
     add_to_cleanup => [
-        'META.yml', '*.bak', '*.gz',
+        'META.yml', '*.bak', '*.gz', 'Makefile.PL',
     ],
 );
 
