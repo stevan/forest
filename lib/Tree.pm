@@ -134,7 +134,7 @@ sub parent {
 sub children {
     my $self = shift;
     return (
-        LIST { @{$self->{_children}} }
+        DEFAULT { @{$self->{_children}} }
         SCALAR { scalar @{$self->{_children}} }
         ARRAYREF { $self->{_children} }
     );
