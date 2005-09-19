@@ -91,7 +91,7 @@ sub remove_child {
     $self->_fix_width;
 
     return (
-        LIST { @return }
+        DEFAULT { @return }
         ARRAYREF { \@return }
         SCALAR { $return[0] }
     );
