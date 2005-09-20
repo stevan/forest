@@ -55,7 +55,7 @@ sub new {
         _error_handler => $ERROR_HANDLER,
         _root => undef,
     }, $class;
-    $self->{_root} = $self;
+    $self->_set_root( $self );
     return $self;
 }
 
@@ -76,9 +76,8 @@ sub add_child {
     }
 
     for my $node ( @nodes ) {
-        #${$node->parent} = $self;
         $node->_set_parent( $self );
-        ${$node->root} = $self->root;
+        $node->_set_root( $self->root );
     }
 
     if ( defined $index ) {
@@ -118,9 +117,8 @@ sub remove_child {
     my @return;
     for my $idx (sort { $b <=> $a } @indices) {
         my $node = splice @{$self->children}, $idx, 1;
-        #${$node->parent} = $node->_null;
         $node->_set_parent( $node->_null );
-        ${$node->root} = $node;
+        $node->_set_root( $node );
 
         push @return, $node;
     }
@@ -211,20 +209,16 @@ sub width {
 sub error_handler {
     my $self = shift;
 
-    if ( blessed( $self ) ) {
-        if ( @_ ) {
-            my $old = $self->{_error_handler};
-            $self->{_error_handler} = shift;
-            return $old;
-        }
-
-        return $self->{_error_handler};
-    }
-    else {
+    if ( !blessed( $self ) ) {
         my $old = $ERROR_HANDLER;
-        $ERROR_HANDLER = shift;
+        $ERROR_HANDLER = shift if @_;
         return $old;
     }
+
+    my $root = $self->root;
+    my $old = $root->{_error_handler};
+    $root->{_error_handler} = shift if @_;
+    return $old;
 }
 
 # These are private convenience methods
@@ -269,6 +263,27 @@ sub _set_parent {
 
     ${$self->parent} = $value;
     weaken( $self->{_parent} ) if $CONFIG{ use_weak_refs };
+
+    return;
+}
+
+sub _set_root {
+    my $self = shift;
+    my ($value) = @_;
+
+    ${$self->root} = $value;
+
+    # Propagate the root-change down to all children
+    # Because this is called from DESTROY, we need to verify
+    # that the child still exists because destruction in Perl5
+    # is neither ordered nor timely.
+    for my $child ( grep { $_ } @{$self->children} ) {
+        $child->_set_root( $value );
+    }
+
+    weaken( $self->{_root} ) if $CONFIG{ use_weak_refs };
+
+    return;
 }
 
 # These are the book-keeping methods
@@ -278,8 +293,9 @@ sub DESTROY {
 
     return if $CONFIG{ use_weak_refs };
 
+    $self->_set_root( $self->_null );
     foreach my $child (grep { $_ } @{$self->children}) {
-        ${$child->parent} = $child->_null;
+        $child->_set_parent( $child->_null );
     }
 }
 
@@ -416,6 +432,12 @@ This will return the height of $self. A leaf has a height of 1. A parent has a h
 
 This will return the width of $self. A leaf has a width of 1. A parent has a width equal to the sum of all the widths of its children.
 
+=item B<error_handler( [ $handler ] )>
+
+This will return the current error handler for the tree. If a value is passed in, then it will be used to set the error handler for the tree.
+
+If called as a class method, this will instead work with the default error handler.
+
 =back
 
 =head1 CIRCULAR REFERENCES
@@ -430,22 +452,20 @@ The test suite for Tree 1.0 is based very heavily on the test suite for L<Test::
 
 =head1 CODE COVERAGE
 
-We use L<Devel::Cover> to test the code coverage of my tests, below is the L<Devel::Cover> report on this module's test suite. We use TDD, which is why our coverage is so high.
+We use L<Devel::Cover> to test the code coverage of our tests. Below is the L<Devel::Cover> report on this module's test suite. We use TDD, which is why our coverage is so high.
  
   ---------------------------- ------ ------ ------ ------ ------ ------ ------
   File                           stmt branch   cond    sub    pod   time  total
   ---------------------------- ------ ------ ------ ------ ------ ------ ------
-  blib/lib/Tree.pm               96.1   95.8  100.0   95.5  100.0  100.0   96.2
-  Total                          96.1   95.8  100.0   95.5  100.0  100.0   96.2
+  blib/lib/Tree.pm              100.0   96.9  100.0  100.0   93.8  100.0   99.3
+  Total                         100.0   96.9  100.0  100.0   93.8  100.0   99.3
   ---------------------------- ------ ------ ------ ------ ------ ------ ------
 
-=head1 MISSING TESTS
+=head2 Missing Tests
 
 =over 4
 
 =item * A test on import where something is passed in that isn't an expected value.
-
-=item * For some reason, Deve::Cover is now counting lines as uncovered that were previously covered, like Tree::Null's can() and a commented-out mention of AUTOLOAD.
 
 =back
 
@@ -453,7 +473,7 @@ We use L<Devel::Cover> to test the code coverage of my tests, below is the L<Dev
 
 =over 4
 
-=item Stevan Little for writing Tree::Simple, upon which Tree is based.
+=item Stevan Little for writing L<Tree::Simple>, upon which Tree is based.
 
 =back
 

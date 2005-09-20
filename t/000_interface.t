@@ -27,7 +27,7 @@ my %methods = (
         parent children root height width error_handler
     )],
     private => [ qw(
-        _null _fix_width _fix_height _set_parent
+        _null _fix_width _fix_height _set_parent _set_root
     )],
     book_keeping => [qw(
         DESTROY

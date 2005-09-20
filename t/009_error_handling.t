@@ -1,10 +1,12 @@
 use strict;
 use warnings;
 
-use Test::More tests => 8;
+use Test::More tests => 9;
 
 my $CLASS = 'Tree';
 use_ok( $CLASS );
+
+is( $CLASS->error_handler, $CLASS->QUIET, "The initial default error_handler is quiet." );
 
 my $tree = $CLASS->new;
 
