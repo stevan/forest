@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 6;
+use Test::More tests => 7;
 
 my $CLASS = 'Tree';
 use_ok( $CLASS )
@@ -19,13 +19,12 @@ my %existing_methods = do {
 
 my %methods = (
     class => [ qw(
-        new
+        new error_handler QUIET WARN DIE
     )],
     public => [ qw(
         is_root is_leaf
-        parent children
         add_child remove_child has_child
-        height width
+        parent children root height width error_handler
     )],
     private => [ qw(
         _null _fix_width _fix_height _set_parent
@@ -46,7 +45,7 @@ can_ok( $tree, @{ $methods{public} } );
 delete @existing_methods{@{$methods{public}}};
 can_ok( $tree, @{ $methods{private} } );
 delete @existing_methods{@{$methods{private}}};
-#can_ok( $tree, @{ $methods{book_keeping} } );
-#delete @existing_methods{@{$methods{book_keeping}}};
+can_ok( $tree, @{ $methods{book_keeping} } );
+delete @existing_methods{@{$methods{book_keeping}}};
 
 ok( keys %existing_methods == 0, "We've accounted for everything." );

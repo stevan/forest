@@ -27,7 +27,23 @@ sub import {
     }
 }
 
-# These are the constructors
+# These are the class methods
+
+my %error_handlers = (
+    'quiet' => sub {
+    },
+    'warn' => sub {
+    },
+    'die' => sub {
+    },
+);
+
+sub QUIET { return $error_handlers{ 'quiet' } } 
+sub WARN  { return $error_handlers{ 'warn' } } 
+sub DIE   { return $error_handlers{ 'die' } } 
+
+# The default error handler is quiet
+my $ERROR_HANDLER = $error_handlers{ quiet };
 
 sub new {
     my $class = shift;
@@ -36,7 +52,10 @@ sub new {
         _parent => $class->_null,
         _height => 1,
         _width => 1,
+        _error_handler => $ERROR_HANDLER,
+        _root => undef,
     }, $class;
+    $self->{_root} = $self;
     return $self;
 }
 
@@ -59,6 +78,7 @@ sub add_child {
     for my $node ( @nodes ) {
         #${$node->parent} = $self;
         $node->_set_parent( $self );
+        ${$node->root} = $self->root;
     }
 
     if ( defined $index ) {
@@ -100,6 +120,7 @@ sub remove_child {
         my $node = splice @{$self->children}, $idx, 1;
         #${$node->parent} = $node->_null;
         $node->_set_parent( $node->_null );
+        ${$node->root} = $node;
 
         push @return, $node;
     }
@@ -163,6 +184,14 @@ sub children {
     }
 }
 
+sub root {
+    my $self = shift;
+    return (
+        SCALARREF { \($self->{_root}) }
+        DEFAULT { $self->{_root} }
+    );
+}
+
 sub height {
     my $self = shift;
     return (
@@ -177,6 +206,25 @@ sub width {
         SCALARREF { \($self->{_width}) }
         DEFAULT { $self->{_width} }
     );
+}
+
+sub error_handler {
+    my $self = shift;
+
+    if ( blessed( $self ) ) {
+        if ( @_ ) {
+            my $old = $self->{_error_handler};
+            $self->{_error_handler} = shift;
+            return $old;
+        }
+
+        return $self->{_error_handler};
+    }
+    else {
+        my $old = $ERROR_HANDLER;
+        $ERROR_HANDLER = shift;
+        return $old;
+    }
 }
 
 # These are private convenience methods
@@ -355,6 +403,10 @@ This will return the parent of $self.
 This will return the children of $self. If called in list context, it will return all the children. If called in scalar context, it will return the number of children.
 
 You may optionally pass in a list of indices to retrieve. This will return the children in the order you asked for them. This is very much like an arrayslice.
+
+=item B<root()>
+
+This will return the root node of the tree that $self is in. The root of the root node is itself.
 
 =item B<height()>
 

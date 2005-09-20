@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 33;
+use Test::More tests => 36;
 
 my $CLASS = 'Tree';
 use_ok( $CLASS );
@@ -47,6 +47,7 @@ is( $root->children(0), $child, "You can also access the children by index" );
 }
 
 is( $child->parent, $root, "The child's parent is also set correctly" );
+is( $child->root, $root, "The child's root is also set correctly" );
 
 ok( $root->has_child( $child ), "The tree has the child" );
 
@@ -63,6 +64,9 @@ ok( $root->is_leaf, 'The root is now a leaf' );
 
 ok( $child->is_root, 'The child is now a root' );
 ok( $child->is_leaf, 'The child is still a leaf' );
+
+is( $child->parent, "", "The child's parent is now empty" );
+is( $child->root, $child, "The child's root is now itself" );
 
 ok( $root->children == 0, "The root has no children" );
 
