@@ -244,8 +244,8 @@ sub error {
 
 sub last_error {
     my $self = shift;
-    $self->{_last_error} = shift if @_;
-    return $self->{_last_error};
+    $self->root->{_last_error} = shift if @_;
+    return $self->root->{_last_error};
 }
 
 # These are private convenience methods
@@ -518,8 +518,8 @@ We use L<Devel::Cover> to test the code coverage of our tests. Below is the L<De
   ---------------------------- ------ ------ ------ ------ ------ ------ ------
   File                           stmt branch   cond    sub    pod   time  total
   ---------------------------- ------ ------ ------ ------ ------ ------ ------
-  blib/lib/Tree.pm              100.0   96.9  100.0  100.0   93.8  100.0   99.3
-  Total                         100.0   96.9  100.0  100.0   93.8  100.0   99.3
+  blib/lib/Tree.pm              100.0   97.1  100.0  100.0  100.0  100.0   99.7
+  Total                         100.0   97.1  100.0  100.0  100.0  100.0   99.7
   ---------------------------- ------ ------ ------ ------ ------ ------ ------
 
 =head2 Missing Tests
