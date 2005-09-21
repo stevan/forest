@@ -1,7 +1,9 @@
 use strict;
 use warnings;
 
-use Test::More tests => 22;
+use Test::More tests => 27;
+use Test::Warn;
+use Test::Exception;
 
 my $CLASS = 'Tree';
 use_ok( $CLASS );
@@ -56,3 +58,19 @@ is( $tree->last_error, undef, "add_child() resets last_error()" );
 $tree->error( 1, 2);
 $tree->remove_child( 0 );
 is( $tree->last_error, undef, "remove_child() resets last_error()" );
+
+$tree->error_handler( $tree->WARN );
+my $rv;
+warning_is {
+    $rv = $tree->error( 1, 2);
+} '12', "Calling the WARN handler warns";
+is( $rv, undef, "The WARN handler returns undef" );
+is( $tree->last_error, "1\n2\n", "The WARN handler sets last_error()" );
+
+$tree->error_handler( $tree->DIE );
+throws_ok {
+    $tree->error( 1, 2);
+} qr/12/, "Calling the DIE handler dies";
+is( $tree->last_error, "1\n2\n", "The DIE handler sets last_error()" );
+
+

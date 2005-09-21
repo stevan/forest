@@ -36,8 +36,15 @@ my %error_handlers = (
         return;
     },
     'warn' => sub {
+        my $node = shift;
+        $node->last_error( join "\n", @_, '');
+        warn @_;
+        return;
     },
     'die' => sub {
+        my $node = shift;
+        $node->last_error( join "\n", @_, '');
+        die @_;
     },
 );
 
