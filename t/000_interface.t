@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 7;
+use Test::More tests => 8;
 
 my $CLASS = 'Tree';
 use_ok( $CLASS )
@@ -13,8 +13,14 @@ use_ok( $CLASS )
 # 2) Verify that all methods in $CLASS have been classified appropriately
 
 my %existing_methods = do {
-  no strict 'refs';
-  map { $_ => undef } grep exists &$_, keys %{ $CLASS . '::'};
+    no strict 'refs';
+    map {
+        $_ => undef
+    } grep {
+        !/^_/ && /^[a-z_]+$/
+    } grep {
+        exists &{${ $CLASS . '::'}{$_}}
+    } keys %{ $CLASS . '::'}
 };
 
 my %methods = (
@@ -24,13 +30,16 @@ my %methods = (
     public => [ qw(
         is_root is_leaf
         add_child remove_child has_child
-        parent children root height width error_handler
+        parent children root height width error_handler error
     )],
     private => [ qw(
         _null _fix_width _fix_height _set_parent _set_root
     )],
     book_keeping => [qw(
-        DESTROY
+        DESTROY import
+    )],
+    imported => [qw(
+        weaken blessed refaddr
     )],
 );
 
@@ -41,11 +50,14 @@ delete @existing_methods{@{$methods{class}}};
 my $tree = $CLASS->new();
 isa_ok( $tree, $CLASS );
 
-can_ok( $tree, @{ $methods{public} } );
-delete @existing_methods{@{$methods{public}}};
-can_ok( $tree, @{ $methods{private} } );
-delete @existing_methods{@{$methods{private}}};
-can_ok( $tree, @{ $methods{book_keeping} } );
-delete @existing_methods{@{$methods{book_keeping}}};
+for my $type ( qw( public private book_keeping imported ) ) {
+    can_ok( $tree, @{ $methods{ $type } } );
+    delete @existing_methods{@{$methods{ $type }}};
+}
 
-ok( keys %existing_methods == 0, "We've accounted for everything." );
+if ( my @k = keys %existing_methods ) {
+    ok( 0, "We need to account for '" . join ("','", @k) . "'" );
+}
+else {
+    ok( 1, "We've accounted for everything." );
+}

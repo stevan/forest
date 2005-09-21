@@ -43,7 +43,7 @@ sub WARN  { return $error_handlers{ 'warn' } }
 sub DIE   { return $error_handlers{ 'die' } } 
 
 # The default error handler is quiet
-my $ERROR_HANDLER = $error_handlers{ quiet };
+my $ERROR_HANDLER = $error_handlers{ 'quiet' };
 
 sub new {
     my $class = shift;
@@ -219,6 +219,13 @@ sub error_handler {
     my $old = $root->{_error_handler};
     $root->{_error_handler} = shift if @_;
     return $old;
+}
+
+sub error {
+    my $self = shift;
+    my @args = @_;
+
+    return $self->error_handler->( $self, @_ );
 }
 
 # These are private convenience methods
@@ -437,6 +444,26 @@ This will return the width of $self. A leaf has a width of 1. A parent has a wid
 This will return the current error handler for the tree. If a value is passed in, then it will be used to set the error handler for the tree.
 
 If called as a class method, this will instead work with the default error handler.
+
+=item B<error( $error, [ arg1 [, arg2 ...] ] )>
+
+Call this when you wish to report an error using the currently defined error_handler for the tree. The only guaranteed parameter is an error string describing the issue. There may be other arguments, and you may certainly provide other arguments in your subclass to be passed to your custom handler.
+
+=back
+
+=head1 ERROR HANDLERS
+
+Describe what the default error handlers do and what a custom error handler is expected to do.
+
+=over 4
+
+=item QUIET
+
+Use this error handler if you want to have quiet error-handling. The last_error method will retrieve the error from the last operation, if there was one. If an error occurs, the operation will return undefined.
+
+=item WARN
+
+=item DIE
 
 =back
 
