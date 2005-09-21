@@ -32,18 +32,18 @@ sub import {
 my %error_handlers = (
     'quiet' => sub {
         my $node = shift;
-        $node->last_error( join "\n", @_, '');
+        $node->last_error( join "\n", @_);
         return;
     },
     'warn' => sub {
         my $node = shift;
-        $node->last_error( join "\n", @_, '');
+        $node->last_error( join "\n", @_);
         warn @_;
         return;
     },
     'die' => sub {
         my $node = shift;
-        $node->last_error( join "\n", @_, '');
+        $node->last_error( join "\n", @_);
         die @_;
     },
 );
@@ -78,13 +78,31 @@ sub add_child {
     $self->last_error( undef );
 
     my $index;
-    if ( !blessed($nodes[0]) ) {
-        my ($at) = shift @nodes;
-        $index = shift @nodes;
+    if ( @nodes >= 2 ) {
+        if ( !blessed($nodes[0]) ) {
+            my ($at) = shift @nodes;
+            $index = shift @nodes;
+
+            unless ( $index =~ /^-?\d+$/ ) {
+                return $self->error( "add_child(): '$index' is not a legal index" );
+            }
+        }
+        elsif ( !blessed( $nodes[$#nodes - 1] ) ) {
+            $index = pop @nodes;
+            my ($at) = pop @nodes;
+
+            unless ( $index =~ /^-?\d+$/ ) {
+                return $self->error( "add_child(): '$index' is not a legal index" );
+            }
+        }
     }
-    elsif ( !blessed( $nodes[$#nodes - 1] ) ) {
-        $index = pop @nodes;
-        my ($at) = pop @nodes;
+
+    unless ( @nodes ) {
+        return $self->error( "add_child(): No children passed in" );
+    }
+
+    if ( my ($bad_node) = grep { !blessed($_) || !$_->isa( 'Tree' ) } @nodes ) {
+        return $self->error( "add_child(): '$bad_node' is not a Tree" );
     }
 
     for my $node ( @nodes ) {

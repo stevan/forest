@@ -47,10 +47,10 @@ is( $err, "". join("",$tree, 1, 2), "... and with two arguments passes the node 
 $tree->error_handler( $tree->QUIET );
 is( $tree->last_error, undef, "There's currently no error queued up" );
 is( $tree->error( 1, 2), undef, "Calling the QUIET handler returns undef" );
-is( $tree->last_error, "1\n2\n", "The QUIET handler concatenates all strings with \\n" );
+is( $tree->last_error, "1\n2", "The QUIET handler concatenates all strings with \\n" );
 
 my $x = $tree->parent;
-is( $tree->last_error, "1\n2\n", "A state query doesn't reset last_error()" );
+is( $tree->last_error, "1\n2", "A state query doesn't reset last_error()" );
 
 $tree->add_child( $CLASS->new );
 is( $tree->last_error, undef, "add_child() resets last_error()" );
@@ -65,12 +65,12 @@ warning_is {
     $rv = $tree->error( 1, 2);
 } '12', "Calling the WARN handler warns";
 is( $rv, undef, "The WARN handler returns undef" );
-is( $tree->last_error, "1\n2\n", "The WARN handler sets last_error()" );
+is( $tree->last_error, "1\n2", "The WARN handler sets last_error()" );
 
 $tree->error_handler( $tree->DIE );
 throws_ok {
     $tree->error( 1, 2);
 } qr/12/, "Calling the DIE handler dies";
-is( $tree->last_error, "1\n2\n", "The DIE handler sets last_error()" );
+is( $tree->last_error, "1\n2", "The DIE handler sets last_error()" );
 
 
