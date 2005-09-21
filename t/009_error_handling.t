@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 16;
+use Test::More tests => 22;
 
 my $CLASS = 'Tree';
 use_ok( $CLASS );
@@ -41,3 +41,18 @@ is( $err, "". join("",$tree, 'Some error, huh?'), "... and with one argument pas
 
 is( $tree->error( 1, 2 ), undef, "Calling the custom error handler returns undef" );
 is( $err, "". join("",$tree, 1, 2), "... and with two arguments passes the node and all arguments in" );
+
+$tree->error_handler( $tree->QUIET );
+is( $tree->last_error, undef, "There's currently no error queued up" );
+is( $tree->error( 1, 2), undef, "Calling the QUIET handler returns undef" );
+is( $tree->last_error, "1\n2\n", "The QUIET handler concatenates all strings with \\n" );
+
+my $x = $tree->parent;
+is( $tree->last_error, "1\n2\n", "A state query doesn't reset last_error()" );
+
+$tree->add_child( $CLASS->new );
+is( $tree->last_error, undef, "add_child() resets last_error()" );
+
+$tree->error( 1, 2);
+$tree->remove_child( 0 );
+is( $tree->last_error, undef, "remove_child() resets last_error()" );

@@ -31,6 +31,9 @@ sub import {
 
 my %error_handlers = (
     'quiet' => sub {
+        my $node = shift;
+        $node->last_error( join "\n", @_, '');
+        return;
     },
     'warn' => sub {
     },
@@ -64,6 +67,8 @@ sub new {
 sub add_child {
     my $self = shift;
     my @nodes = @_;
+
+    $self->last_error( undef );
 
     my $index;
     if ( !blessed($nodes[0]) ) {
@@ -101,6 +106,8 @@ sub add_child {
 sub remove_child {
     my $self = shift;
     my @nodes = @_;
+
+    $self->last_error( undef );
 
     my @indices;
     foreach my $proto (@nodes) {
@@ -226,6 +233,12 @@ sub error {
     my @args = @_;
 
     return $self->error_handler->( $self, @_ );
+}
+
+sub last_error {
+    my $self = shift;
+    $self->{_last_error} = shift if @_;
+    return $self->{_last_error};
 }
 
 # These are private convenience methods
@@ -395,6 +408,8 @@ This will remove all the @nodes from the children of $self. You can either pass 
 
 =back
 
+All behaviors will reset last_error().
+
 =head2 State Queries
 
 =over 4
@@ -439,6 +454,16 @@ This will return the height of $self. A leaf has a height of 1. A parent has a h
 
 This will return the width of $self. A leaf has a width of 1. A parent has a width equal to the sum of all the widths of its children.
 
+=back
+
+=head1 ERROR HANDLING
+
+Describe what the default error handlers do and what a custom error handler is expected to do.
+
+=head2 Error-related methods
+
+=over 4
+
 =item B<error_handler( [ $handler ] )>
 
 This will return the current error handler for the tree. If a value is passed in, then it will be used to set the error handler for the tree.
@@ -449,11 +474,13 @@ If called as a class method, this will instead work with the default error handl
 
 Call this when you wish to report an error using the currently defined error_handler for the tree. The only guaranteed parameter is an error string describing the issue. There may be other arguments, and you may certainly provide other arguments in your subclass to be passed to your custom handler.
 
+=item B<last_error()>
+
+If an error occurred during the last behavior, this will return the error string. It is reset only when a behavior is called.
+
 =back
 
-=head1 ERROR HANDLERS
-
-Describe what the default error handlers do and what a custom error handler is expected to do.
+=head2 Default error handlers
 
 =over 4
 
