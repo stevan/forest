@@ -101,8 +101,18 @@ sub add_child {
         return $self->error( "add_child(): No children passed in" );
     }
 
-    if ( my ($bad_node) = grep { !blessed($_) || !$_->isa( 'Tree' ) } @nodes ) {
-        return $self->error( "add_child(): '$bad_node' is not a Tree" );
+    for my $node ( @nodes ) {
+        unless ( blessed($node) && $node->isa( 'Tree' ) ) {
+            return $self->error( "add_child(): '$node' is not a Tree" );
+        }
+
+        if ( $node->root eq $self->root ) {
+            return $self->error( "add_child(): Cannot add a node in the tree back into the tree" );
+        }
+
+        if ( $node->parent ) {
+            return $self->error( "add_child(): Cannot add a child to another parent" );
+        }
     }
 
     for my $node ( @nodes ) {

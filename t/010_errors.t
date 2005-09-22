@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 22;
+use Test::More tests => 31;
 
 my $CLASS = 'Tree';
 use_ok( $CLASS );
@@ -40,3 +40,15 @@ is( $root->add_child( $child1, at => $bad_node ), undef, "add_child(): An illega
 is( $root->last_error, "add_child(): '$bad_node' is not a legal index", "... and the error is good" );
 cmp_ok( $root->children, '==', 0, "... and we still have no children" );
 
+is( $root->add_child( $root ), undef, "add_child(): Cannot add the root to itself" );
+is( $root->last_error, "add_child(): Cannot add a node in the tree back into the tree", '... and the error is good' );
+cmp_ok( $root->children, '==', 0, "... and we still have no children" );
+
+$child1->add_child( $child2 );
+is( $root->add_child( $child2 ), undef, "add_child(): Cannot add a child to another parent" );
+is( $root->last_error, "add_child(): Cannot add a child to another parent", '... and the error is good' );
+cmp_ok( $root->children, '==', 0, "... and we still have no children" );
+
+is( $child1->add_child( $child2 ), undef, "add_child(): Cannot add a child a second time" );
+is( $child1->last_error, "add_child(): Cannot add a node in the tree back into the tree", '... and the error is good' );
+cmp_ok( $child1->children, '==', 1, "... and we still have only one child" );
