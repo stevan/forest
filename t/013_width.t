@@ -5,17 +5,15 @@ use warnings;
 
 use Test::More tests => 77;
 
-BEGIN { 
-	use_ok('Tree'); 
-};
-
+my $CLASS = 'Tree';
+use_ok( $CLASS );
 
 { # test height (with pictures)
 
-    my $tree = Tree->new();
+    my $tree = $CLASS->new();
     isa_ok($tree, 'Tree');
 
-    my $D = Tree->new('D');
+    my $D = $CLASS->new();
     isa_ok($D, 'Tree');
 
     $tree->add_child($D);
@@ -25,7 +23,7 @@ BEGIN {
 
     cmp_ok($D->width(), '==', 1, '... D has a width of 1');
 
-    my $E = Tree->new('E');
+    my $E = $CLASS->new();
     isa_ok($E, 'Tree');
 
     $D->add_child($E);
@@ -38,7 +36,7 @@ BEGIN {
     cmp_ok($D->width(), '==', 1, '... D has a width of 1');
     cmp_ok($E->width(), '==', 1, '... E has a width of 1');
 
-    my $F = Tree->new('F');
+    my $F = $CLASS->new();
     isa_ok($F, 'Tree');
 
     $E->add_child($F);
@@ -54,7 +52,7 @@ BEGIN {
     cmp_ok($E->width(), '==', 1, '... E has a width of 1');
     cmp_ok($F->width(), '==', 1, '... F has a width of 1');
 
-    my $C = Tree->new('C');
+    my $C = $CLASS->new();
     isa_ok($C, 'Tree');
 
     $D->add_child($C);
@@ -71,7 +69,7 @@ BEGIN {
     cmp_ok($F->width(), '==', 1, '... F has a width of 1');
     cmp_ok($C->width(), '==', 1, '... C has a width of 1');
 
-    my $B = Tree->new('B');
+    my $B = $CLASS->new();
     isa_ok($B, 'Tree');
 
     $D->add_child($B);
@@ -91,7 +89,7 @@ BEGIN {
     cmp_ok($B->width(), '==', 1, '... B has a width of 1');
 
 
-    my $A = Tree->new('A');
+    my $A = $CLASS->new();
     isa_ok($A, 'Tree');
 
     $E->add_child($A);
@@ -110,7 +108,7 @@ BEGIN {
     cmp_ok($B->width(), '==', 1, '... B has a width of 1');
     cmp_ok($A->width(), '==', 1, '... A has a width of 1');
 
-    my $G = Tree->new('G');
+    my $G = $CLASS->new();
     isa_ok($G, 'Tree');
 
     $E->add_child( at => 1, $G);
@@ -130,7 +128,7 @@ BEGIN {
     cmp_ok($B->width(), '==', 1, '... B has a width of 1');
     cmp_ok($A->width(), '==', 1, '... A has a width of 1');
 
-    my $H = Tree->new('H');
+    my $H = $CLASS->new();
     isa_ok($H, 'Tree');
 
     $G->add_child($H);
@@ -153,7 +151,7 @@ BEGIN {
     cmp_ok($B->width(), '==', 1, '... B has a width of 1');
     cmp_ok($A->width(), '==', 1, '... A has a width of 1');
 
-    my $I = Tree->new('I');
+    my $I = $CLASS->new();
     isa_ok($I, 'Tree');
 
     $G->add_child($I);
