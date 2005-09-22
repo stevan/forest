@@ -88,8 +88,8 @@ sub add_child {
                     return $self->error( "add_child(): '$index' is not a legal index" );
                 }
 
-                if ( $index > $self->children ) {
-                    return $self->error( "add_child(): '$index' is outside the current range" );
+                if ( $index > $self->children || $self->children + $index < 0 ) {
+                    return $self->error( "add_child(): '$index' is out-of-bounds" );
                 }
             }
         }
@@ -102,8 +102,8 @@ sub add_child {
                     return $self->error( "add_child(): '$index' is not a legal index" );
                 }
 
-                if ( $index > $self->children ) {
-                    return $self->error( "add_child(): '$index' is outside the current range" );
+                if ( $index > $self->children || $self->children + $index < 0 ) {
+                    return $self->error( "add_child(): '$index' is out-of-bounds" );
                 }
             }
         }
@@ -160,10 +160,21 @@ sub remove_child {
         return $self->error( "remove_child(): Nothing to remove" );
     }
 
-
     my @indices;
     foreach my $proto (@nodes) {
+        if ( !defined( $proto ) ) {
+            return $self->error( "remove_child(): 'undef' is out-of-bounds" );
+        }
+
         if ( !blessed( $proto ) ) {
+            unless ( $proto =~ /^-?\d+$/ ) {
+                return $self->error( "remove_child(): '$proto' is not a legal index" );
+            }
+
+            if ( $proto >= $self->children || $self->children + $proto <= 0 ) {
+                return $self->error( "remove_child(): '$proto' is out-of-bounds" );
+            }
+
             push @indices, $proto;
         }
         else {
@@ -206,14 +217,25 @@ sub is_leaf {
 
 sub has_child {
     my $self = shift;
+    my @nodes = @_;
 
-    my %temp = map { refaddr($_) => undef } @{$self->children};
+    my @children = $self->children;
+    my %temp = map { refaddr($children[$_]) => $_ } 0 .. $#children;
 
-    my $rv = 1;
-    $rv &&= exists $temp{refaddr($_)}
-        for @_;
-
-    return $rv;
+    return
+        BOOL { 
+            my $rv = 1;
+            $rv &&= exists $temp{refaddr($_)}
+                for @nodes;
+            return $rv;
+        }
+        SCALAR {
+            return $temp{refaddr($nodes[0])};
+        }
+        LIST {
+            return map { $temp{refaddr($_)} } @nodes;
+        }
+    ;
 }
 
 # These are the smart accessors
@@ -478,7 +500,7 @@ This will return true is $self has no children and false otherwise.
 
 =item B<has_child(@nodes)>
 
-This will return true is $self has each of the @nodes as a child.
+If called in a boolean context, this will return true is $self has each of the @nodes as a child. If called in a list context, it will map back the list of indices for each of the @nodes. If called in a scalar, non-boolean context, it will return back the index for C<$nodes[0]>.
 
 =back
 
@@ -565,8 +587,8 @@ We use L<Devel::Cover> to test the code coverage of our tests. Below is the L<De
   ---------------------------- ------ ------ ------ ------ ------ ------ ------
   File                           stmt branch   cond    sub    pod   time  total
   ---------------------------- ------ ------ ------ ------ ------ ------ ------
-  blib/lib/Tree.pm              100.0   98.2  100.0  100.0  100.0  100.0   99.7
-  Total                         100.0   98.2  100.0  100.0  100.0  100.0   99.7
+  blib/lib/Tree.pm              100.0   98.4  100.0  100.0  100.0  100.0   99.7
+  Total                         100.0   98.4  100.0  100.0  100.0  100.0   99.7
   ---------------------------- ------ ------ ------ ------ ------ ------ ------
 
 =head2 Missing Tests

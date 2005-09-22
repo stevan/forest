@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 36;
+use Test::More tests => 38;
 
 my $CLASS = 'Tree';
 use_ok( $CLASS );
@@ -50,6 +50,12 @@ is( $child->parent, $root, "The child's parent is also set correctly" );
 is( $child->root, $root, "The child's root is also set correctly" );
 
 ok( $root->has_child( $child ), "The tree has the child" );
+
+my $idx = $root->has_child( $child );
+cmp_ok( $idx, '==', 0, "... and the child is at index 0 (scalar)" );
+
+my @idx = $root->has_child( $child );
+is_deeply( \@idx, [ 0 ], "... and the child is at index 0 (list)" );
 
 ok( $root->height == 2, "The root's height is 2" );
 ok( $child->height == 1, "The child's height is 1" );

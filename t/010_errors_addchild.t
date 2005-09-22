@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 37;
+use Test::More tests => 43;
 
 my $CLASS = 'Tree';
 use_ok( $CLASS );
@@ -41,11 +41,19 @@ is( $root->last_error, "add_child(): '$bad_node' is not a legal index", "... and
 cmp_ok( $root->children, '==', 0, "... and we still have no children" );
 
 is( $root->add_child( $child1, at => 1 ), undef, "add_child(): An 'at' value outside the current number of children is illegal" );
-is( $root->last_error, "add_child(): '1' is outside the current range", "... and the error is good" );
+is( $root->last_error, "add_child(): '1' is out-of-bounds", "... and the error is good" );
+cmp_ok( $root->children, '==', 0, "... and we still have no children" );
+
+is( $root->add_child( $child1, at => -1 ), undef, "add_child(): An 'at' value outside the current number of children is illegal" );
+is( $root->last_error, "add_child(): '-1' is out-of-bounds", "... and the error is good" );
 cmp_ok( $root->children, '==', 0, "... and we still have no children" );
 
 is( $root->add_child( at => 1, $child1 ), undef, "add_child(): An 'at' value outside the current number of children is illegal" );
-is( $root->last_error, "add_child(): '1' is outside the current range", "... and the error is good" );
+is( $root->last_error, "add_child(): '1' is out-of-bounds", "... and the error is good" );
+cmp_ok( $root->children, '==', 0, "... and we still have no children" );
+
+is( $root->add_child( at => -1, $child1 ), undef, "add_child(): An 'at' value outside the current number of children is illegal" );
+is( $root->last_error, "add_child(): '-1' is out-of-bounds", "... and the error is good" );
 cmp_ok( $root->children, '==', 0, "... and we still have no children" );
 
 is( $root->add_child( $root ), undef, "add_child(): Cannot add the root to itself" );
