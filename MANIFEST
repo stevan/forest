@@ -14,6 +14,9 @@ t/007_add_child.t
 t/008_weak_refs.t
 t/009_error_handling.t
 t/010_errors_addchild.t
+t/011_errors_removechild.t
+t/012_height.t
+t/013_width.t
 t/998_pod.t
 t/999_pod_coverage.t
 META.yml

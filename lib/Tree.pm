@@ -156,6 +156,11 @@ sub remove_child {
 
     $self->last_error( undef );
 
+    unless ( @nodes ) {
+        return $self->error( "remove_child(): Nothing to remove" );
+    }
+
+
     my @indices;
     foreach my $proto (@nodes) {
         if ( !blessed( $proto ) ) {
@@ -320,6 +325,8 @@ sub _fix_width {
         ${$self->width} += $child->width;
     }
     ${$self->width} ||= 1;
+
+    $self->parent->_fix_width;
 
     return $self;
 }
