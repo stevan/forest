@@ -83,16 +83,28 @@ sub add_child {
             my ($at) = shift @nodes;
             $index = shift @nodes;
 
-            unless ( $index =~ /^-?\d+$/ ) {
-                return $self->error( "add_child(): '$index' is not a legal index" );
+            if ( defined $index ) {
+                unless ( $index =~ /^-?\d+$/ ) {
+                    return $self->error( "add_child(): '$index' is not a legal index" );
+                }
+
+                if ( $index > $self->children ) {
+                    return $self->error( "add_child(): '$index' is outside the current range" );
+                }
             }
         }
         elsif ( !blessed( $nodes[$#nodes - 1] ) ) {
             $index = pop @nodes;
             my ($at) = pop @nodes;
 
-            unless ( $index =~ /^-?\d+$/ ) {
-                return $self->error( "add_child(): '$index' is not a legal index" );
+            if ( defined $index ) {
+                unless ( $index =~ /^-?\d+$/ ) {
+                    return $self->error( "add_child(): '$index' is not a legal index" );
+                }
+
+                if ( $index > $self->children ) {
+                    return $self->error( "add_child(): '$index' is outside the current range" );
+                }
             }
         }
     }
@@ -435,7 +447,7 @@ This will return a Tree object. It currently accepts no parameters.
 
 =item B<add_child(@nodes)>
 
-This will add all the @nodes as children of $self. If the first two or last two parameters are of the form C<at =E<gt> $idx>, @nodes will be added starting at that index.
+This will add all the @nodes as children of $self. If the first two or last two parameters are of the form C<at =E<gt> $idx>, @nodes will be added starting at that index. If C<$idx> is negative, it will start that many in from the end. So, C<$idx == -1> will add @nodes before the last element of the children. If $idx is undefined, then it act as a push(). If $idx is 0, then it will act as an unshift.
 
 =item B<remove_child(@nodes)>
 
@@ -546,8 +558,8 @@ We use L<Devel::Cover> to test the code coverage of our tests. Below is the L<De
   ---------------------------- ------ ------ ------ ------ ------ ------ ------
   File                           stmt branch   cond    sub    pod   time  total
   ---------------------------- ------ ------ ------ ------ ------ ------ ------
-  blib/lib/Tree.pm              100.0   97.1  100.0  100.0  100.0  100.0   99.7
-  Total                         100.0   97.1  100.0  100.0  100.0  100.0   99.7
+  blib/lib/Tree.pm              100.0   98.2  100.0  100.0  100.0  100.0   99.7
+  Total                         100.0   98.2  100.0  100.0  100.0  100.0   99.7
   ---------------------------- ------ ------ ------ ------ ------ ------ ------
 
 =head2 Missing Tests
