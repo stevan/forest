@@ -18,6 +18,7 @@ my $build = Module::Build->new(
         'Test::More'      => '0.47',
         'Test::Exception' => '0.15',
         'Test::Warn'      => '0.08',
+        'Test::Deep'      => '0.088',
         'Scalar::Util'    => '1.10',
     },
     create_makefile_pl => 'traditional',

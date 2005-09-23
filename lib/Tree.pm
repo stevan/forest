@@ -57,6 +57,10 @@ my $ERROR_HANDLER = $error_handlers{ 'quiet' };
 
 sub new {
     my $class = shift;
+
+    return $class->clone( @_ )
+        if blessed $class;
+
     my $self = bless {
         _children => [],
         _parent => $class->_null,
@@ -66,6 +70,7 @@ sub new {
         _error_handler => $ERROR_HANDLER,
         _root => undef,
         _value => undef,
+        _last_error => undef,
     }, $class;
 
     $self->_set_root( $self );
@@ -212,6 +217,20 @@ sub remove_child {
         ARRAYREF { \@return }
         SCALAR { $return[0] }
     );
+}
+
+sub clone {
+    my $self = shift;
+
+    return $self->new(@_) unless blessed $self;
+
+    my $value = @_ ? shift : $self->value;
+    my $clone = ref($self)->new( $value );
+
+    $clone->add_child( map { $_->clone } $self->children )
+        if $self->children;
+
+    return $clone;
 }
 
 # These are the state-queries
@@ -489,7 +508,6 @@ sub numify { return 0; }
 sub boolify { return; }
 
 1;
-
 __END__
 
 =head1 NAME
@@ -508,9 +526,19 @@ This is meant to be a full-featured replacement for L<Tree::Simple>.
 
 =over 4
 
-=item B<new()>
+=item B<new([$value])>
 
-This will return a Tree object. It currently accepts no parameters.
+This will return a Tree object. It will accept one parameter which, if passed, will become the value (accessible by L<value()>). All other parameters will be ignored.
+
+If you call C<$tree->new([$value])>, it will instead call C<clone()>, then set the value of the clone to $value.
+
+=item B<clone()>
+
+This will return a clone of $tree. The clone will be a root tree, but all children will be cloned.
+
+If you call <Tree->clone([$value])>, it will instead call C<new()>.
+
+B<NOTE:> the value is merely a shallow copy. This means that all references will be kept.
 
 =back
 
@@ -520,11 +548,11 @@ This will return a Tree object. It currently accepts no parameters.
 
 =item B<add_child(@nodes)>
 
-This will add all the @nodes as children of $self. If the first two or last two parameters are of the form C<at =E<gt> $idx>, @nodes will be added starting at that index. If C<$idx> is negative, it will start that many in from the end. So, C<$idx == -1> will add @nodes before the last element of the children. If $idx is undefined, then it act as a push(). If $idx is 0, then it will act as an unshift.
+This will add all the @nodes as children of $tree. If the first two or last two parameters are of the form C<at =E<gt> $idx>, @nodes will be added starting at that index. If C<$idx> is negative, it will start that many in from the end. So, C<$idx == -1> will add @nodes before the last element of the children. If $idx is undefined, then it act as a push(). If $idx is 0, then it will act as an unshift.
 
 =item B<remove_child(@nodes)>
 
-This will remove all the @nodes from the children of $self. You can either pass in the actual child object you wish to remove, the index of the child you wish to remove, or a combination of both.
+This will remove all the @nodes from the children of $tree. You can either pass in the actual child object you wish to remove, the index of the child you wish to remove, or a combination of both.
 
 =back
 
@@ -536,15 +564,15 @@ All behaviors will reset last_error().
 
 =item B<is_root()>
 
-This will return true is $self has no parent and false otherwise.
+This will return true is $tree has no parent and false otherwise.
 
 =item B<is_leaf()>
 
-This will return true is $self has no children and false otherwise.
+This will return true is $tree has no children and false otherwise.
 
 =item B<has_child(@nodes)>
 
-If called in a boolean context, this will return true is $self has each of the @nodes as a child. If called in a list context, it will map back the list of indices for each of the @nodes. If called in a scalar, non-boolean context, it will return back the index for C<$nodes[0]>.
+If called in a boolean context, this will return true is $tree has each of the @nodes as a child. If called in a list context, it will map back the list of indices for each of the @nodes. If called in a scalar, non-boolean context, it will return back the index for C<$nodes[0]>.
 
 =back
 
@@ -554,29 +582,29 @@ If called in a boolean context, this will return true is $self has each of the @
 
 =item B<parent()>
 
-This will return the parent of $self.
+This will return the parent of $tree.
 
 =item B<children( [ $idx, [$idx, ..] ] )>
 
-This will return the children of $self. If called in list context, it will return all the children. If called in scalar context, it will return the number of children.
+This will return the children of $tree. If called in list context, it will return all the children. If called in scalar context, it will return the number of children.
 
 You may optionally pass in a list of indices to retrieve. This will return the children in the order you asked for them. This is very much like an arrayslice.
 
 =item B<root()>
 
-This will return the root node of the tree that $self is in. The root of the root node is itself.
+This will return the root node of the tree that $tree is in. The root of the root node is itself.
 
 =item B<height()>
 
-This will return the height of $self. A leaf has a height of 1. A parent has a height of its tallest child, plus 1.
+This will return the height of $tree. A leaf has a height of 1. A parent has a height of its tallest child, plus 1.
 
 =item B<width()>
 
-This will return the width of $self. A leaf has a width of 1. A parent has a width equal to the sum of all the widths of its children.
+This will return the width of $tree. A leaf has a width of 1. A parent has a width equal to the sum of all the widths of its children.
 
 =item B<depth()>
 
-This will return the depth of $self. A root has a depth of 0. A child has the depth of its parent, plus 1.
+This will return the depth of $tree. A root has a depth of 0. A child has the depth of its parent, plus 1.
 
 This is the distance from the root. It's useful for things like pretty-printing the tree.
 
@@ -657,9 +685,11 @@ We use L<Devel::Cover> to test the code coverage of our tests. Below is the L<De
 
 =over 4
 
-=item * Payload
-
 =item * Siblings
+
+=item * Visitors
+
+=item * Cloning
 
 =back
 
