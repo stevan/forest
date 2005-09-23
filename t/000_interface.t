@@ -33,6 +33,7 @@ my %methods = (
         root parent children
         height width depth
         error_handler error last_error
+        value
     )],
     private => [ qw(
         _null _fix_width _fix_height _set_parent _set_root

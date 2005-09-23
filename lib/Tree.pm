@@ -65,8 +65,12 @@ sub new {
         _depth => 0,
         _error_handler => $ERROR_HANDLER,
         _root => undef,
+        _value => undef,
     }, $class;
+
     $self->_set_root( $self );
+    $self->value( $_[0] ) if @_;
+
     return $self;
 }
 
@@ -301,6 +305,14 @@ sub depth {
         DEFAULT { $self->{_depth} }
     );
 }
+
+sub value {
+    my $self = shift;
+    $self->{_value} = shift if @_;
+    return $self->{_value};
+}
+
+# These are the error-handling functions
 
 sub error_handler {
     my $self = shift;
@@ -567,6 +579,10 @@ This will return the width of $self. A leaf has a width of 1. A parent has a wid
 This will return the depth of $self. A root has a depth of 0. A child has the depth of its parent, plus 1.
 
 This is the distance from the root. It's useful for things like pretty-printing the tree.
+
+=item B<value([$value])>
+
+This will return the value stored in the node. If $value is passed in, it will set the value stored in the node to $value, then return $value.
 
 =back
 
