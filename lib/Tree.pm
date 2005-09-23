@@ -178,9 +178,7 @@ sub remove_child {
             push @indices, $proto;
         }
         else {
-            my ($index) = grep {
-                refaddr($self->children->[$_]) eq refaddr($proto)
-            } 0 .. $#{$self->children};
+            my ($index) = $self->has_child( $proto );
 
             unless ( defined $index ) {
                 return $self->error( "remove_child(): '$proto' not found" );
