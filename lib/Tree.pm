@@ -62,6 +62,7 @@ sub new {
         _parent => $class->_null,
         _height => 1,
         _width => 1,
+        _depth => 0,
         _error_handler => $ERROR_HANDLER,
         _root => undef,
     }, $class;
@@ -130,6 +131,7 @@ sub add_child {
     for my $node ( @nodes ) {
         $node->_set_parent( $self );
         $node->_set_root( $self->root );
+        $node->_fix_depth;
     }
 
     if ( defined $index ) {
@@ -193,6 +195,7 @@ sub remove_child {
         my $node = splice @{$self->children}, $idx, 1;
         $node->_set_parent( $node->_null );
         $node->_set_root( $node );
+        $node->_fix_depth;
 
         push @return, $node;
     }
@@ -291,6 +294,14 @@ sub width {
     );
 }
 
+sub depth {
+    my $self = shift;
+    return (
+        SCALARREF { \($self->{_depth}) }
+        DEFAULT { $self->{_depth} }
+    );
+}
+
 sub error_handler {
     my $self = shift;
 
@@ -353,6 +364,23 @@ sub _fix_width {
     ${$self->width} ||= 1;
 
     $self->parent->_fix_width;
+
+    return $self;
+}
+
+sub _fix_depth {
+    my $self = shift;
+
+    if ( $self->is_root ) {
+        ${$self->depth} = 0;
+    }
+    else {
+        ${$self->depth} = $self->parent->depth + 1;
+    }
+
+    for my $child (@{$self->children}) {
+        $child->_fix_depth;
+    }
 
     return $self;
 }
@@ -534,6 +562,12 @@ This will return the height of $self. A leaf has a height of 1. A parent has a h
 
 This will return the width of $self. A leaf has a width of 1. A parent has a width equal to the sum of all the widths of its children.
 
+=item B<depth()>
+
+This will return the depth of $self. A root has a depth of 0. A child has the depth of its parent, plus 1.
+
+This is the distance from the root. It's useful for things like pretty-printing the tree.
+
 =back
 
 =head1 ERROR HANDLING
@@ -591,8 +625,8 @@ We use L<Devel::Cover> to test the code coverage of our tests. Below is the L<De
   ---------------------------- ------ ------ ------ ------ ------ ------ ------
   File                           stmt branch   cond    sub    pod   time  total
   ---------------------------- ------ ------ ------ ------ ------ ------ ------
-  blib/lib/Tree.pm              100.0   98.4  100.0  100.0  100.0  100.0   99.7
-  Total                         100.0   98.4  100.0  100.0  100.0  100.0   99.7
+  blib/lib/Tree.pm              100.0   98.5  100.0  100.0  100.0  100.0   99.8
+  Total                         100.0   98.5  100.0  100.0  100.0  100.0   99.8
   ---------------------------- ------ ------ ------ ------ ------ ------ ------
 
 =head2 Missing Tests

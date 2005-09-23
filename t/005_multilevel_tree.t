@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 47;
+use Test::More tests => 50;
 
 my $CLASS = 'Tree';
 use_ok( $CLASS );
@@ -37,6 +37,10 @@ ok( $child2->height == 1, "The child2's height is one." );
 ok( $root->width == 1, "The root's width is one." );
 ok( $child1->width == 1, "The child1's width is one." );
 ok( $child2->width == 1, "The child2's width is one." );
+
+ok( $root->depth == 0, "The root's depth is zero." );
+ok( $child1->depth == 1, "The child1's depth is one." );
+ok( $child2->depth == 2, "The child2's depth is two." );
 
 is( $child1->root, $root, "The child1's root is the root" );
 is( $child2->root, $root, "The child2's root is the root" );

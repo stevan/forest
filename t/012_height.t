@@ -3,20 +3,15 @@
 use strict;
 use warnings;
 
-use Test::More tests => 67;
+use Test::More tests => 74;
 
 my $CLASS = 'Tree';
 use_ok( $CLASS );
 
 { # test height (with pictures)
 
-    my $tree = $CLASS->new();
-    isa_ok($tree, 'Tree');
-
     my $D = $CLASS->new();
     isa_ok($D, 'Tree');
-
-    $tree->add_child($D);
 
     #   |
     #  <D>
@@ -153,6 +148,15 @@ use_ok( $CLASS );
     cmp_ok($C->height(), '==', 3, '... C has a height of 3');
     cmp_ok($B->height(), '==', 2, '... B has a height of 2');
     cmp_ok($A->height(), '==', 1, '... A has a height of 1');
+
+    cmp_ok($D->depth(), '==', 0, '... D has a depth of 0');
+    cmp_ok($E->depth(), '==', 1, '... E has a depth of 1');
+    cmp_ok($F->depth(), '==', 2, '... F has a depth of 2');
+    cmp_ok($G->depth(), '==', 2, '... G has a depth of 2');
+    cmp_ok($H->depth(), '==', 3, '... H has a depth of 3');
+    cmp_ok($C->depth(), '==', 1, '... C has a depth of 1');
+    cmp_ok($B->depth(), '==', 2, '... B has a depth of 2');
+    cmp_ok($A->depth(), '==', 3, '... A has a depth of 3');
 
     ok($B->remove_child($A), '... removed A subtree from B tree');
 

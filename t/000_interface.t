@@ -30,7 +30,8 @@ my %methods = (
     public => [ qw(
         is_root is_leaf
         add_child remove_child has_child
-        parent children root height width
+        root parent children
+        height width depth
         error_handler error last_error
     )],
     private => [ qw(

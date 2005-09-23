@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 38;
+use Test::More tests => 42;
 
 my $CLASS = 'Tree';
 use_ok( $CLASS );
@@ -63,6 +63,9 @@ ok( $child->height == 1, "The child's height is 1" );
 ok( $root->width == 1, "The root's width is 1" );
 ok( $child->width == 1, "The child's width is 1" );
 
+ok( $root->depth == 0, "The root's depth is 0" );
+ok( $child->depth == 1, "The child's depth is 1" );
+
 is( $root->remove_child( $child ), $child, "remove_child() returns the removed node" );
 
 ok( $root->is_root, 'The root is still the root' );
@@ -81,3 +84,7 @@ ok( $child->height == 1, "The child's height is still 1" );
 
 ok( $root->width == 1, "The root's width is still 1" );
 ok( $child->width == 1, "The child's width is still 1" );
+
+ok( $root->depth == 0, "The root's depth is 0" );
+ok( $child->depth == 0, "The child's depth is 0" );
+
