@@ -3,6 +3,7 @@ Changes
 Makefile.PL
 MANIFEST			This list of files
 lib/Tree.pm
+lib/Tree/Binary.pm
 t/000_interface.t
 t/001_root_node.t
 t/002_null_object.t
@@ -18,6 +19,7 @@ t/011_errors_removechild.t
 t/012_height.t
 t/013_width.t
 t/014_clone.t
+t/100_binary_trees.t
 t/998_pod.t
 t/999_pod_coverage.t
 META.yml
