@@ -669,8 +669,8 @@ We use L<Devel::Cover> to test the code coverage of our tests. Below is the L<De
   ---------------------------- ------ ------ ------ ------ ------ ------ ------
   File                           stmt branch   cond    sub    pod   time  total
   ---------------------------- ------ ------ ------ ------ ------ ------ ------
-  blib/lib/Tree.pm              100.0   98.5  100.0  100.0  100.0  100.0   99.8
-  Total                         100.0   98.5  100.0  100.0  100.0  100.0   99.8
+  blib/lib/Tree.pm              100.0   98.8  100.0  100.0  100.0  100.0   99.8
+  Total                         100.0   98.8  100.0  100.0  100.0  100.0   99.8
   ---------------------------- ------ ------ ------ ------ ------ ------ ------
 
 =head2 Missing Tests
@@ -687,9 +687,9 @@ We use L<Devel::Cover> to test the code coverage of our tests. Below is the L<De
 
 =item * Siblings
 
-=item * Visitors
+I'm not sure I want to do this. These are purely convenience methods that wrap C<$tree->parent->METHOD( @args )>. What's the point??
 
-=item * Cloning
+=item * Visitors
 
 =back
 
