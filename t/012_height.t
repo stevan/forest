@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 74;
+use Test::More tests => 82;
 
 my $CLASS = 'Tree';
 use_ok( $CLASS );
@@ -157,6 +157,15 @@ use_ok( $CLASS );
     cmp_ok($C->depth(), '==', 1, '... C has a depth of 1');
     cmp_ok($B->depth(), '==', 2, '... B has a depth of 2');
     cmp_ok($A->depth(), '==', 3, '... A has a depth of 3');
+
+    cmp_ok($D->size(), '==', 8, '... D has a size of 8');
+    cmp_ok($E->size(), '==', 4, '... E has a size of 4');
+    cmp_ok($F->size(), '==', 1, '... F has a size of 1');
+    cmp_ok($G->size(), '==', 2, '... G has a size of 2');
+    cmp_ok($H->size(), '==', 1, '... H has a size of 1');
+    cmp_ok($C->size(), '==', 3, '... C has a size of 3');
+    cmp_ok($B->size(), '==', 2, '... B has a size of 2');
+    cmp_ok($A->size(), '==', 1, '... A has a size of 1');
 
     ok($B->remove_child($A), '... removed A subtree from B tree');
 

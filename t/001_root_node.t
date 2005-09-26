@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 37;
+use Test::More tests => 38;
 
 my $CLASS = 'Tree';
 use_ok( $CLASS );
@@ -24,6 +24,7 @@ use_ok( $CLASS );
     cmp_ok( $tree->height, '==', 1, "A tree with just a root has a height of 1" );
     cmp_ok( $tree->width, '==', 1, "A tree with just a root has a width of 1" );
     cmp_ok( $tree->depth, '==', 0, "A tree with just a root has a depth of 0" );
+    cmp_ok( $tree->size, '==', 1, "A tree with just a root has a size of 1" );
 
     is( $tree->root, $tree, "The root's root is itself" );
 

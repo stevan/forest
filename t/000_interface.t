@@ -32,7 +32,7 @@ my %methods = (
         is_root is_leaf
         add_child remove_child has_child
         root parent children
-        height width depth
+        height width depth size
         error_handler error last_error
         value
         clone mirror traverse

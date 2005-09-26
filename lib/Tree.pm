@@ -368,6 +368,13 @@ sub depth {
     );
 }
 
+sub size {
+    my $self = shift;
+    my $size = 1;
+    $size += $_->size for $self->children;
+    return $size;
+}
+
 sub value {
     my $self = shift;
     $self->{_value} = shift if @_;
@@ -684,6 +691,10 @@ This will return the width of $tree. A leaf has a width of 1. A parent has a wid
 This will return the depth of $tree. A root has a depth of 0. A child has the depth of its parent, plus 1.
 
 This is the distance from the root. It's useful for things like pretty-printing the tree.
+
+=item B<size()>
+
+This will return the number of nodes within $tree. A leaf has a size of 1. A parent has a size equal to the 1 plus the sum of all the sizes of its children.
 
 =item B<value([$value])>
 
