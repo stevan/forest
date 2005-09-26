@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 34;
+use Test::More tests => 37;
 
 my $CLASS = 'Tree';
 use_ok( $CLASS );
@@ -30,6 +30,8 @@ use_ok( $CLASS );
     is( $tree->value, undef, "The root's value is undef" );
     is( $tree->value( 'foobar' ), 'foobar', "Setting value() returns the value passed in" );
     is( $tree->value(), 'foobar', "Setting value() returns the value passed in" );
+
+    is_deeply( $tree->mirror, $tree, "A single-node tree's mirror is itself" );
 }
 
 {
@@ -50,6 +52,8 @@ use_ok( $CLASS );
     is( $tree->value, 'payload', "The root's value is undef" );
     is( $tree->value( 'foobar' ), 'foobar', "Setting value() returns the value passed in" );
     is( $tree->value(), 'foobar', "Setting value() returns the value passed in" );
+
+    is_deeply( $tree->mirror, $tree, "A single-node tree's mirror is itself" );
 }
 
 {
@@ -70,4 +74,6 @@ use_ok( $CLASS );
     is( $tree->value, 'payload', "The root's value is undef" );
     is( $tree->value( 'foobar' ), 'foobar', "Setting value() returns the value passed in" );
     is( $tree->value(), 'foobar', "Setting value() returns the value passed in" );
+
+    is_deeply( $tree->mirror, $tree, "A single-node tree's mirror is itself" );
 }

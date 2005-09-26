@@ -34,7 +34,7 @@ my %methods = (
         height width depth
         error_handler error last_error
         value
-        clone
+        clone mirror
     )],
     private => [ qw(
         _null _fix_width _fix_height _set_parent _set_root

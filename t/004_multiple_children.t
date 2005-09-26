@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 67;
+use Test::More tests => 69;
 
 my $CLASS = 'Tree';
 use_ok( $CLASS );
@@ -13,13 +13,13 @@ use_ok( $CLASS );
 # 4) Verify that the other child is still a child of the root
 # 5) Add the removed child back, then remove both to test removing multiple children
 
-my $root = $CLASS->new;
+my $root = $CLASS->new( '1' );
 isa_ok( $root, $CLASS );
 
-my $child1 = $CLASS->new;
+my $child1 = $CLASS->new( '1.1' );
 isa_ok( $child1, $CLASS );
 
-my $child2 = $CLASS->new;
+my $child2 = $CLASS->new( '1.2' );
 isa_ok( $child2, $CLASS );
 
 ok( $root->is_root, "The root is a root node" );
@@ -89,6 +89,15 @@ ok( $child2->height == 1, "The child2's height is still one." );
 ok( $root->width == 2, "The root's width is back to two." );
 ok( $child1->width == 1, "The child1's width is one." );
 ok( $child2->width == 1, "The child2's width is one." );
+
+{
+    my $mirror = $root->clone->mirror;
+    my @children = $root->children;
+    my @reversed_children = $mirror->children;
+
+    is( $children[0]->value, $reversed_children[1]->value );
+    is( $children[1]->value, $reversed_children[0]->value );
+}
 
 my @removed = $root->remove_child( $child1, $child2 );
 is( $removed[0], $child1 );

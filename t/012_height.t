@@ -10,7 +10,7 @@ use_ok( $CLASS );
 
 { # test height (with pictures)
 
-    my $D = $CLASS->new();
+    my $D = $CLASS->new('D');
     isa_ok($D, 'Tree');
 
     #   |
@@ -18,7 +18,7 @@ use_ok( $CLASS );
 
     cmp_ok($D->height(), '==', 1, '... D has a height of 1');
 
-    my $E = $CLASS->new();
+    my $E = $CLASS->new('E');
     isa_ok($E, 'Tree');
 
     $D->add_child($E);
@@ -31,7 +31,7 @@ use_ok( $CLASS );
     cmp_ok($D->height(), '==', 2, '... D has a height of 2');
     cmp_ok($E->height(), '==', 1, '... E has a height of 1');
 
-    my $F = $CLASS->new();
+    my $F = $CLASS->new('F');
     isa_ok($F, 'Tree');
 
     $E->add_child($F);
@@ -47,7 +47,7 @@ use_ok( $CLASS );
     cmp_ok($E->height(), '==', 2, '... E has a height of 2');
     cmp_ok($F->height(), '==', 1, '... F has a height of 1');
 
-    my $C = $CLASS->new();
+    my $C = $CLASS->new('C');
     isa_ok($C, 'Tree');
 
     $D->add_child($C);
@@ -64,7 +64,7 @@ use_ok( $CLASS );
     cmp_ok($F->height(), '==', 1, '... F has a height of 1');
     cmp_ok($C->height(), '==', 1, '... C has a height of 1');
 
-    my $B = $CLASS->new();
+    my $B = $CLASS->new('B');
     isa_ok($B, 'Tree');
 
     $C->add_child($B);
@@ -83,7 +83,7 @@ use_ok( $CLASS );
     cmp_ok($C->height(), '==', 2, '... C has a height of 2');
     cmp_ok($B->height(), '==', 1, '... B has a height of 1');
 
-    my $A = $CLASS->new();
+    my $A = $CLASS->new('A');
     isa_ok($A, 'Tree');
 
     $B->add_child($A);
@@ -104,7 +104,7 @@ use_ok( $CLASS );
     cmp_ok($B->height(), '==', 2, '... B has a height of 2');
     cmp_ok($A->height(), '==', 1, '... A has a height of 1');
 
-    my $G = $CLASS->new();
+    my $G = $CLASS->new('G');
     isa_ok($G, 'Tree');
 
     $E->add_child( at => 0, $G);
@@ -126,7 +126,7 @@ use_ok( $CLASS );
     cmp_ok($B->height(), '==', 2, '... B has a height of 2');
     cmp_ok($A->height(), '==', 1, '... A has a height of 1');
 
-    my $H = $CLASS->new();
+    my $H = $CLASS->new('H');
     isa_ok($H, 'Tree');
 
     $G->add_child($H);

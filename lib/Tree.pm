@@ -233,6 +233,15 @@ sub clone {
     return $clone;
 }
 
+sub mirror {
+    my $self = shift;
+
+    @{$self->children} = reverse @{$self->children};
+#    $_->mirror for $self->children;
+
+    return $self;
+}
+
 # These are the state-queries
 
 sub is_root {
@@ -553,6 +562,12 @@ This will add all the @nodes as children of $tree. If the first two or last two 
 =item B<remove_child(@nodes)>
 
 This will remove all the @nodes from the children of $tree. You can either pass in the actual child object you wish to remove, the index of the child you wish to remove, or a combination of both.
+
+=item B<mirror()>
+
+This will modify the tree such that it is a mirror of what it was before. This means that the order of all children is reversed.
+
+B<NOTE>: This is a destructive action. It I<will> modify the tree's internal structure. If you wish to get a mirror, yet keep the original tree intact, use C<my $mirror = $tree->clone->mirror;>
 
 =back
 
