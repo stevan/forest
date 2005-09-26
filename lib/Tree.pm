@@ -757,8 +757,9 @@ We use L<Devel::Cover> to test the code coverage of our tests. Below is the L<De
   ---------------------------- ------ ------ ------ ------ ------ ------ ------
   File                           stmt branch   cond    sub    pod   time  total
   ---------------------------- ------ ------ ------ ------ ------ ------ ------
-  blib/lib/Tree.pm              100.0   98.8  100.0  100.0  100.0  100.0   99.8
-  Total                         100.0   98.8  100.0  100.0  100.0  100.0   99.8
+  blib/lib/Tree.pm              100.0   98.8   95.0  100.0  100.0  100.0   99.6
+  blib/lib/Tree/Binary.pm       100.0    n/a    n/a  100.0    n/a    0.0  100.0
+  Total                         100.0   98.8   95.0  100.0  100.0  100.0   99.6
   ---------------------------- ------ ------ ------ ------ ------ ------ ------
 
 =head2 Missing Tests
@@ -780,6 +781,10 @@ Need to add contextual awareness by providing an iterating closure (object?) in 
 =item * N-ary Proofs
 
 Need to generalize some of the btree proofs to N-ary trees, if possible.
+
+=item * Traversals and memory
+
+Need tests for what happens with a traversal list and deleted nodes, particularly w.r.t. how memory is handled - should traversals weaken if use_weak_refs is in force?
 
 =back
 
