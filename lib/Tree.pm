@@ -277,6 +277,15 @@ sub has_child {
     ;
 }
 
+sub traverse {
+    my $self = shift;
+
+    my @list = ($self);
+    push @list, map { $_->traverse } $self->children;
+
+    return @list;
+}
+
 # These are the smart accessors
 
 sub parent { 
@@ -568,6 +577,20 @@ This will remove all the @nodes from the children of $tree. You can either pass 
 This will modify the tree such that it is a mirror of what it was before. This means that the order of all children is reversed.
 
 B<NOTE>: This is a destructive action. It I<will> modify the tree's internal structure. If you wish to get a mirror, yet keep the original tree intact, use C<my $mirror = $tree->clone->mirror;>
+
+=item B<traverse()>
+
+This will return a list of the nodes in the given traversal order. The default traversal order is pre-order. This is also the only method currently implemented.
+
+The various traversal orders do the following steps:
+
+=over 4
+
+=item * Pre-order (aka Prefix traversal)
+
+This will return the node, then the first sub tree in pre-order traversal, then the next sub tree, etc. Thus, it will return the root, the first child, the first child of the first child, etc.
+
+=back
 
 =back
 
