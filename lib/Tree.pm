@@ -277,11 +277,36 @@ sub has_child {
     ;
 }
 
+use constant PRE_ORDER   => 1;
+use constant POST_ORDER  => 2;
+use constant LEVEL_ORDER => 3;
+
 sub traverse {
     my $self = shift;
+    my ($order) = @_;
 
-    my @list = ($self);
-    push @list, map { $_->traverse } $self->children;
+    $order ||= $self->PRE_ORDER;
+
+    my @list;
+
+    if ( $order eq $self->PRE_ORDER ) {
+        @list = ($self);
+        push @list, map { $_->traverse( $order ) } $self->children;
+    }
+    elsif ( $order eq $self->POST_ORDER ) {
+        @list = map { $_->traverse( $order ) } $self->children;
+        push @list, $self;
+    }
+    elsif ( $order eq $self->LEVEL_ORDER ) {
+        my @queue = ($self);
+        while ( my $node = shift @queue ) {
+            push @list, $node;
+            push @queue, $node->children;
+        }
+    }
+    else {
+        return $self->error( "traverse(): '$order' is an illegal traversal order" );
+    }
 
     return @list;
 }
@@ -578,9 +603,9 @@ This will modify the tree such that it is a mirror of what it was before. This m
 
 B<NOTE>: This is a destructive action. It I<will> modify the tree's internal structure. If you wish to get a mirror, yet keep the original tree intact, use C<my $mirror = $tree->clone->mirror;>
 
-=item B<traverse()>
+=item B<traverse( [$order] )>
 
-This will return a list of the nodes in the given traversal order. The default traversal order is pre-order. This is also the only method currently implemented.
+This will return a list of the nodes in the given traversal order. The default traversal order is pre-order.
 
 The various traversal orders do the following steps:
 
@@ -588,7 +613,21 @@ The various traversal orders do the following steps:
 
 =item * Pre-order (aka Prefix traversal)
 
-This will return the node, then the first sub tree in pre-order traversal, then the next sub tree, etc. Thus, it will return the root, the first child, the first child of the first child, etc.
+This will return the node, then the first sub tree in pre-order traversal, then the next sub tree, etc.
+
+Use C<$tree->PRE_ORDER> as the C<$order>.
+
+=item * Post-order (aka Prefix traversal)
+
+This will return the each sub-tree in post-order traversal, then the node.
+
+Use C<$tree->POST_ORDER> as the C<$order>.
+
+=item * Level-order (aka Prefix traversal)
+
+This will return the node, then the all children of the node, then all grandchildren of the node, etc.
+
+Use C<$tree->LEVEL_ORDER> as the C<$order>.
 
 =back
 

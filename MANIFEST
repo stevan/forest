@@ -19,6 +19,7 @@ t/011_errors_removechild.t
 t/012_height.t
 t/013_width.t
 t/014_clone.t
+t/015_traverse.t
 t/100_binary_trees.t
 t/998_pod.t
 t/999_pod_coverage.t

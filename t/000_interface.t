@@ -17,7 +17,7 @@ my %existing_methods = do {
     map {
         $_ => undef
     } grep {
-        !/^_/ && /^[a-z_]+$/
+        !/^_/ && /^[a-zA-Z_]+$/
     } grep {
         exists &{${ $CLASS . '::'}{$_}}
     } keys %{ $CLASS . '::'}
@@ -26,6 +26,7 @@ my %existing_methods = do {
 my %methods = (
     class => [ qw(
         new error_handler QUIET WARN DIE
+        PRE_ORDER POST_ORDER LEVEL_ORDER
     )],
     public => [ qw(
         is_root is_leaf
@@ -44,6 +45,8 @@ my %methods = (
     )],
     imported => [qw(
         weaken blessed refaddr
+        GLOBREF NUM SCALARREF SCALAR VALUE OBJREF VOID LIST NONVOID BOOL REF STR DEFAULT HASHREF ARRAYREF CODEREF
+
     )],
 );
 
