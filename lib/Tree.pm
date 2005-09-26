@@ -773,11 +773,13 @@ We use L<Devel::Cover> to test the code coverage of our tests. Below is the L<De
 
 =over 4
 
-=item * Siblings
+=item * traverse()
 
-I'm not sure I want to do this. These are purely convenience methods that wrap C<$tree->parent->METHOD( @args )>. What's the point??
+Need to add contextual awareness by providing an iterating closure (object?) in scalar context.
 
-=item * Visitors
+=item * N-ary Proofs
+
+Need to generalize some of the btree proofs to N-ary trees, if possible.
 
 =back
 
