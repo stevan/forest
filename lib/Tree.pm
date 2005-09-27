@@ -421,7 +421,7 @@ sub _fix_height {
     my $self = shift;
 
     my $height = 1;
-    for my $child (@{$self->children}) {
+    for my $child ($self->children) {
         my $temp_height = $child->height + 1;
         $height = $temp_height if $height < $temp_height;
     }
@@ -439,7 +439,7 @@ sub _fix_width {
     my $self = shift;
 
     ${$self->width} = 0;
-    for my $child (@{$self->children}) {
+    for my $child ($self->children) {
         ${$self->width} += $child->width;
     }
     ${$self->width} ||= 1;
@@ -459,7 +459,7 @@ sub _fix_depth {
         ${$self->depth} = $self->parent->depth + 1;
     }
 
-    for my $child (@{$self->children}) {
+    for my $child ($self->children) {
         $child->_fix_depth;
     }
 
@@ -486,7 +486,7 @@ sub _set_root {
     # Because this is called from DESTROY, we need to verify
     # that the child still exists because destruction in Perl5
     # is neither ordered nor timely.
-    for my $child ( grep { $_ } @{$self->children} ) {
+    for my $child ( grep { $_ } $self->children ) {
         $child->_set_root( $value );
     }
 
@@ -503,7 +503,7 @@ sub DESTROY {
     return if $CONFIG{ use_weak_refs };
 
     $self->_set_root( $self->_null );
-    foreach my $child (grep { $_ } @{$self->children}) {
+    foreach my $child (grep { $_ } $self->children) {
         $child->_set_parent( $child->_null );
     }
 }
