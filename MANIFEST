@@ -23,4 +23,5 @@ t/015_traverse.t
 t/100_binary_trees.t
 t/998_pod.t
 t/999_pod_coverage.t
+t/tests.pm
 META.yml

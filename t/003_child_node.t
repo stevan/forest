@@ -1,7 +1,11 @@
 use strict;
 use warnings;
 
-use Test::More tests => 46;
+use Test::More;
+
+use t::tests qw( %runs );
+
+plan tests => 22 + 4 * $runs{stats}{plan};
 
 my $CLASS = 'Tree';
 use_ok( $CLASS );
@@ -25,12 +29,6 @@ ok( $child->is_leaf, "The child is also a leaf" );
 ok( !$root->has_child( $child ), "The root doesn't have the child ... yet" );
 
 is( $root->add_child( $child ), $root, "add_child() chains" );
-
-ok( $root->is_root, 'The root is still the root' );
-ok( !$root->is_leaf, 'The root is no longer a leaf' );
-
-ok( !$child->is_root, 'The child is no longer a root' );
-ok( $child->is_leaf, 'The child is still a leaf' );
 
 cmp_ok( $root->children, '==', 1, "The root has one child" );
 {
@@ -57,39 +55,25 @@ cmp_ok( $idx, '==', 0, "... and the child is at index 0 (scalar)" );
 my @idx = $root->has_child( $child );
 is_deeply( \@idx, [ 0 ], "... and the child is at index 0 (list)" );
 
-cmp_ok( $root->height, '==', 2, "The root's height is 2" );
-cmp_ok( $child->height, '==', 1, "The child's height is 1" );
+$runs{stats}{func}->( $root,
+    height => 2, width => 1, depth => 0, size => 2, is_root => 1, is_leaf => 0,
+);
 
-cmp_ok( $root->width, '==', 1, "The root's width is 1" );
-cmp_ok( $child->width, '==', 1, "The child's width is 1" );
-
-cmp_ok( $root->depth, '==', 0, "The root's depth is 0" );
-cmp_ok( $child->depth, '==', 1, "The child's depth is 1" );
-
-cmp_ok( $root->size, '==', 2, "The root's size is 2" );
-cmp_ok( $child->size, '==', 1, "The child's size is 1" );
+$runs{stats}{func}->( $child,
+    height => 1, width => 1, depth => 1, size => 1, is_root => 0, is_leaf => 1,
+);
 
 is( $root->remove_child( $child ), $child, "remove_child() returns the removed node" );
-
-ok( $root->is_root, 'The root is still the root' );
-ok( $root->is_leaf, 'The root is now a leaf' );
-
-ok( $child->is_root, 'The child is now a root' );
-ok( $child->is_leaf, 'The child is still a leaf' );
 
 is( $child->parent, "", "The child's parent is now empty" );
 is( $child->root, $child, "The child's root is now itself" );
 
 cmp_ok( $root->children, '==', 0, "The root has no children" );
 
-cmp_ok( $root->height, '==', 1, "The root's height is now 1 again" );
-cmp_ok( $child->height, '==', 1, "The child's height is still 1" );
+$runs{stats}{func}->( $root,
+    height => 1, width => 1, depth => 0, size => 1, is_root => 1, is_leaf => 1,
+);
 
-cmp_ok( $root->width, '==', 1, "The root's width is still 1" );
-cmp_ok( $child->width, '==', 1, "The child's width is still 1" );
-
-cmp_ok( $root->depth, '==', 0, "The root's depth is 0" );
-cmp_ok( $child->depth, '==', 0, "The child's depth is 0" );
-
-cmp_ok( $root->size, '==', 1, "The root's size is 1" );
-cmp_ok( $child->size, '==', 1, "The child's size is 1" );
+$runs{stats}{func}->( $child,
+    height => 1, width => 1, depth => 0, size => 1, is_root => 1, is_leaf => 1,
+);

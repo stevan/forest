@@ -1,7 +1,11 @@
 use strict;
 use warnings;
 
-use Test::More tests => 53;
+use Test::More;
+
+use t::tests qw( %runs );
+
+plan tests => 41 + 3 * $runs{stats}{plan};
 
 my $CLASS = 'Tree';
 use_ok( $CLASS );
@@ -30,21 +34,17 @@ cmp_ok( $root->children, '==', 1, "The root has one child" );
 cmp_ok( $child1->children, '==', 1, "The child1 has one child" );
 cmp_ok( $child2->children, '==', 0, "The child2 has zero children" );
 
-cmp_ok( $root->height, '==', 3, "The root's height is three." );
-cmp_ok( $child1->height, '==', 2, "The child1's height is two." );
-cmp_ok( $child2->height, '==', 1, "The child2's height is one." );
+$runs{stats}{func}->( $root,
+    height => 3, width => 1, depth => 0, size => 3, is_root => 1, is_leaf => 0,
+);
 
-cmp_ok( $root->width, '==', 1, "The root's width is one." );
-cmp_ok( $child1->width, '==', 1, "The child1's width is one." );
-cmp_ok( $child2->width, '==', 1, "The child2's width is one." );
+$runs{stats}{func}->( $child1,
+    height => 2, width => 1, depth => 1, size => 2, is_root => 0, is_leaf => 0,
+);
 
-cmp_ok( $root->depth, '==', 0, "The root's depth is zero." );
-cmp_ok( $child1->depth, '==', 1, "The child1's depth is one." );
-cmp_ok( $child2->depth, '==', 2, "The child2's depth is two." );
-
-cmp_ok( $root->size, '==', 3, "The root's size is two." );
-cmp_ok( $child1->size, '==', 2, "The child1's size is one." );
-cmp_ok( $child2->size, '==', 1, "The child2's size is zero." );
+$runs{stats}{func}->( $child2,
+    height => 1, width => 1, depth => 2, size => 1, is_root => 0, is_leaf => 1,
+);
 
 is( $child1->root, $root, "The child1's root is the root" );
 is( $child2->root, $root, "The child2's root is the root" );

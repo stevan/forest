@@ -1,7 +1,11 @@
 use strict;
 use warnings;
 
-use Test::More tests => 38;
+use Test::More;
+
+use t::tests qw( %runs );
+
+plan tests => 22 + 3 * $runs{stats}{plan};
 
 my $CLASS = 'Tree';
 use_ok( $CLASS );
@@ -15,22 +19,18 @@ use_ok( $CLASS );
     my $tree = $CLASS->new();
     isa_ok( $tree, $CLASS );
 
-    ok( $tree->is_root, "Node without a parent knows it's a root" );
-    ok( $tree->is_leaf, "Node without a child knows it's a leaf" );
-
     my $parent = $tree->parent;
     is( $parent, $tree->_null, "The root's parent is the null node" );
 
-    cmp_ok( $tree->height, '==', 1, "A tree with just a root has a height of 1" );
-    cmp_ok( $tree->width, '==', 1, "A tree with just a root has a width of 1" );
-    cmp_ok( $tree->depth, '==', 0, "A tree with just a root has a depth of 0" );
-    cmp_ok( $tree->size, '==', 1, "A tree with just a root has a size of 1" );
+    $runs{stats}{func}->( $tree,
+        height => 1, width => 1, depth => 0, size => 1, is_root => 1, is_leaf => 1,
+    );
 
     is( $tree->root, $tree, "The root's root is itself" );
 
     is( $tree->value, undef, "The root's value is undef" );
     is( $tree->value( 'foobar' ), 'foobar', "Setting value() returns the value passed in" );
-    is( $tree->value(), 'foobar', "Setting value() returns the value passed in" );
+    is( $tree->value(), 'foobar', "Calling value() returns the value passed in" );
 
     is_deeply( $tree->mirror, $tree, "A single-node tree's mirror is itself" );
 }
@@ -39,15 +39,12 @@ use_ok( $CLASS );
     my $tree = $CLASS->new( 'payload' );
     isa_ok( $tree, $CLASS );
 
-    ok( $tree->is_root, "Node without a parent knows it's a root" );
-    ok( $tree->is_leaf, "Node without a child knows it's a leaf" );
-
     my $parent = $tree->parent;
     is( $parent, $tree->_null, "The root's parent is the null node" );
 
-    cmp_ok( $tree->height, '==', 1, "A tree with just a root has a height of 1" );
-    cmp_ok( $tree->width, '==', 1, "A tree with just a root has a width of 1" );
-    cmp_ok( $tree->depth, '==', 0, "A tree with just a root has a depth of 0" );
+    $runs{stats}{func}->( $tree,
+        height => 1, width => 1, depth => 0, size => 1, is_root => 1, is_leaf => 1,
+    );
 
     is( $tree->root, $tree, "The root's root is itself" );
     is( $tree->value, 'payload', "The root's value is undef" );
@@ -61,15 +58,12 @@ use_ok( $CLASS );
     my $tree = $CLASS->new( 'payload', 'unused value' );
     isa_ok( $tree, $CLASS );
 
-    ok( $tree->is_root, "Node without a parent knows it's a root" );
-    ok( $tree->is_leaf, "Node without a child knows it's a leaf" );
-
     my $parent = $tree->parent;
     is( $parent, $tree->_null, "The root's parent is the null node" );
 
-    cmp_ok( $tree->height, '==', 1, "A tree with just a root has a height of 1" );
-    cmp_ok( $tree->width, '==', 1, "A tree with just a root has a width of 1" );
-    cmp_ok( $tree->depth, '==', 0, "A tree with just a root has a depth of 0" );
+    $runs{stats}{func}->( $tree,
+        height => 1, width => 1, depth => 0, size => 1, is_root => 1, is_leaf => 1,
+    );
 
     is( $tree->root, $tree, "The root's root is itself" );
     is( $tree->value, 'payload', "The root's value is undef" );

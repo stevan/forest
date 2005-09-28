@@ -33,8 +33,8 @@ sub _set_child {
         }
 
         if ( $old ) {
-            $old->_set_parent( $self );
-            $old->_set_root( $self->root );
+            $old->_set_parent( $old->_null );
+            $old->_set_root( $old->_null );
             $old->_fix_depth;
         }
 

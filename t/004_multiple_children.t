@@ -1,7 +1,11 @@
 use strict;
 use warnings;
 
-use Test::More tests => 72;
+use Test::More;
+
+use t::tests qw( %runs );
+
+plan tests => 30 + 15 * $runs{stats}{plan};
 
 my $CLASS = 'Tree';
 use_ok( $CLASS );
@@ -22,43 +26,37 @@ isa_ok( $child1, $CLASS );
 my $child2 = $CLASS->new( '1.2' );
 isa_ok( $child2, $CLASS );
 
-ok( $root->is_root, "The root is a root node" );
-ok( $root->is_leaf, "The root is a leaf node" );
-ok( $child1->is_root, "The child1 is a root node" );
-ok( $child1->is_leaf, "The child1 is a leaf node" );
-ok( $child2->is_root, "The child2 is a root node" );
-ok( $child2->is_leaf, "The child2 is a leaf node" );
+$runs{stats}{func}->( $root,
+    height => 1, width => 1, depth => 0, size => 1, is_root => 1, is_leaf => 1,
+);
+
+$runs{stats}{func}->( $child1,
+    height => 1, width => 1, depth => 0, size => 1, is_root => 1, is_leaf => 1,
+);
+
+$runs{stats}{func}->( $child2,
+    height => 1, width => 1, depth => 0, size => 1, is_root => 1, is_leaf => 1,
+);
 
 is( $root->add_child( $child1, $child2 ), $root, "add_child(\@many) still chains" );
 
-ok( $root->is_root, "The root is a root node" );
-ok( !$root->is_leaf, "The root is not a leaf node" );
-ok( !$child1->is_root, "The child1 is not a root node" );
-ok( $child1->is_leaf, "The child1 is a leaf node" );
-ok( !$child2->is_root, "The child2 is not a root node" );
-ok( $child2->is_leaf, "The child2 is a leaf node" );
+$runs{stats}{func}->( $root,
+    height => 2, width => 2, depth => 0, size => 3, is_root => 1, is_leaf => 0,
+);
+
+$runs{stats}{func}->( $child1,
+    height => 1, width => 1, depth => 1, size => 1, is_root => 0, is_leaf => 1,
+);
+
+$runs{stats}{func}->( $child2,
+    height => 1, width => 1, depth => 1, size => 1, is_root => 0, is_leaf => 1,
+);
 
 cmp_ok( $root->children, '==', 2, "The root has two children" );
 
 ok( $root->has_child( $child1 ), "The root has child1" );
 ok( $root->has_child( $child2 ), "The root has child2" );
 ok( $root->has_child( $child1, $child2 ), "The root has both children" );
-
-cmp_ok( $root->height, '==', 2, "The root's height is two." );
-cmp_ok( $child1->height, '==', 1, "The child1's height is one." );
-cmp_ok( $child2->height, '==', 1, "The child2's height is one." );
-
-cmp_ok( $root->width, '==', 2, "The root's width is two." );
-cmp_ok( $child1->width, '==', 1, "The child1's width is one." );
-cmp_ok( $child2->width, '==', 1, "The child2's width is one." );
-
-cmp_ok( $root->depth, '==', 0, "The root's depth is zero." );
-cmp_ok( $child1->depth, '==', 1, "The child1's depth is one." );
-cmp_ok( $child2->depth, '==', 1, "The child2's depth is one." );
-
-cmp_ok( $root->size, '==', 3, "The root's size is three." );
-cmp_ok( $child1->size, '==', 1, "The child1's size is one." );
-cmp_ok( $child2->size, '==', 1, "The child2's size is one." );
 
 my @v = $root->children(1, 0);
 cmp_ok( @v, '==', 2, "Accessing children() by index out of order gives both back" );
@@ -75,24 +73,32 @@ ok( $root->has_child( $child2 ), "The root has child2" );
 ok( !$root->has_child( $child1, $child2 ), "The root doesn't have both children" );
 ok( !$root->has_child( $child2, $child1 ), "The root doesn't have both children (reversed)" );
 
-cmp_ok( $root->height, '==', 2, "The root's height is still two." );
-cmp_ok( $child1->height, '==', 1, "The child1's height is still one." );
-cmp_ok( $child2->height, '==', 1, "The child2's height is still one." );
+$runs{stats}{func}->( $root,
+    height => 2, width => 1, depth => 0, size => 2, is_root => 1, is_leaf => 0,
+);
 
-cmp_ok( $root->width, '==', 1, "The root's width is now one." );
-cmp_ok( $child1->width, '==', 1, "The child1's width is one." );
-cmp_ok( $child2->width, '==', 1, "The child2's width is one." );
+$runs{stats}{func}->( $child1,
+    height => 1, width => 1, depth => 0, size => 1, is_root => 1, is_leaf => 1,
+);
+
+$runs{stats}{func}->( $child2,
+    height => 1, width => 1, depth => 1, size => 1, is_root => 0, is_leaf => 1,
+);
 
 $root->add_child( $child1 );
 cmp_ok( $root->children, '==', 2, "Adding child1 back works as expected" );
 
-cmp_ok( $root->height, '==', 2, "The root's height is still two. (" . $root->height . ")" );
-cmp_ok( $child1->height, '==', 1, "The child1's height is still one." );
-cmp_ok( $child2->height, '==', 1, "The child2's height is still one." );
+$runs{stats}{func}->( $root,
+    height => 2, width => 2, depth => 0, size => 3, is_root => 1, is_leaf => 0,
+);
 
-cmp_ok( $root->width, '==', 2, "The root's width is back to two." );
-cmp_ok( $child1->width, '==', 1, "The child1's width is one." );
-cmp_ok( $child2->width, '==', 1, "The child2's width is one." );
+$runs{stats}{func}->( $child1,
+    height => 1, width => 1, depth => 1, size => 1, is_root => 0, is_leaf => 1,
+);
+
+$runs{stats}{func}->( $child2,
+    height => 1, width => 1, depth => 1, size => 1, is_root => 0, is_leaf => 1,
+);
 
 {
     my $mirror = $root->clone->mirror;
@@ -108,13 +114,18 @@ is( $removed[0], $child1 );
 is( $removed[1], $child2 );
 cmp_ok( $root->children, '==', 0, "remove_child(\@many) works" );
 
-cmp_ok( $root->height, '==', 1, "The root's height is back to one." );
-cmp_ok( $child1->height, '==', 1, "The child1's height is still one." );
-cmp_ok( $child2->height, '==', 1, "The child2's height is still one." );
+$runs{stats}{func}->( $root,
+    height => 1, width => 1, depth => 0, size => 1, is_root => 1, is_leaf => 1,
+);
 
-cmp_ok( $root->width, '==', 1, "The root's width is now one (as a single-node tree)." );
-cmp_ok( $child1->width, '==', 1, "The child1's width is one." );
-cmp_ok( $child2->width, '==', 1, "The child2's width is one." );
+$runs{stats}{func}->( $child1,
+    height => 1, width => 1, depth => 0, size => 1, is_root => 1, is_leaf => 1,
+);
+
+$runs{stats}{func}->( $child2,
+    height => 1, width => 1, depth => 0, size => 1, is_root => 1, is_leaf => 1,
+);
+
 
 # Test various permutations of the return values from remove_child()
 {

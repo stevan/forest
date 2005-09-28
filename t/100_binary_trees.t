@@ -1,57 +1,107 @@
 use strict;
 use warnings;
 
-use Test::More tests => 34;
+use Test::More;
+
+use t::tests qw( %runs );
+
+plan tests => 21 + 14 * $runs{stats}{plan};
 
 my $CLASS = 'Tree::Binary';
 use_ok( $CLASS );
 
-my $tree = $CLASS->new( 'root' );
-isa_ok( $tree, $CLASS );
-isa_ok( $tree, 'Tree' );
+my $root = $CLASS->new( 'root' );
+isa_ok( $root, $CLASS );
+isa_ok( $root, 'Tree' );
 
-ok( $tree->is_root, "Node without a parent knows it's a root" );
-ok( $tree->is_leaf, "Node without a child knows it's a leaf" );
-is( $tree->root, $tree, "The root's root is itself" );
+is( $root->root, $root, "The root's root is itself" );
+is( $root->value, 'root', "value() works" );
 
-is( $tree->value, 'root', "value() works" );
-cmp_ok( $tree->size, '==', 1, "size() works" );
-cmp_ok( $tree->depth, '==', 0, "depth() works" );
-cmp_ok( $tree->height, '==', 1, "height() works" );
-cmp_ok( $tree->width, '==', 1, "width() works" );
+$runs{stats}{func}->( $root,
+    height => 1, width => 1, depth => 0, size => 1, is_root => 1, is_leaf => 1,
+);
 
-can_ok( $tree, qw( left right ) );
+can_ok( $root, qw( left right ) );
 
 my $left = $CLASS->new( 'left' );
 
-is( $tree->left(), undef, "Calling left with no params is a getter" );
-is( $tree->left( $left ), $tree, "Calling left as a setter chains" );
-is( $tree->left(), $left, "... and set the left" );
+$runs{stats}{func}->( $left,
+    height => 1, width => 1, depth => 0, size => 1, is_root => 1, is_leaf => 1,
+);
 
-cmp_ok( $tree->size, '==', 2, "size() works" );
-cmp_ok( $tree->height, '==', 2, "height() works" );
-cmp_ok( $tree->width, '==', 1, "width() works" );
+is( $root->left(), undef, "Calling left with no params is a getter" );
+is( $root->left( $left ), $root, "Calling left as a setter chains" );
+is( $root->left(), $left, "... and set the left" );
 
-is( $tree->left( undef ), $tree, "Calling left with undef as a param" );
-is( $tree->left(), undef, "... unsets left" );
+cmp_ok( $root->children, '==', 1, "children() works" );
 
-cmp_ok( $tree->size, '==', 1, "size() works" );
-cmp_ok( $tree->height, '==', 1, "height() works" );
-cmp_ok( $tree->width, '==', 1, "width() works" );
+$runs{stats}{func}->( $root,
+    height => 2, width => 1, depth => 0, size => 2, is_root => 1, is_leaf => 0,
+);
+
+$runs{stats}{func}->( $left,
+    height => 1, width => 1, depth => 1, size => 1, is_root => 0, is_leaf => 1,
+);
+
+is( $root->left( undef ), $root, "Calling left with undef as a param" );
+is( $root->left(), undef, "... unsets left" );
+
+cmp_ok( $root->children, '==', 0, "children() works" );
+
+$runs{stats}{func}->( $root,
+    height => 1, width => 1, depth => 0, size => 1, is_root => 1, is_leaf => 1,
+);
+
+$runs{stats}{func}->( $left,
+    height => 1, width => 1, depth => 0, size => 1, is_root => 1, is_leaf => 1,
+);
 
 my $right = $CLASS->new( 'right' );
 
-is( $tree->right(), undef, "Calling right with no params is a getter" );
-is( $tree->right( $right ), $tree, "Calling right as a setter chains" );
-is( $tree->right(), $right, "... and set the right" );
+$runs{stats}{func}->( $right,
+    height => 1, width => 1, depth => 0, size => 1, is_root => 1, is_leaf => 1,
+);
 
-cmp_ok( $tree->size, '==', 2, "size() works" );
-cmp_ok( $tree->height, '==', 2, "height() works" );
-cmp_ok( $tree->width, '==', 1, "width() works" );
+is( $root->right(), undef, "Calling right with no params is a getter" );
+is( $root->right( $right ), $root, "Calling right as a setter chains" );
+is( $root->right(), $right, "... and set the right" );
 
-is( $tree->right( undef ), $tree, "Calling right with undef as a param" );
-is( $tree->right(), undef, "... unsets right" );
+cmp_ok( $root->children, '==', 1, "children() works" );
 
-cmp_ok( $tree->size, '==', 1, "size() works" );
-cmp_ok( $tree->height, '==', 1, "height() works" );
-cmp_ok( $tree->width, '==', 1, "width() works" );
+$runs{stats}{func}->( $root,
+    height => 2, width => 1, depth => 0, size => 2, is_root => 1, is_leaf => 0,
+);
+
+$runs{stats}{func}->( $right,
+    height => 1, width => 1, depth => 1, size => 1, is_root => 0, is_leaf => 1,
+);
+
+is( $root->right( undef ), $root, "Calling right with undef as a param" );
+is( $root->right(), undef, "... unsets right" );
+
+cmp_ok( $root->children, '==', 0, "children() works" );
+
+$runs{stats}{func}->( $root,
+    height => 1, width => 1, depth => 0, size => 1, is_root => 1, is_leaf => 1,
+);
+
+$runs{stats}{func}->( $right,
+    height => 1, width => 1, depth => 0, size => 1, is_root => 1, is_leaf => 1,
+);
+
+$root->left( $left );
+$root->right( $right );
+
+cmp_ok( $root->children, '==', 2, "children() works" );
+
+$runs{stats}{func}->( $root,
+    height => 2, width => 2, depth => 0, size => 3, is_root => 1, is_leaf => 0,
+);
+
+$runs{stats}{func}->( $left,
+    height => 1, width => 1, depth => 1, size => 1, is_root => 0, is_leaf => 1,
+);
+
+$runs{stats}{func}->( $right,
+    height => 1, width => 1, depth => 1, size => 1, is_root => 0, is_leaf => 1,
+);
