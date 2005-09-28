@@ -63,6 +63,10 @@ sub new {
 
     my $self = bless {
         _children => [],
+        _handlers => {
+            add_child => [],
+            remove_child => [],
+        },
         _parent => $class->_null,
         _height => 1,
         _width => 1,
@@ -159,6 +163,8 @@ sub add_child {
     $self->_fix_height;
     $self->_fix_width;
 
+    $self->event( 'add_child', $self, @_ );
+
     return $self;
 }
 
@@ -214,6 +220,8 @@ sub remove_child {
     $self->_fix_height;
     $self->_fix_width;
 
+    $self->event( 'remove_child', $self, @_ );
+
     return (
         DEFAULT { @return }
         ARRAYREF { \@return }
@@ -241,6 +249,28 @@ sub mirror {
 
     @{$self->children} = reverse @{$self->children};
 #    $_->mirror for $self->children;
+
+    return $self;
+}
+
+sub add_event_handler {
+    my $self = shift;
+    my ($type, @handlers) = @_;
+
+    push @{$self->{_handlers}{$type}}, @handlers;
+
+    return $self;
+}
+
+sub event {
+    my $self = shift;
+    my ( $type, @args ) = @_;
+
+    foreach my $handler ( @{$self->{_handlers}{$type}} ) {
+        $handler->( @args );
+    }
+
+    $self->parent->event( @_ );
 
     return $self;
 }
@@ -691,6 +721,38 @@ Use this error handler if you want to have quiet error-handling. The last_error 
 
 =back
 
+=head1 EVENT HANDLING
+
+Forest provides for basic event handling. You may choose to register one or more callbacks to be called when the appropriate event occurs. The events are:
+
+=over 4
+
+=item * add_child
+
+This event will trigger as the last step in an add_child() call.
+
+=item * remove_child
+
+This event will trigger as the last step in an remove_child() call.
+
+=back
+
+=head2 Event handling methods
+
+=over 4
+
+=item * B<add_event_handler( $type, $callback [, $callback, ... ])>
+
+You may choose to add event handlers for any known type. Callbacks must be references to subroutines. They will be called in the order they are defined.
+
+=item * B<event( $type, $actor, @args )>
+
+This will trigger an event of type C<$type>. All event handlers registered on C<$tree> will be called with parameters of C<($actor, @args)>. Then, the parent will be notified of the event and its handlers will be called, on up to the root.
+
+This allows you specify an event handler on the root and be guaranteed that it will fire every time the appropriate event occurs anywhere in the tree.
+
+=back
+
 =head1 CIRCULAR REFERENCES
 
 Copy the text from L<Tree::Simple>, rewording appropriately.
@@ -708,9 +770,9 @@ We use L<Devel::Cover> to test the code coverage of our tests. Below is the L<De
   ---------------------------- ------ ------ ------ ------ ------ ------ ------
   File                           stmt branch   cond    sub    pod   time  total
   ---------------------------- ------ ------ ------ ------ ------ ------ ------
-  blib/lib/Tree.pm              100.0   98.8   95.0  100.0  100.0  100.0   99.6
-  blib/lib/Tree/Binary.pm       100.0    n/a    n/a  100.0    n/a    0.0  100.0
-  Total                         100.0   98.8   95.0  100.0  100.0  100.0   99.6
+  blib/lib/Tree.pm              100.0   98.9   84.4  100.0  100.0   99.0   98.7
+  blib/lib/Tree/Binary.pm       100.0    n/a    n/a  100.0    n/a    1.0  100.0
+  Total                         100.0   98.9   84.4  100.0  100.0  100.0   98.9
   ---------------------------- ------ ------ ------ ------ ------ ------ ------
 
 =head2 Missing Tests
