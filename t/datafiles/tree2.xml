@@ -1,0 +1,3 @@
+<node class="Tree" value="root2">
+    <node class="Tree" value="child" />
+</node>
