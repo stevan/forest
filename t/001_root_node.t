@@ -5,7 +5,7 @@ use Test::More;
 
 use t::tests qw( %runs );
 
-plan tests => 22 + 3 * $runs{stats}{plan};
+plan tests => 24 + 3 * $runs{stats}{plan};
 
 my $CLASS = 'Tree';
 use_ok( $CLASS );
@@ -33,6 +33,9 @@ use_ok( $CLASS );
     is( $tree->value(), 'foobar', "Calling value() returns the value passed in" );
 
     is_deeply( $tree->mirror, $tree, "A single-node tree's mirror is itself" );
+
+    is( $tree->root( 'foo' ), $tree, "Attempting to set the root outside the tree hierarchy acts as a getter" );
+    is( $tree->root, $tree, "... and doesn't change the value" );
 }
 
 {

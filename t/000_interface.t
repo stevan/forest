@@ -38,7 +38,7 @@ my %methods = (
         clone mirror traverse
     )],
     private => [ qw(
-        _null _fix_width _fix_height _set_parent _set_root
+        _null _fix_width _fix_height
     )],
     book_keeping => [qw(
         DESTROY import
@@ -46,7 +46,6 @@ my %methods = (
     imported => [qw(
         weaken blessed refaddr
         GLOBREF NUM SCALARREF SCALAR VALUE OBJREF VOID LIST NONVOID BOOL REF STR DEFAULT HASHREF ARRAYREF CODEREF
-
     )],
 );
 

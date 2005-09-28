@@ -73,7 +73,7 @@ sub new {
         _last_error => undef,
     }, $class;
 
-    $self->_set_root( $self );
+    $self->root( $self );
     $self->value( $_[0] ) if @_;
 
     return $self;
@@ -89,6 +89,7 @@ sub add_child {
 
     my $index;
     if ( @nodes >= 2 ) {
+        my $num_children = () = $self->children;
         if ( !blessed($nodes[0]) ) {
             my ($at) = shift @nodes;
             $index = shift @nodes;
@@ -98,7 +99,7 @@ sub add_child {
                     return $self->error( "add_child(): '$index' is not a legal index" );
                 }
 
-                if ( $index > $self->children || $self->children + $index < 0 ) {
+                if ( $index > $num_children || $num_children + $index < 0 ) {
                     return $self->error( "add_child(): '$index' is out-of-bounds" );
                 }
             }
@@ -112,7 +113,7 @@ sub add_child {
                     return $self->error( "add_child(): '$index' is not a legal index" );
                 }
 
-                if ( $index > $self->children || $self->children + $index < 0 ) {
+                if ( $index > $num_children || $num_children + $index < 0 ) {
                     return $self->error( "add_child(): '$index' is out-of-bounds" );
                 }
             }
@@ -138,8 +139,8 @@ sub add_child {
     }
 
     for my $node ( @nodes ) {
-        $node->_set_parent( $self );
-        $node->_set_root( $self->root );
+        $node->parent( $self );
+        $node->root( $self->root );
         $node->_fix_depth;
     }
 
@@ -152,7 +153,7 @@ sub add_child {
         }
     }
     else {
-        push @{$self->children}, @nodes;
+        push @{$self->{_children}}, @nodes;
     }
 
     $self->_fix_height;
@@ -172,6 +173,7 @@ sub remove_child {
     }
 
     my @indices;
+    my $num_children = () = $self->children;
     foreach my $proto (@nodes) {
         if ( !defined( $proto ) ) {
             return $self->error( "remove_child(): 'undef' is out-of-bounds" );
@@ -182,7 +184,7 @@ sub remove_child {
                 return $self->error( "remove_child(): '$proto' is not a legal index" );
             }
 
-            if ( $proto >= $self->children || $self->children + $proto <= 0 ) {
+            if ( $proto >= $num_children || $num_children + $proto <= 0 ) {
                 return $self->error( "remove_child(): '$proto' is out-of-bounds" );
             }
 
@@ -201,9 +203,9 @@ sub remove_child {
 
     my @return;
     for my $idx (sort { $b <=> $a } @indices) {
-        my $node = splice @{$self->children}, $idx, 1;
-        $node->_set_parent( $node->_null );
-        $node->_set_root( $node );
+        my $node = splice @{$self->{_children}}, $idx, 1;
+        $node->parent( $node->_null );
+        $node->root( $node );
         $node->_fix_depth;
 
         push @return, $node;
@@ -227,8 +229,9 @@ sub clone {
     my $value = @_ ? shift : $self->value;
     my $clone = ref($self)->new( $value );
 
-    $clone->add_child( map { $_->clone } $self->children )
-        if $self->children;
+    if ( my @children = @{$self->children} ) {
+        $clone->add_child( map { $_->clone } @children );
+    }
 
     return $clone;
 }
@@ -313,14 +316,6 @@ sub traverse {
 
 # These are the smart accessors
 
-sub parent { 
-    my $self = shift;
-    return (
-        SCALARREF { \($self->{_parent}) }
-        DEFAULT { $self->{_parent} }
-    );
-}
-
 sub children {
     my $self = shift;
     if ( @_ ) {
@@ -328,44 +323,59 @@ sub children {
         return @{$self->{_children}}[@idx];
     }
     else {
-        return (
-            DEFAULT { @{$self->{_children}} }
-            SCALAR { scalar @{$self->{_children}} }
-            ARRAYREF { $self->{_children} }
-        );
+        if ( caller->isa( __PACKAGE__ ) ) {
+            return wantarray ? @{$self->{_children}} : $self->{_children};
+        }
+        else {
+            return @{$self->{_children}};
+        }
     }
+}
+
+for my $name ( qw( height width depth ) ) {
+    no strict 'refs';
+
+    *{ __PACKAGE__ . "::$name" } = sub {
+        use strict;
+
+        my $self = shift;
+
+        if ( @_ && caller->isa( __PACKAGE__ ) ) {
+            $self->{"_$name"} = shift;
+        }
+
+        return $self->{"_$name"};
+    };
+}
+
+sub parent {
+    my $self = shift;
+
+    if ( @_ && caller->isa( __PACKAGE__ ) ) {
+        $self->{_parent} = shift;
+        weaken( $self->{_parent} ) if $CONFIG{ use_weak_refs };
+    }
+
+    return $self->{_parent};
 }
 
 sub root {
     my $self = shift;
-    return (
-        SCALARREF { \($self->{_root}) }
-        DEFAULT { $self->{_root} }
-    );
-}
 
-sub height {
-    my $self = shift;
-    return (
-        SCALARREF { \($self->{_height}) }
-        DEFAULT { $self->{_height} }
-    );
-}
+    if ( @_ && caller->isa( __PACKAGE__ ) ) {
+        $self->{_root} = shift;
+        weaken( $self->{_root} ) if $CONFIG{ use_weak_refs };
 
-sub width {
-    my $self = shift;
-    return (
-        SCALARREF { \($self->{_width}) }
-        DEFAULT { $self->{_width} }
-    );
-}
+        # Propagate the root-change down to all children
+        # Because this is called from DESTROY, we need to verify
+        # that the child still exists because destruction in Perl5
+        # is neither ordered nor timely.
 
-sub depth {
-    my $self = shift;
-    return (
-        SCALARREF { \($self->{_depth}) }
-        DEFAULT { $self->{_depth} }
-    );
+        $_ && $_->root( $self->{_root} )
+            for $self->children;
+    }
+
+    return $self->{_root};
 }
 
 sub size {
@@ -426,9 +436,7 @@ sub _fix_height {
         $height = $temp_height if $height < $temp_height;
     }
 
-    #XXX This sucks - Contextual::Return::Value needs to change
-    # to walk though any nesting
-    ${$self->height} = $height + 0;
+    $self->height( $height );
 
     $self->parent->_fix_height;
 
@@ -438,11 +446,10 @@ sub _fix_height {
 sub _fix_width {
     my $self = shift;
 
-    ${$self->width} = 0;
-    for my $child ($self->children) {
-        ${$self->width} += $child->width;
-    }
-    ${$self->width} ||= 1;
+    my $width = 0;
+    $width += $_->width for $self->children;
+
+    $self->width( $width || 1 );
 
     $self->parent->_fix_width;
 
@@ -453,46 +460,15 @@ sub _fix_depth {
     my $self = shift;
 
     if ( $self->is_root ) {
-        ${$self->depth} = 0;
+        $self->depth( 0 );
     }
     else {
-        ${$self->depth} = $self->parent->depth + 1;
+        $self->depth( $self->parent->depth + 1 );
     }
 
-    for my $child ($self->children) {
-        $child->_fix_depth;
-    }
+    $_->_fix_depth for $self->children;
 
     return $self;
-}
-
-sub _set_parent {
-    my $self = shift;
-    my ($value) = @_;
-
-    ${$self->parent} = $value;
-    weaken( $self->{_parent} ) if $CONFIG{ use_weak_refs };
-
-    return;
-}
-
-sub _set_root {
-    my $self = shift;
-    my ($value) = @_;
-
-    ${$self->root} = $value;
-
-    # Propagate the root-change down to all children
-    # Because this is called from DESTROY, we need to verify
-    # that the child still exists because destruction in Perl5
-    # is neither ordered nor timely.
-    for my $child ( grep { $_ } $self->children ) {
-        $child->_set_root( $value );
-    }
-
-    weaken( $self->{_root} ) if $CONFIG{ use_weak_refs };
-
-    return;
 }
 
 # These are the book-keeping methods
@@ -502,9 +478,9 @@ sub DESTROY {
 
     return if $CONFIG{ use_weak_refs };
 
-    $self->_set_root( $self->_null );
+    $self->root( $self->_null );
     foreach my $child (grep { $_ } $self->children) {
-        $child->_set_parent( $child->_null );
+        $child->parent( $child->_null );
     }
 }
 
@@ -513,49 +489,24 @@ package Tree::Null;
 #XXX Add this in once it's been thought out
 #our @ISA = qw( Tree );
 
-# There's a lot of choices that have been made to allow for
-# subclassing of this package. They are:
-# 1) overload uses method names and not subrefs
-# 2) new() accesses a hash of singletons, not just a scalar
-# 3) AUTOLOAD uses ref() instead of __PACKAGE__
-
 # You want to be able to interrogate the null object as to
 # its class, so we don't override isa() as we do can()
 
 use overload
-    '""' => 'stringify',
-    '0+' => 'numify',
-    'bool' => 'boolify',
+    '""' => sub { return "" },
+    '0+' => sub { return 0 },
+    'bool' => sub { return },
         fallback => 1,
 ;
 
 {
-    my %singletons;
-    sub new {
-        my $class = shift;
-        $singletons{$class} = bless \my($x), $class
-            unless exists $singletons{$class};
-        return $singletons{$class};
-    }
+    my $singleton = bless \my($x), __PACKAGE__;
+    sub new { return $singleton }
+    sub AUTOLOAD { return $singleton }
 }
 
 # The null object can do anything
-sub can {
-    return 1;
-}
-
-{
-    our $AUTOLOAD;
-    sub AUTOLOAD {
-        no strict 'refs';
-        *{$AUTOLOAD} = sub { ref($_[0])->new };
-        goto &$AUTOLOAD;
-    }
-}
-
-sub stringify { return ""; }
-sub numify { return 0; }
-sub boolify { return; }
+sub can { return 1 }
 
 1;
 __END__

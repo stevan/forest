@@ -5,7 +5,7 @@ use Test::More;
 
 use t::tests qw( %runs );
 
-plan tests => 25 + 15 * $runs{stats}{plan};
+plan tests => 28 + 15 * $runs{stats}{plan};
 
 my $CLASS = 'Tree::Binary';
 use_ok( $CLASS );
@@ -99,7 +99,7 @@ $root->right( $right );
 cmp_ok( $root->children, '==', 2, "children() works" );
 ok( $root->has_child( $left ), "has_child(BOOL) works on right" );
 ok( $root->has_child( $right ), "has_child(BOOL) works on right" );
-is_deeply( $root->has_child( $left, $right ), '==', 1, "has_child(SCALAR) works on right" );
+ok( $root->has_child( $left, $right ), "has_child(SCALAR) works on right" );
 
 $runs{stats}{func}->( $root,
     height => 2, width => 2, depth => 0, size => 3, is_root => 1, is_leaf => 0,

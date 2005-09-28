@@ -27,14 +27,14 @@ sub _set_child {
         $self->children->[$index] = $node;
 
         if ( $node ) {
-            $node->_set_parent( $self );
-            $node->_set_root( $self->root );
+            $node->parent( $self );
+            $node->root( $self->root );
             $node->_fix_depth;
         }
 
         if ( $old ) {
-            $old->_set_parent( $old->_null );
-            $old->_set_root( $old->_null );
+            $old->parent( $old->_null );
+            $old->root( $old->_null );
             $old->_fix_depth;
         }
 
