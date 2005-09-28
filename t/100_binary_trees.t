@@ -5,7 +5,7 @@ use Test::More;
 
 use t::tests qw( %runs );
 
-plan tests => 21 + 14 * $runs{stats}{plan};
+plan tests => 25 + 15 * $runs{stats}{plan};
 
 my $CLASS = 'Tree::Binary';
 use_ok( $CLASS );
@@ -34,6 +34,8 @@ is( $root->left( $left ), $root, "Calling left as a setter chains" );
 is( $root->left(), $left, "... and set the left" );
 
 cmp_ok( $root->children, '==', 1, "children() works" );
+ok( $root->has_child( $left ), "has_child(BOOL) works on left" );
+cmp_ok( $root->has_child( $left ), '==', 0, "has_child(SCALAR) works on left" );
 
 $runs{stats}{func}->( $root,
     height => 2, width => 1, depth => 0, size => 2, is_root => 1, is_leaf => 0,
@@ -67,6 +69,8 @@ is( $root->right( $right ), $root, "Calling right as a setter chains" );
 is( $root->right(), $right, "... and set the right" );
 
 cmp_ok( $root->children, '==', 1, "children() works" );
+ok( $root->has_child( $right ), "has_child(BOOL) works on right" );
+cmp_ok( $root->has_child( $right ), '==', 1, "has_child(SCALAR) works on right" );
 
 $runs{stats}{func}->( $root,
     height => 2, width => 1, depth => 0, size => 2, is_root => 1, is_leaf => 0,
@@ -93,15 +97,20 @@ $root->left( $left );
 $root->right( $right );
 
 cmp_ok( $root->children, '==', 2, "children() works" );
+ok( $root->has_child( $left ), "has_child(BOOL) works on right" );
+ok( $root->has_child( $right ), "has_child(BOOL) works on right" );
+is_deeply( $root->has_child( $left, $right ), '==', 1, "has_child(SCALAR) works on right" );
 
 $runs{stats}{func}->( $root,
     height => 2, width => 2, depth => 0, size => 3, is_root => 1, is_leaf => 0,
 );
-
-$runs{stats}{func}->( $left,
-    height => 1, width => 1, depth => 1, size => 1, is_root => 0, is_leaf => 1,
-);
+$runs{stats}{func}->( $left, height => 1, width => 1, depth => 1, size => 1, is_root => 0, is_leaf => 1,);
 
 $runs{stats}{func}->( $right,
     height => 1, width => 1, depth => 1, size => 1, is_root => 0, is_leaf => 1,
+);
+
+my $right2 = $right->clone;
+$runs{stats}{func}->( $right2,
+    height => 1, width => 1, depth => 0, size => 1, is_root => 1, is_leaf => 1,
 );
