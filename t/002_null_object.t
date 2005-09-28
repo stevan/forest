@@ -6,7 +6,8 @@ use Test::More tests => 13;
 use Scalar::Util qw( refaddr );
 
 my $CLASS = 'Tree';
-use_ok( $CLASS );
+use_ok( $CLASS )
+    or Test::More->builder->BAILOUT( "Cannot load $CLASS" );
 
 # Test plan:
 # 1) The null object should inherit from Tree::Simple

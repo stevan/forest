@@ -8,7 +8,8 @@ use t::tests qw( %runs );
 plan tests => 41 + 3 * $runs{stats}{plan};
 
 my $CLASS = 'Tree';
-use_ok( $CLASS );
+use_ok( $CLASS )
+    or Test::More->builder->BAILOUT( "Cannot load $CLASS" );
 
 # Test Plan:
 # 1) Add two children to a root node to make a 3-level tree.

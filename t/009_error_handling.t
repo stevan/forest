@@ -6,7 +6,8 @@ use Test::Warn;
 use Test::Exception;
 
 my $CLASS = 'Tree';
-use_ok( $CLASS );
+use_ok( $CLASS )
+    or Test::More->builder->BAILOUT( "Cannot load $CLASS" );
 
 is( $CLASS->error_handler, $CLASS->QUIET, "The initial default error_handler is quiet." );
 

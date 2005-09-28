@@ -4,7 +4,8 @@ use warnings;
 use Test::More tests => 76;
 
 my $CLASS = 'Tree';
-use_ok( $CLASS );
+use_ok( $CLASS )
+    or Test::More->builder->BAILOUT( "Cannot load $CLASS" );
 
 # Test Plan:
 # 1) Add children to a root node to make a 2-level tree, using add_child() in various

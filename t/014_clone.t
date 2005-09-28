@@ -7,7 +7,8 @@ use Test::Deep;
 use Scalar::Util qw( refaddr );
 
 my $CLASS = 'Tree';
-use_ok( $CLASS );
+use_ok( $CLASS )
+    or Test::More->builder->BAILOUT( "Cannot load $CLASS" );
 
 my $tree = $CLASS->new( 'foo' );
 my $clone = $tree->clone;

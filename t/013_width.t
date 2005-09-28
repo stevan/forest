@@ -6,7 +6,8 @@ use warnings;
 use Test::More tests => 76;
 
 my $CLASS = 'Tree';
-use_ok( $CLASS );
+use_ok( $CLASS )
+    or Test::More->builder->BAILOUT( "Cannot load $CLASS" );
 
 { # test height (with pictures)
 

@@ -8,7 +8,8 @@ use t::tests qw( %runs );
 plan tests => 24 + 3 * $runs{stats}{plan};
 
 my $CLASS = 'Tree';
-use_ok( $CLASS );
+use_ok( $CLASS )
+    or Test::More->builder->BAILOUT( "Cannot load $CLASS" );
 
 # Test plan:
 # 1) Create with an empty new().
