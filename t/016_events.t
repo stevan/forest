@@ -5,7 +5,7 @@ use Test::More;
 
 #use t::tests qw( %runs );
 
-plan tests => 7;
+plan tests => 8;
 
 my $CLASS = 'Tree';
 use_ok( $CLASS )
@@ -48,3 +48,7 @@ $tree->add_event_handler( value => sub {
 $tree->value( 'new value' );
 
 is( $stack[3], "Value changed: root from $tree", "remove_child event" );
+
+$tree->value();
+
+cmp_ok( @stack, '==', 4, "The value event only triggers when it's set, not accessed" );

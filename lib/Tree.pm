@@ -66,6 +66,7 @@ sub new {
         _handlers => {
             add_child => [],
             remove_child => [],
+            value => [],
         },
         _parent => $class->_null,
         _height => 1,
