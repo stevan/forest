@@ -565,7 +565,7 @@ If you call C<$tree->new([$value])>, it will instead call C<clone()>, then set t
 
 =item B<clone()>
 
-This will return a clone of $tree. The clone will be a root tree, but all children will be cloned.
+This will return a clone of C<$tree>. The clone will be a root tree, but all children will be cloned.
 
 If you call <Tree->clone([$value])>, it will instead call C<new()>.
 
@@ -579,11 +579,11 @@ B<NOTE:> the value is merely a shallow copy. This means that all references will
 
 =item B<add_child(@nodes)>
 
-This will add all the @nodes as children of $tree. If the first two or last two parameters are of the form C<at =E<gt> $idx>, @nodes will be added starting at that index. If C<$idx> is negative, it will start that many in from the end. So, C<$idx == -1> will add @nodes before the last element of the children. If $idx is undefined, then it act as a push(). If $idx is 0, then it will act as an unshift.
+This will add all the @nodes as children of C<$tree>. If the first two or last two parameters are of the form C<at =E<gt> $idx>, @nodes will be added starting at that index. If C<$idx> is negative, it will start that many in from the end. So, C<$idx == -1> will add @nodes before the last element of the children. If $idx is undefined, then it act as a push(). If $idx is 0, then it will act as an unshift.
 
 =item B<remove_child(@nodes)>
 
-This will remove all the @nodes from the children of $tree. You can either pass in the actual child object you wish to remove, the index of the child you wish to remove, or a combination of both.
+This will remove all the @nodes from the children of C<$tree>. You can either pass in the actual child object you wish to remove, the index of the child you wish to remove, or a combination of both.
 
 =item B<mirror()>
 
@@ -627,17 +627,17 @@ All behaviors will reset last_error().
 
 =over 4
 
-=item B<is_root()>
+=item * B<is_root()>
 
-This will return true is $tree has no parent and false otherwise.
+This will return true is C<$tree> has no parent and false otherwise.
 
-=item B<is_leaf()>
+=item * B<is_leaf()>
 
-This will return true is $tree has no children and false otherwise.
+This will return true is C<$tree> has no children and false otherwise.
 
-=item B<has_child(@nodes)>
+=item * B<has_child(@nodes)>
 
-If called in a boolean context, this will return true is $tree has each of the @nodes as a child. If called in a list context, it will map back the list of indices for each of the @nodes. If called in a scalar, non-boolean context, it will return back the index for C<$nodes[0]>.
+If called in a boolean context, this will return true is C<$tree> has each of the @nodes as a child. If called in a list context, it will map back the list of indices for each of the @nodes. If called in a scalar, non-boolean context, it will return back the index for C<$nodes[0]>.
 
 =back
 
@@ -645,39 +645,39 @@ If called in a boolean context, this will return true is $tree has each of the @
 
 =over 4
 
-=item B<parent()>
+=item * B<parent()>
 
-This will return the parent of $tree.
+This will return the parent of C<$tree>.
 
-=item B<children( [ $idx, [$idx, ..] ] )>
+=item * B<children( [ $idx, [$idx, ..] ] )>
 
-This will return the children of $tree. If called in list context, it will return all the children. If called in scalar context, it will return the number of children.
+This will return the children of C<$tree>. If called in list context, it will return all the children. If called in scalar context, it will return the number of children.
 
 You may optionally pass in a list of indices to retrieve. This will return the children in the order you asked for them. This is very much like an arrayslice.
 
-=item B<root()>
+=item * B<root()>
 
-This will return the root node of the tree that $tree is in. The root of the root node is itself.
+This will return the root node of the tree that C<$tree> is in. The root of the root node is itself.
 
-=item B<height()>
+=item * B<height()>
 
-This will return the height of $tree. A leaf has a height of 1. A parent has a height of its tallest child, plus 1.
+This will return the height of C<$tree>. A leaf has a height of 1. A parent has a height of its tallest child, plus 1.
 
-=item B<width()>
+=item * B<width()>
 
-This will return the width of $tree. A leaf has a width of 1. A parent has a width equal to the sum of all the widths of its children.
+This will return the width of C<$tree>. A leaf has a width of 1. A parent has a width equal to the sum of all the widths of its children.
 
-=item B<depth()>
+=item * B<depth()>
 
-This will return the depth of $tree. A root has a depth of 0. A child has the depth of its parent, plus 1.
+This will return the depth of C<$tree>. A root has a depth of 0. A child has the depth of its parent, plus 1.
 
 This is the distance from the root. It's useful for things like pretty-printing the tree.
 
-=item B<size()>
+=item * B<size()>
 
-This will return the number of nodes within $tree. A leaf has a size of 1. A parent has a size equal to the 1 plus the sum of all the sizes of its children.
+This will return the number of nodes within C<$tree>. A leaf has a size of 1. A parent has a size equal to the 1 plus the sum of all the sizes of its children.
 
-=item B<value([$value])>
+=item * B<value([$value])>
 
 This will return the value stored in the node. If $value is passed in, it will set the value stored in the node to $value, then return $value.
 
@@ -691,17 +691,17 @@ Describe what the default error handlers do and what a custom error handler is e
 
 =over 4
 
-=item B<error_handler( [ $handler ] )>
+=item * B<error_handler( [ $handler ] )>
 
 This will return the current error handler for the tree. If a value is passed in, then it will be used to set the error handler for the tree.
 
 If called as a class method, this will instead work with the default error handler.
 
-=item B<error( $error, [ arg1 [, arg2 ...] ] )>
+=item * B<error( $error, [ arg1 [, arg2 ...] ] )>
 
 Call this when you wish to report an error using the currently defined error_handler for the tree. The only guaranteed parameter is an error string describing the issue. There may be other arguments, and you may certainly provide other arguments in your subclass to be passed to your custom handler.
 
-=item B<last_error()>
+=item * B<last_error()>
 
 If an error occurred during the last behavior, this will return the error string. It is reset only when a behavior is called.
 
@@ -805,7 +805,7 @@ Need tests for what happens with a traversal list and deleted nodes, particularl
 
 =over 4
 
-=item Stevan Little for writing L<Tree::Simple>, upon which Tree is based.
+=item * Stevan Little for writing L<Tree::Simple>, upon which Tree is based.
 
 =back
 
