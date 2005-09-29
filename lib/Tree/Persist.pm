@@ -16,9 +16,7 @@ sub connect {
 
     my $self = bless {
         _filename => $opts{filename},
-        _tree => '',
-        _datastore => [],
-        _mapping => {},
+        _tree => undef,
     }, $class;
 
     $self->reload;
