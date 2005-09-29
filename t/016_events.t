@@ -5,13 +5,13 @@ use Test::More;
 
 #use t::tests qw( %runs );
 
-plan tests => 6;
+plan tests => 7;
 
 my $CLASS = 'Tree';
 use_ok( $CLASS )
     or Test::More->builder->BAILOUT( "Cannot load $CLASS" );
 
-my $tree = $CLASS->new;
+my $tree = $CLASS->new( 'root' );
 
 my @stack;
 is( $tree->add_event_handler( add_child => sub {
@@ -39,3 +39,12 @@ is( $stack[2], "Removed $child2 from $child", "remove_child event" );
 
 $tree->remove_child( $child );
 cmp_ok( @stack, '==', 3, "Events trigger on the actor, not the acted-upon" );
+
+$tree->add_event_handler( value => sub {
+    my ($node, @args) = @_;
+    push @stack, "Value changed: @args from $node";
+});
+
+$tree->value( 'new value' );
+
+is( $stack[3], "Value changed: root from $tree", "remove_child event" );

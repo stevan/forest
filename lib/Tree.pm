@@ -417,7 +417,11 @@ sub size {
 
 sub value {
     my $self = shift;
-    $self->{_value} = shift if @_;
+    if (@_) {
+        my $old_value = $self->{_value};
+        $self->{_value} = shift;
+        $self->event( 'value', $self, $old_value );
+    }
     return $self->{_value};
 }
 
@@ -731,9 +735,19 @@ Forest provides for basic event handling. You may choose to register one or more
 
 This event will trigger as the last step in an add_child() call.
 
+The parameters will be C<( $self, @args )> where C<@args> is the arguments passed into the add_child() call.
+
 =item * remove_child
 
 This event will trigger as the last step in an remove_child() call.
+
+The parameters will be C<( $self, @args )> where C<@args> is the arguments passed into the remove_child() call.
+
+=item * value
+
+This event will trigger as if the value of a node has changed.
+
+The parameters will be C<( $self, $old_value )> where C<$old_value> is what the value was before it was changed. The new value can be accessed through C<$self->value()>.
 
 =back
 
