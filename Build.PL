@@ -22,6 +22,7 @@ my $build = Module::Build->new(
         'Test::File::Contents' => '0.02',
         'Test::Exception' => '0.15',
         'Test::Warn'      => '0.08',
+        'File::Copy'      => '0.01',
         'File::Spec'      => '0.01',
         'Scalar::Util'    => '1.10',
     },

@@ -25,6 +25,8 @@ t/016_events.t
 t/100_binary_trees.t
 t/200_persist.t
 t/201_load_from_file.t
+t/202_save_to_file.t
+t/203_associate_with_file.t
 t/998_pod.t
 t/999_pod_coverage.t
 t/tests.pm

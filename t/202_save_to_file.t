@@ -24,13 +24,13 @@ my $cleaner = Test::File::Cleaner->new( $dirname );
     my $filename = catfile( $dirname, 'save1.xml' );
     file_not_exists_ok( $filename, "Tree1 file doesn't exist yet" ); 
 
-    my $persist = $CLASS->new(
-        filename => $filename,
-    );
-
     my $tree = Tree->new( 'root' );
 
-    $persist->store( $tree );
+    my $persist = $CLASS->create_datastore(
+        filename => $filename,
+        tree => $tree,
+    );
+
     file_exists_ok( $filename, 'Tree1 file exists' ); 
     file_contents_is( $filename, <<__END_FILE__, '... and the contents are good' );
 <node class="Tree" value="root">
@@ -43,10 +43,6 @@ __END_FILE__
     my $filename = catfile( $dirname, 'save2.xml' );
     file_not_exists_ok( $filename, "Tree2 file doesn't exist yet" ); 
 
-    my $persist = $CLASS->new(
-        filename => $filename,
-    );
-
     my $tree = Tree->new( 'A' )->add_child(
         Tree->new( 'B' ),
         Tree->new( 'C' )->add_child(
@@ -55,7 +51,10 @@ __END_FILE__
         Tree->new( 'E' ),
     );
 
-    $persist->store( $tree );
+    my $persist = $CLASS->create_datastore(
+        filename => $filename,
+        tree => $tree,
+    );
 
     file_exists_ok( $filename, 'Tree2 file exists' ); 
     file_contents_is( $filename, <<__END_FILE__, '... and the contents are good' );
@@ -77,10 +76,6 @@ __END_FILE__
     my $filename = catfile( $dirname, 'save3.xml' );
     file_not_exists_ok( $filename, "Tree3 file doesn't exist yet" ); 
 
-    my $persist = $CLASS->new(
-        filename => $filename,
-    );
-
     my $tree = Tree->new( 'A' )->add_child(
         Tree->new( 'B' ),
         Tree->new( 'C' )->add_child(
@@ -89,7 +84,10 @@ __END_FILE__
         ),
     );
 
-    $persist->store( $tree );
+    my $persist = $CLASS->create_datastore(
+        filename => $filename,
+        tree => $tree,
+    );
 
     file_exists_ok( $filename, 'Tree3 file exists' ); 
     file_contents_is( $filename, <<__END_FILE__, '... and the contents are good' );

@@ -1,15 +1,59 @@
 use strict;
 use warnings;
 
-use Test::More tests => 4;
+use File::Spec::Functions qw( catfile );
+use Test::More tests => 6;
 
 my $CLASS = 'Tree::Persist';
 use_ok( $CLASS )
     or Test::More->builder->BAILOUT( "Cannot load $CLASS" );
 
-can_ok( $CLASS, 'new' );
+my %existing_methods = do {
+    no strict 'refs';
+    map {
+        $_ => undef
+    } grep {
+        !/^_/ && /^[a-zA-Z_]+$/
+    } grep {
+        exists &{${ $CLASS . '::'}{$_}}
+    } keys %{ $CLASS . '::'}
+};
 
-my $persist = $CLASS->new;
+my %methods = (
+    class => [ qw(
+        connect create_datastore
+    )],
+    public => [ qw(
+        autocommit tree
+        commit rollback reload
+    )],
+    private => [ qw(
+    )],
+    book_keeping => [qw(
+    )],
+    imported => [qw(
+        blessed
+    )],
+);
+
+# These are the class methods
+can_ok( $CLASS, @{ $methods{class} } );
+delete @existing_methods{@{$methods{class}}};
+
+my $persist = $CLASS->connect(
+    filename => catfile( qw( t datafiles tree1.xml ) ),
+);
 isa_ok( $persist, $CLASS );
 
-can_ok( $persist, qw( load store associate ) );
+for my $type ( qw( public private book_keeping imported ) ) {
+    next unless @{$methods{$type}};
+    can_ok( $persist, @{ $methods{ $type } } );
+    delete @existing_methods{@{$methods{ $type }}};
+}
+
+if ( my @k = keys %existing_methods ) {
+    ok( 0, "We need to account for '" . join ("','", @k) . "'" );
+}
+else {
+    ok( 1, "We've accounted for everything." );
+}

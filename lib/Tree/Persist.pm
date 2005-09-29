@@ -6,18 +6,36 @@ use warnings;
 use Tree;
 use XML::Parser;
 
-sub new {
+use Scalar::Util qw( blessed );
+
+sub connect {
     my $class = shift;
-    my $self = bless {@_}, $class;
+    my %opts = @_;
+
+    my $self = bless {
+        _filename => $opts{filename},
+        _tree => '',
+    }, $class;
+
+    $self->reload;
+
     return $self;
 }
 
-sub load {
+sub create_datastore {
+    my $class = shift;
+    my %opts = @_;
+
+    $class->commit( %opts );
+
+    return $class;
+}
+
+sub reload {
     my $self = shift;
 
     my @stack;
     my $class;
-    my $root;
     my $parser = XML::Parser->new(
         Handlers => {
             Start => sub {
@@ -31,7 +49,7 @@ sub load {
                     $stack[-1]->add_child( $node );
                 }
                 else {
-                    $root = $node;
+                    $self->{_tree} = $node;
                 }
 
                 push @stack, $node;
@@ -42,23 +60,30 @@ sub load {
         },
     );
 
-    $parser->parsefile( $self->{filename} );
+    $parser->parsefile( $self->{_filename} );
 
-    return $root;
+    return $self;
 }
 
-sub store {
+sub commit {
     my $self = shift;
-    my ($tree) = @_;
+    my %opts = @_;
 
-    open my $fh, '>', $self->{filename}
-        or die "Cannot open '$self->{filename}' for writing: $!\n";
+    my $fh;
+    if ( blessed $self ) {
+        open $fh, '>', $self->{_filename}
+            or die "Cannot open '$self->{_filename}' for writing: $!\n";
+    }
+    else {
+        open $fh, '>', $opts{filename}
+            or die "Cannot open '$opts{filename}' for writing: $!\n";
+    }
 
     my $pad = ' ' x 4;
 
     my $curr_depth = 0;
     my @closer;
-    foreach my $node ( $tree->traverse ) {
+    foreach my $node ( $opts{tree}->traverse ) {
         my $new_depth = $node->depth;
         print $fh pop(@closer) while $curr_depth && $curr_depth-- >= $new_depth;
 
@@ -73,7 +98,14 @@ sub store {
     return $self;
 }
 
-sub associate {}
+sub autocommit {}
+
+sub rollback {}
+
+sub tree {
+    my $self = shift;
+    return $self->{_tree};
+}
 
 1;
 __END__
@@ -90,13 +122,37 @@ This is meant to be a transparent persistence layer for Tree and its children. I
 
 =head1 METHODS
 
-=head2 Constructor
+=head2 Class Methods
 
 =over 4
 
-=item B<new()>
+=item * B<connect( %opts )>
 
-This will return a Tree::Persist object.
+This will return a Tree::Persist object. C<%opts> includes:
+
+=over 4
+
+=item * Required: (datastore)
+
+=item * Optional: autocommit
+
+This is a boolean option that determines whether or not changes to the tree will committed to the datastore immediately or not. The default is true.
+
+=back
+
+=item * B<create_datastore( %opts )>
+
+This will create a new datastore for a tree. C<%opts> includes;
+
+=over 4
+
+=item * Required: tree
+
+This is the tree that will be used to create the datastore.
+
+=item * Required: (datastore)
+
+=back
 
 =back
 
@@ -104,17 +160,33 @@ This will return a Tree::Persist object.
 
 =over 4
 
-=item * B<load()>
+=item * B<autocommit()>
 
-This will load a tree from the given datastore.
+This is a boolean option that determines whether or not changes to the tree will committed to the datastore immediately or not. The default is true. This will return the current setting.
 
-=item * B<store( $tree )>
+=item * B<tree()>
 
-This will save C<$tree> to the given datastore.
+This returns the tree.
 
-=item * B<associate( $tree )>
+=item * B<commit()>
 
-This will install event handlers in C<$tree> so that any change to C<$tree> will be mirrored in the datastore.
+This will save all changes made to the tree associated with this Tree::Persist object.
+
+This is a no-op if autocommit is true.
+
+=item * B<rollback()>
+
+This will undo all changes made to the tree since the last commit. Essentially, it performs a reload() only if autocommit is false.
+
+This is a no-op if autocommit is true.
+
+B<NOTE>: Any references to any of the nodes in the tree as it was before rollback() is called are to considered suspect.
+
+=item * B<reload()>
+
+This will throw out the current tree and reload it from the datastore.
+
+B<NOTE>: Any references to any of the nodes in the tree as it was before reload() is called are to considered suspect.
 
 =back
 
