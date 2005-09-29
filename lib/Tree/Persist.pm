@@ -31,6 +31,10 @@ sub connect {
         $self->commit;
     });
 
+    $self->{_tree}->add_event_handler( value => sub {
+        $self->commit;
+    });
+
     return $self;
 }
 

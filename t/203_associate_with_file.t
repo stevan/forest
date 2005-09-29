@@ -11,7 +11,7 @@ use File::Spec::Functions qw( catfile );
 
 use t::tests qw( %runs );
 
-plan tests => 8 + 1 * $runs{stats}{plan};
+plan tests => 9 + 1 * $runs{stats}{plan};
 
 my $CLASS = 'Tree::Persist';
 use_ok( $CLASS )
@@ -73,6 +73,15 @@ __END_FILE__
     file_contents_is( $filename, <<__END_FILE__, '... and the contents are good' );
 <node class="Tree" value="root">
     <node class="Tree" value="child2">
+    </node>
+</node>
+__END_FILE__
+
+    $child2->value( 'New value' );
+
+    file_contents_is( $filename, <<__END_FILE__, '... and the contents are good' );
+<node class="Tree" value="root">
+    <node class="Tree" value="New value">
     </node>
 </node>
 __END_FILE__
