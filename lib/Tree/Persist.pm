@@ -8,13 +8,12 @@ use XML::Parser;
 
 sub new {
     my $class = shift;
-    my $self = bless {}, $class;
+    my $self = bless {@_}, $class;
     return $self;
 }
 
 sub load {
     my $self = shift;
-    my $filename = shift || $self->{_filename};
 
     my @stack;
     my $class;
@@ -43,12 +42,37 @@ sub load {
         },
     );
 
-    $parser->parsefile( $filename );
+    $parser->parsefile( $self->{filename} );
 
     return $root;
 }
 
-sub store {}
+sub store {
+    my $self = shift;
+    my ($tree) = @_;
+
+    open my $fh, '>', $self->{filename}
+        or die "Cannot open '$self->{filename}' for writing: $!\n";
+
+    my $pad = ' ' x 4;
+
+    my $curr_depth = 0;
+    my @closer;
+    foreach my $node ( $tree->traverse ) {
+        my $new_depth = $node->depth;
+        print $fh pop(@closer) while $curr_depth && $curr_depth-- >= $new_depth;
+
+        $curr_depth = $new_depth;
+        print $fh ($pad x $curr_depth) . '<node class="Tree" value="' . $node->value . '">' . $/;
+        push @closer, ($pad x $curr_depth) . "</node>\n";
+    }
+    print $fh pop(@closer) while @closer;
+
+    close $fh;
+
+    return $self;
+}
+
 sub associate {}
 
 1;
@@ -84,7 +108,7 @@ This will return a Tree::Persist object.
 
 This will load a tree from the given datastore.
 
-=item * B<save( $tree )>
+=item * B<store( $tree )>
 
 This will save C<$tree> to the given datastore.
 
