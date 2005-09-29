@@ -17,7 +17,7 @@ my %existing_methods = do {
     map {
         $_ => undef
     } grep {
-        !/^_/ && /^[a-zA-Z_]+$/
+        /^[a-zA-Z_]+$/
     } grep {
         exists &{${ $CLASS . '::'}{$_}}
     } keys %{ $CLASS . '::'}
@@ -39,7 +39,7 @@ my %methods = (
         add_event_handler event
     )],
     private => [ qw(
-        _null _fix_width _fix_height
+        _null _fix_width _fix_height _fix_depth
     )],
     book_keeping => [qw(
         DESTROY import

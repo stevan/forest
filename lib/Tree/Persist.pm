@@ -6,7 +6,9 @@ use warnings;
 use Tree;
 use XML::Parser;
 
-use Scalar::Util qw( blessed );
+use Scalar::Util qw( blessed refaddr );
+
+my $pad = ' ' x 4;
 
 sub connect {
     my $class = shift;
@@ -15,9 +17,19 @@ sub connect {
     my $self = bless {
         _filename => $opts{filename},
         _tree => '',
+        _datastore => [],
+        _mapping => {},
     }, $class;
 
     $self->reload;
+
+    $self->{_tree}->add_event_handler( add_child => sub {
+        $self->commit;
+    });
+
+    $self->{_tree}->add_event_handler( remove_child => sub {
+        $self->commit;
+    });
 
     return $self;
 }
@@ -34,16 +46,15 @@ sub create_datastore {
 sub reload {
     my $self = shift;
 
+    my $linenum = 0;
     my @stack;
-    my $class;
     my $parser = XML::Parser->new(
         Handlers => {
             Start => sub {
                 shift;
                 my ($name, %args) = @_;
 
-                $class ||= $args{class};
-                my $node = $class->new( $args{value} );
+                my $node = $args{class}->new( $args{value} );
 
                 if ( @stack ) {
                     $stack[-1]->add_child( $node );
@@ -52,9 +63,12 @@ sub reload {
                     $self->{_tree} = $node;
                 }
 
+                $self->{_mapping}{refaddr($node)} = $linenum++;
+
                 push @stack, $node;
             },
             End => sub {
+                $linenum++;
                 pop @stack;
             },
         },
@@ -79,23 +93,32 @@ sub commit {
             or die "Cannot open '$opts{filename}' for writing: $!\n";
     }
 
-    my $pad = ' ' x 4;
-
-    my $curr_depth = 0;
-    my @closer;
-    foreach my $node ( $opts{tree}->traverse ) {
-        my $new_depth = $node->depth;
-        print $fh pop(@closer) while $curr_depth && $curr_depth-- >= $new_depth;
-
-        $curr_depth = $new_depth;
-        print $fh ($pad x $curr_depth) . '<node class="Tree" value="' . $node->value . '">' . $/;
-        push @closer, ($pad x $curr_depth) . "</node>\n";
-    }
-    print $fh pop(@closer) while @closer;
+    print $fh $self->_build_string( $opts{tree} || $self->{_tree} );
 
     close $fh;
 
     return $self;
+}
+
+sub _build_string {
+    my $self = shift;
+    my ($tree) = @_;
+
+    my $str = '';
+
+    my $curr_depth = $tree->depth;
+    my @closer;
+    foreach my $node ( $tree->traverse ) {
+        my $new_depth = $node->depth;
+        $str .= pop(@closer) while @closer && $curr_depth-- >= $new_depth;
+
+        $curr_depth = $new_depth;
+        $str .= ($pad x $curr_depth) . '<node class="' . blessed($node) . '" value="' . $node->value . '">' . $/;
+        push @closer, ($pad x $curr_depth) . "</node>\n";
+    }
+    $str .= pop(@closer) while @closer;
+
+    return $str;
 }
 
 sub autocommit {}

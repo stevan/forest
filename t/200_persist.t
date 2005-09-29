@@ -2,7 +2,7 @@ use strict;
 use warnings;
 
 use File::Spec::Functions qw( catfile );
-use Test::More tests => 6;
+use Test::More tests => 7;
 
 my $CLASS = 'Tree::Persist';
 use_ok( $CLASS )
@@ -13,7 +13,7 @@ my %existing_methods = do {
     map {
         $_ => undef
     } grep {
-        !/^_/ && /^[a-zA-Z_]+$/
+        /^[a-zA-Z_]+$/
     } grep {
         exists &{${ $CLASS . '::'}{$_}}
     } keys %{ $CLASS . '::'}
@@ -28,11 +28,12 @@ my %methods = (
         commit rollback reload
     )],
     private => [ qw(
+        _build_string
     )],
     book_keeping => [qw(
     )],
     imported => [qw(
-        blessed
+        blessed refaddr
     )],
 );
 
