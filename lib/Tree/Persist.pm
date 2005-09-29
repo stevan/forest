@@ -17,15 +17,21 @@ sub connect {
     my $self = bless {
         _filename => $opts{filename},
         _tree => undef,
-        _autocommit => 1,
+        _autocommit => (exists $opts{autocommit} ? $opts{autocommit} : 1),
+        _changes => 0,
     }, $class;
 
     $self->reload;
 
+    my $sub = sub {
+        $self->{_changes}++;
+        $self->commit if $self->autocommit;
+    };
+
     $self->{_tree}->add_event_handler(
-        add_child    => sub { $self->commit if $self->autocommit },
-        remove_child => sub { $self->commit if $self->autocommit },
-        value        => sub { $self->commit if $self->autocommit },
+        add_child    => $sub,
+        remove_child => $sub,
+        value        => $sub,
     );
 
     return $self;
@@ -78,10 +84,13 @@ sub reload {
 
 sub commit {
     my $self = shift;
+
     my %opts = @_;
 
     my $fh;
     if ( blessed $self ) {
+        return unless $self->{_changes};
+
         open $fh, '>', $self->{_filename}
             or die "Cannot open '$self->{_filename}' for writing: $!\n";
     }
@@ -93,6 +102,8 @@ sub commit {
     print $fh $self->_build_string( $opts{tree} || $self->{_tree} );
 
     close $fh;
+
+    $self->{_changes} = 0 if blessed $self;
 
     return $self;
 }
@@ -120,6 +131,9 @@ sub _build_string {
 
 sub autocommit {
     my $self = shift;
+
+    return 0 unless blessed $self;
+
     if ( @_ ) {
         (my $old, $self->{_autocommit}) = ($self->{_autocommit}, shift );
         return $old;
@@ -129,7 +143,15 @@ sub autocommit {
     }
 }
 
-sub rollback {}
+sub rollback {
+    my $self = shift;
+
+    $self->reload if $self->{_changes};
+
+    $self->{_changes} = 0;
+
+    return $self;
+}
 
 sub tree {
     my $self = shift;
@@ -161,7 +183,9 @@ This will return a Tree::Persist object. C<%opts> includes:
 
 =over 4
 
-=item * Required: (datastore)
+=item * Required: filename
+
+This is the filename that is used as the XML datastore. The filename must exist and be in the appropriate format.
 
 =item * Optional: autocommit
 
@@ -179,7 +203,9 @@ This will create a new datastore for a tree. C<%opts> includes;
 
 This is the tree that will be used to create the datastore.
 
-=item * Required: (datastore)
+=item * Required: filename
+
+This is the filename that is used as the XML datastore. It I<will> be B<overwritten> if it exists.
 
 =back
 
