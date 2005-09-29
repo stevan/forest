@@ -23,17 +23,11 @@ sub connect {
 
     $self->reload;
 
-    $self->{_tree}->add_event_handler( add_child => sub {
-        $self->commit;
-    });
-
-    $self->{_tree}->add_event_handler( remove_child => sub {
-        $self->commit;
-    });
-
-    $self->{_tree}->add_event_handler( value => sub {
-        $self->commit;
-    });
+    $self->{_tree}->add_event_handler(
+        add_child => sub { $self->commit },
+        remove_child => sub { $self->commit },
+        value => sub { $self->commit },
+    );
 
     return $self;
 }

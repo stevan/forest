@@ -61,6 +61,8 @@ sub new {
     return $class->clone( @_ )
         if blessed $class;
 
+    my ($value) = @_;
+
     my $self = bless {
         _children => [],
         _handlers => {
@@ -74,12 +76,11 @@ sub new {
         _depth => 0,
         _error_handler => $ERROR_HANDLER,
         _root => undef,
-        _value => undef,
+        _value => $value,
         _last_error => undef,
     }, $class;
 
     $self->root( $self );
-    $self->value( $_[0] ) if @_;
 
     return $self;
 }
@@ -256,9 +257,11 @@ sub mirror {
 
 sub add_event_handler {
     my $self = shift;
-    my ($type, @handlers) = @_;
+    my (%opts) = @_;
 
-    push @{$self->{_handlers}{$type}}, @handlers;
+    while ( my ($type,$handler) = each %opts ) {
+        push @{$self->{_handlers}{$type}}, $handler;
+    }
 
     return $self;
 }

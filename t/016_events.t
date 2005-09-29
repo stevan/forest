@@ -14,10 +14,17 @@ use_ok( $CLASS )
 my $tree = $CLASS->new( 'root' );
 
 my @stack;
-is( $tree->add_event_handler( add_child => sub {
-    my ($node, @args) = @_;
-    push @stack, "Added @args to $node";
-}), $tree, "add_event_handler() chains" );
+is( $tree->add_event_handler(
+    add_child => sub {
+        my ($node, @args) = @_;
+        push @stack, "Added @args to $node";
+    },
+    value => sub {
+        my ($node, @args) = @_;
+        push @stack, "Value changed: @args from $node";
+    },
+), $tree, "add_event_handler() chains and handles multiple entries" );
+
 
 my $child = $CLASS->new;
 $tree->add_child( $child );
@@ -39,11 +46,6 @@ is( $stack[2], "Removed $child2 from $child", "remove_child event" );
 
 $tree->remove_child( $child );
 cmp_ok( @stack, '==', 3, "Events trigger on the actor, not the acted-upon" );
-
-$tree->add_event_handler( value => sub {
-    my ($node, @args) = @_;
-    push @stack, "Value changed: @args from $node";
-});
 
 $tree->value( 'new value' );
 
