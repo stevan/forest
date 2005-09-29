@@ -235,13 +235,13 @@ This will undo all changes made to the tree since the last commit. Essentially, 
 
 This is a no-op if autocommit is true.
 
-B<NOTE>: Any references to any of the nodes in the tree as it was before rollback() is called are to considered suspect.
+B<NOTE>: Any references to any of the nodes in the tree as it was before rollback() is called will B<not> refer to the same node of C<$persist->tree> after rollback().
 
 =item * B<reload()>
 
 This will throw out the current tree and reload it from the datastore.
 
-B<NOTE>: Any references to any of the nodes in the tree as it was before reload() is called are to considered suspect.
+B<NOTE>: Any references to any of the nodes in the tree as it was before reload() is called will B<not> refer to the same node of C<$persist->tree> after reload().
 
 =back
 
