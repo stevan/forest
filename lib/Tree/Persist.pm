@@ -17,14 +17,15 @@ sub connect {
     my $self = bless {
         _filename => $opts{filename},
         _tree => undef,
+        _autocommit => 1,
     }, $class;
 
     $self->reload;
 
     $self->{_tree}->add_event_handler(
-        add_child => sub { $self->commit },
-        remove_child => sub { $self->commit },
-        value => sub { $self->commit },
+        add_child    => sub { $self->commit if $self->autocommit },
+        remove_child => sub { $self->commit if $self->autocommit },
+        value        => sub { $self->commit if $self->autocommit },
     );
 
     return $self;
@@ -117,7 +118,16 @@ sub _build_string {
     return $str;
 }
 
-sub autocommit {}
+sub autocommit {
+    my $self = shift;
+    if ( @_ ) {
+        (my $old, $self->{_autocommit}) = ($self->{_autocommit}, shift );
+        return $old;
+    }
+    else {
+        return $self->{_autocommit};
+    }
+}
 
 sub rollback {}
 
