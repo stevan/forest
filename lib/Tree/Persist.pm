@@ -121,7 +121,12 @@ sub _build_string {
         $str .= pop(@closer) while @closer && $curr_depth-- >= $new_depth;
 
         $curr_depth = $new_depth;
-        $str .= ($pad x $curr_depth) . '<node class="' . blessed($node) . '" value="' . $node->value . '">' . $/;
+        $str .= ($pad x $curr_depth)
+                . '<node class="'
+                . blessed($node)
+                . '" value="'
+                . $node->value
+                . '">' . $/;
         push @closer, ($pad x $curr_depth) . "</node>\n";
     }
     $str .= pop(@closer) while @closer;

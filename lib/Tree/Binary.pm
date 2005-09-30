@@ -34,8 +34,7 @@ sub _set_get_child {
     my $index = shift;
 
     if ( @_ ) {
-        my $node = shift;
-        $node ||= $self->_null;
+        my $node = shift || $self->_null;
 
         my $old = $self->children->[$index];
         $self->children->[$index] = $node;
@@ -72,6 +71,24 @@ sub children {
     );
 }
 
+use constant IN_ORDER => 4;
+
+sub traverse {
+    my $self = shift;
+    my $order = shift || $self->PRE_ORDER;
+
+    if ( $order == $self->IN_ORDER ) {
+        # Remove all the Tree::Null elements
+        return grep { $_ } (
+            $self->left->traverse( $order ),
+            $self,
+            $self->right->traverse( $order ),
+        );
+    }
+
+    return grep { $_ } $self->SUPER::traverse( $order );
+}
+
 1;
 __END__
 
@@ -83,9 +100,16 @@ Tree::Binary - An implementation of a binary tree
 
 =head1 DESCRIPTION
 
+This is an implementation of a binary tree. This class inherits from L<Tree>,
+which is an N-ary tree implemenation. Because of this, this class actually
+provides an implementation of a complete binary tree vs. a sparse binary tree.
+The empty nodes are instances of Tree::Null, which is described in L<Tree>.
+This should have no effect on your usage of this class.
+
 =head1 METHODS
 
-In addition to the methods provided by L<Tree>, the following items are provided.
+In addition to the methods provided by L<Tree>, the following items are
+provided or overriden.
 
 =over 4
 
@@ -98,6 +122,21 @@ If you do not pass in any parameters, then it will act as a getter for the speci
 If you pass in a child, it will act as a setter for the specific child, setting the child to the passed-in value and returning the $tree. (Thus, this method chains.)
 
 If you wish to unset the child, do C<$tree->left( undef );>
+
+=item * B<traverse( [$order] )>
+
+Tree::Binary provides a fourth ordering, called IN_ORDER. All other traversals
+are handed off L<Tree>'s traverse() method.
+
+=over 4
+
+=item * In-order
+
+This will return the result of an in-order traversal on the left node (if
+any), then the node, then the result of an in-order traversal on the right
+node (if any).
+
+=back
 
 =back
 
@@ -112,14 +151,6 @@ The test suite for Tree 1.0 is based very heavily on the test suite for L<Test::
 These are items to consider adding in general.
 
 =over 4
-
-=item * Strongly binary
-
-Where every node has 0 or 2 children
-
-=item * Weakly binary
-
-Where the root has one child
 
 =item * Partial balancing
 

@@ -23,6 +23,7 @@ t/014_clone.t
 t/015_traverse.t
 t/016_events.t
 t/100_binary_trees.t
+t/101_binary_mirror.t
 t/200_persist.t
 t/201_load_from_file.t
 t/202_save_to_file.t

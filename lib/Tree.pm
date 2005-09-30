@@ -141,8 +141,8 @@ sub add_child {
     }
 
     for my $node ( @nodes ) {
-        unless ( blessed($node) && $node->isa( 'Tree' ) ) {
-            return $self->error( "add_child(): '$node' is not a Tree" );
+        unless ( blessed($node) && $node->isa( __PACKAGE__ ) ) {
+            return $self->error( "add_child(): '$node' is not a " . __PACKAGE__ );
         }
 
         if ( $node->root eq $self->root ) {
@@ -260,7 +260,7 @@ sub mirror {
     my $self = shift;
 
     @{$self->children} = reverse @{$self->children};
-#    $_->mirror for $self->children;
+    $_->mirror for $self->children;
 
     return $self;
 }
@@ -330,9 +330,7 @@ use constant LEVEL_ORDER => 3;
 
 sub traverse {
     my $self = shift;
-    my ($order) = @_;
-
-    $order ||= $self->PRE_ORDER;
+    my $order = shift || $self->PRE_ORDER;
 
     my @list;
 
@@ -415,8 +413,8 @@ sub root {
         # that the child still exists because destruction in Perl5
         # is neither ordered nor timely.
 
-        $_ && $_->root( $self->{_root} )
-            for $self->children;
+        $_->root( $self->{_root} )
+            for grep { $_ } $self->children;
     }
 
     return $self->{_root};
@@ -551,10 +549,19 @@ use overload
     my $singleton = bless \my($x), __PACKAGE__;
     sub new { return $singleton }
     sub AUTOLOAD { return $singleton }
+    sub can { return sub { return $singleton } }
 }
 
 # The null object can do anything
-sub can { return 1 }
+sub isa {
+    my ($proto, $class) = @_;
+
+    if ( $class =~ /^Tree(?:::.*)?$/ ) {
+        return 1;
+    }
+
+    return $proto->SUPER::isa( $class );
+}
 
 1;
 __END__
@@ -781,6 +788,22 @@ This allows you specify an event handler on the root and be guaranteed that it w
 
 =back
 
+=head1 NULL TREE
+
+If you call C<$self->parent> on a root node, it will return a Tree::Null object. This is an implementation of the Null Object pattern optimized for usage with L<Tree>. It will evaluate as false in every case (using L<overload>) and all methods called on it will return a Tree::Null object.
+
+=head2 Notes
+
+=over 4
+
+=item * Current, Tree::Null does B<not> inherit from Tree. This is so that all the methods will go through AUTOLOAD vs. the actual method.
+
+=item * However, calling isa() on a Tree::Null object will report that it is-a any object that is either Tree or in the Tree:: hierarchy.
+
+=item * The Tree::Null object is a singleton.
+
+=back
+
 =head1 CIRCULAR REFERENCES
 
 Copy the text from L<Tree::Simple>, rewording appropriately.
@@ -798,9 +821,10 @@ We use L<Devel::Cover> to test the code coverage of our tests. Below is the L<De
   ---------------------------- ------ ------ ------ ------ ------ ------ ------
   File                           stmt branch   cond    sub    pod   time  total
   ---------------------------- ------ ------ ------ ------ ------ ------ ------
-  blib/lib/Tree.pm              100.0   98.9   84.4  100.0  100.0   99.0   98.7
-  blib/lib/Tree/Binary.pm       100.0    n/a    n/a  100.0    n/a    1.0  100.0
-  Total                         100.0   98.9   84.4  100.0  100.0  100.0   98.9
+  blib/lib/Tree.pm              100.0   98.9   89.7  100.0  100.0   88.6   99.2
+  blib/lib/Tree/Binary.pm       100.0  100.0   66.7  100.0  100.0   10.4   97.6
+  blib/lib/Tree/Persist.pm      100.0   77.3   83.3  100.0  100.0    1.0   95.4
+  Total                         100.0   95.2   85.4  100.0  100.0  100.0   98.3
   ---------------------------- ------ ------ ------ ------ ------ ------ ------
 
 =head2 Missing Tests
