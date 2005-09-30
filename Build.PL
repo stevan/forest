@@ -12,7 +12,7 @@ my $build = Module::Build->new(
     requires => {
         'perl'         => '5.6.0',
         'Scalar::Util' => '1.10',
-        'Contextual::Return' => 'v0.0.2',
+        'Contextual::Return' => '0.0.2',
     },
     build_requires => {
         'Test::More'      => '0.47',
