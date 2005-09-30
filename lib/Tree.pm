@@ -61,24 +61,34 @@ sub new {
     return $class->clone( @_ )
         if blessed $class;
 
+    my $self = bless {}, $class;
+
+    $self->_init( @_ );
+
+    return $self;
+}
+
+sub _init {
+    my $self = shift;
     my ($value) = @_;
 
-    my $self = bless {
-        _children => [],
-        _handlers => {
-            add_child => [],
-            remove_child => [],
-            value => [],
-        },
-        _parent => $class->_null,
-        _height => 1,
-        _width => 1,
-        _depth => 0,
-        _error_handler => $ERROR_HANDLER,
-        _root => undef,
-        _value => $value,
-        _last_error => undef,
-    }, $class;
+    $self->{_parent} = $self->_null,
+    $self->{_children} = [];
+    $self->{_root} = undef,
+    $self->{_value} = $value,
+
+    $self->{_height} = 1,
+    $self->{_width} = 1,
+    $self->{_depth} = 0,
+
+    $self->{_error_handler} = $ERROR_HANDLER,
+    $self->{_last_error} = undef;
+
+    $self->{_handlers} = {
+        add_child    => [],
+        remove_child => [],
+        value        => [],
+    };
 
     $self->root( $self );
 

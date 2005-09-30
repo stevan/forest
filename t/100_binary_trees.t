@@ -30,7 +30,7 @@ $runs{stats}{func}->( $left,
     height => 1, width => 1, depth => 0, size => 1, is_root => 1, is_leaf => 1,
 );
 
-is( $root->left(), undef, "Calling left with no params is a getter" );
+is( $root->left(), '', "Calling left with no params is a getter" );
 is( $root->left( $left ), $root, "Calling left as a setter chains" );
 is( $root->left(), $left, "... and set the left" );
 
@@ -47,7 +47,7 @@ $runs{stats}{func}->( $left,
 );
 
 is( $root->left( undef ), $root, "Calling left with undef as a param" );
-is( $root->left(), undef, "... unsets left" );
+is( $root->left(), '', "... unsets left" );
 
 cmp_ok( $root->children, '==', 0, "children() works" );
 
@@ -65,16 +65,13 @@ $runs{stats}{func}->( $right,
     height => 1, width => 1, depth => 0, size => 1, is_root => 1, is_leaf => 1,
 );
 
-is( $root->right(), undef, "Calling right with no params is a getter" );
+is( $root->right(), '', "Calling right with no params is a getter" );
 is( $root->right( $right ), $root, "Calling right as a setter chains" );
 is( $root->right(), $right, "... and set the right" );
 
 cmp_ok( $root->children, '==', 1, "children() works" );
 ok( $root->has_child( $right ), "has_child(BOOL) works on right" );
-TODO: {
-          local $TODO = "This doesn't work right yet";
 cmp_ok( $root->has_child( $right ), '==', 1, "has_child(SCALAR) works on right" );
-      }
 
 $runs{stats}{func}->( $root,
     height => 2, width => 1, depth => 0, size => 2, is_root => 1, is_leaf => 0,
@@ -85,7 +82,7 @@ $runs{stats}{func}->( $right,
 );
 
 is( $root->right( undef ), $root, "Calling right with undef as a param" );
-is( $root->right(), undef, "... unsets right" );
+is( $root->right(), '', "... unsets right" );
 
 cmp_ok( $root->children, '==', 0, "children() works" );
 

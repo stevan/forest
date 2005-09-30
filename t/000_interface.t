@@ -39,7 +39,7 @@ my %methods = (
         add_event_handler event
     )],
     private => [ qw(
-        _null _fix_width _fix_height _fix_depth
+        _null _fix_width _fix_height _fix_depth _init
     )],
     book_keeping => [qw(
         DESTROY import

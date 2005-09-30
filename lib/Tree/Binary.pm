@@ -2,26 +2,40 @@
 package Tree::Binary;
 
 use Contextual::Return;
+use Scalar::Util qw( blessed );
 
 use Tree;
 our @ISA = qw( Tree );
 
+sub _init {
+    my $self = shift;
+    $self->SUPER::_init( @_ );
+
+    # Make this class a complete binary tree,
+    # filling in with Tree::Null as appropriate.
+    $self->{_children}->[$_] = $self->_null
+        for 0 .. 1;
+
+    return $self;
+}
+
 sub left {
     my $self = shift;
-    return $self->_set_child( 0, @_ );
+    return $self->_set_get_child( 0, @_ );
 }
 
 sub right {
     my $self = shift;
-    return $self->_set_child( 1, @_ );
+    return $self->_set_get_child( 1, @_ );
 }
 
-sub _set_child {
+sub _set_get_child {
     my $self = shift;
     my $index = shift;
 
     if ( @_ ) {
         my $node = shift;
+        $node ||= $self->_null;
 
         my $old = $self->children->[$index];
         $self->children->[$index] = $node;
@@ -52,7 +66,7 @@ sub children {
     my $self = shift;
 
     return (
-        DEFAULT { grep $_, @{$self->{_children}} }
+        DEFAULT { @{$self->{_children}} }
         SCALAR { scalar grep $_, @{$self->{_children}} }
         ARRAYREF { $self->{_children} }
     );
