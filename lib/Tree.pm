@@ -802,6 +802,8 @@ If you call C<$self->parent> on a root node, it will return a Tree::Null object.
 
 =item * The Tree::Null object is a singleton.
 
+=item * The Tree::Null object I<is> defined, though. I couldn't find a way to make it evaluate as undefined.
+
 =back
 
 =head1 CIRCULAR REFERENCES
