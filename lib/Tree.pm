@@ -796,7 +796,7 @@ If you call C<$self->parent> on a root node, it will return a Tree::Null object.
 
 =over 4
 
-=item * Current, Tree::Null does B<not> inherit from Tree. This is so that all the methods will go through AUTOLOAD vs. the actual method.
+=item * Tree::Null does B<not> inherit from Tree. This is so that all the methods will go through AUTOLOAD vs. the actual method.
 
 =item * However, calling isa() on a Tree::Null object will report that it is-a any object that is either Tree or in the Tree:: hierarchy.
 
