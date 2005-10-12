@@ -33,9 +33,9 @@ my $cleaner = Test::File::Cleaner->new( $dirname );
 </node>
 __END_FILE__
 
-    my $persist = $CLASS->connect(
+    my $persist = $CLASS->connect({
         filename => $filename,
-    );
+    });
 
     my $tree = $persist->tree;
 

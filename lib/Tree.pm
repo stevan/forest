@@ -267,9 +267,9 @@ sub mirror {
 
 sub add_event_handler {
     my $self = shift;
-    my (%opts) = @_;
+    my ($opts) = @_;
 
-    while ( my ($type,$handler) = each %opts ) {
+    while ( my ($type,$handler) = each %$opts ) {
         push @{$self->{_handlers}{$type}}, $handler;
     }
 
@@ -776,7 +776,7 @@ The parameters will be C<( $self, $old_value )> where C<$old_value> is what the 
 
 =over 4
 
-=item * B<add_event_handler( $type, $callback [, $callback, ... ])>
+=item * B<add_event_handler( $type => $callback [, $type => $callback, ... ])>
 
 You may choose to add event handlers for any known type. Callbacks must be references to subroutines. They will be called in the order they are defined.
 
@@ -852,6 +852,15 @@ Need to generalize some of the btree proofs to N-ary trees, if possible.
 =item * Traversals and memory
 
 Need tests for what happens with a traversal list and deleted nodes, particularly w.r.t. how memory is handled - should traversals weaken if use_weak_refs is in force?
+
+=item * Convert to use attr() and set_attr()
+
+As recommended by Damian in PBP
+
+=item * Remove all uses of Contextual::Return
+
+Contrary to recommendation by Damian in PBP - this is a UI nightmare solely
+for spiffiness value.
 
 =back
 

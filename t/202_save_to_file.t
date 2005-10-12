@@ -26,10 +26,10 @@ my $cleaner = Test::File::Cleaner->new( $dirname );
 
     my $tree = Tree->new( 'root' );
 
-    my $persist = $CLASS->create_datastore(
+    my $persist = $CLASS->create_datastore({
         filename => $filename,
         tree => $tree,
-    );
+    });
 
     file_exists_ok( $filename, 'Tree1 file exists' ); 
     file_contents_is( $filename, <<__END_FILE__, '... and the contents are good' );
@@ -51,10 +51,10 @@ __END_FILE__
         Tree->new( 'E' ),
     );
 
-    my $persist = $CLASS->create_datastore(
+    my $persist = $CLASS->create_datastore({
         filename => $filename,
         tree => $tree,
-    );
+    });
 
     file_exists_ok( $filename, 'Tree2 file exists' ); 
     file_contents_is( $filename, <<__END_FILE__, '... and the contents are good' );
@@ -84,10 +84,10 @@ __END_FILE__
         ),
     );
 
-    my $persist = $CLASS->create_datastore(
+    my $persist = $CLASS->create_datastore({
         filename => $filename,
         tree => $tree,
-    );
+    });
 
     file_exists_ok( $filename, 'Tree3 file exists' ); 
     file_contents_is( $filename, <<__END_FILE__, '... and the contents are good' );

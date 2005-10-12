@@ -14,7 +14,7 @@ use_ok( $CLASS )
 my $tree = $CLASS->new( 'root' );
 
 my @stack;
-is( $tree->add_event_handler(
+is( $tree->add_event_handler({
     add_child => sub {
         my ($node, @args) = @_;
         push @stack, "Added @args to $node";
@@ -23,7 +23,7 @@ is( $tree->add_event_handler(
         my ($node, @args) = @_;
         push @stack, "Value changed: @args from $node";
     },
-), $tree, "add_event_handler() chains and handles multiple entries" );
+}), $tree, "add_event_handler() chains and handles multiple entries" );
 
 
 my $child = $CLASS->new;
@@ -35,9 +35,11 @@ my $child2 = $CLASS->new;
 $child->add_child( $child2 );
 is( $stack[1], "Added $child2 to $child", "Events bubble upwards to the parent" );
 
-$child->add_event_handler( remove_child => sub {
-    my ($node, @args) = @_;
-    push @stack, "Removed @args from $node";
+$child->add_event_handler({
+    remove_child => sub {
+        my ($node, @args) = @_;
+        push @stack, "Removed @args from $node";
+    },
 });
 
 $child->remove_child( $child2 );

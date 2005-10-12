@@ -12,12 +12,12 @@ my $pad = ' ' x 4;
 
 sub connect {
     my $class = shift;
-    my %opts = @_;
+    my ($opts) = @_;
 
     my $self = bless {
-        _filename => $opts{filename},
+        _filename => $opts->{filename},
         _tree => undef,
-        _autocommit => (exists $opts{autocommit} ? $opts{autocommit} : 1),
+        _autocommit => (exists $opts->{autocommit} ? $opts->{autocommit} : 1),
         _changes => 0,
     }, $class;
 
@@ -28,20 +28,20 @@ sub connect {
         $self->commit if $self->autocommit;
     };
 
-    $self->{_tree}->add_event_handler(
+    $self->{_tree}->add_event_handler({
         add_child    => $sub,
         remove_child => $sub,
         value        => $sub,
-    );
+    });
 
     return $self;
 }
 
 sub create_datastore {
     my $class = shift;
-    my %opts = @_;
+    my ($opts) = @_;
 
-    $class->commit( %opts );
+    $class->commit( $opts );
 
     return $class;
 }
@@ -85,7 +85,7 @@ sub reload {
 sub commit {
     my $self = shift;
 
-    my %opts = @_;
+    my ($opts) = @_;
 
     my $fh;
     if ( blessed $self ) {
@@ -95,11 +95,11 @@ sub commit {
             or die "Cannot open '$self->{_filename}' for writing: $!\n";
     }
     else {
-        open $fh, '>', $opts{filename}
-            or die "Cannot open '$opts{filename}' for writing: $!\n";
+        open $fh, '>', $opts->{filename}
+            or die "Cannot open '$opts->{filename}' for writing: $!\n";
     }
 
-    print $fh $self->_build_string( $opts{tree} || $self->{_tree} );
+    print $fh $self->_build_string( $opts->{tree} || $self->{_tree} );
 
     close $fh;
 
@@ -182,7 +182,7 @@ This is meant to be a transparent persistence layer for Tree and its children. I
 
 =over 4
 
-=item * B<connect( %opts )>
+=item * B<connect({ %opts })>
 
 This will return a Tree::Persist object. C<%opts> includes:
 
@@ -198,7 +198,7 @@ This is a boolean option that determines whether or not changes to the tree will
 
 =back
 
-=item * B<create_datastore( %opts )>
+=item * B<create_datastore({ %opts })>
 
 This will create a new datastore for a tree. C<%opts> includes;
 

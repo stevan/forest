@@ -13,9 +13,9 @@ use_ok( $CLASS )
     or Test::More->builder->BAILOUT( "Cannot load $CLASS" );
 
 {
-    my $persist = $CLASS->connect(
+    my $persist = $CLASS->connect({
         filename => catfile( qw( t datafiles tree1.xml ) ),
-    );
+    });
 
     my $tree = $persist->tree();
 
@@ -28,9 +28,9 @@ use_ok( $CLASS )
 }
 
 {
-    my $persist = $CLASS->connect(
+    my $persist = $CLASS->connect({
         filename => catfile( qw( t datafiles tree2.xml ) ),
-    );
+    });
 
     my $tree = $persist->tree();
 

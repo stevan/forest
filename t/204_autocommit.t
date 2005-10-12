@@ -32,9 +32,9 @@ my $cleaner = Test::File::Cleaner->new( $dirname );
 </node>
 __END_FILE__
 
-    my $persist = $CLASS->connect(
+    my $persist = $CLASS->connect({
         filename => $filename,
-    );
+    });
 
     ok( $persist->autocommit, "Autocommit defaults to true" );
 
@@ -91,9 +91,9 @@ __END_FILE__
 </node>
 __END_FILE__
 
-    my $persist = $CLASS->connect(
+    my $persist = $CLASS->connect({
         filename => $filename,
-    );
+    });
 
     my $modtime = -M $filename;
 
