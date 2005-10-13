@@ -21,7 +21,7 @@ my %existing_methods = do {
 
 my %methods = (
     class => [ qw(
-        connect create_datastore
+        connect create_datastore _instantiate
     )],
     public => [ qw(
         autocommit tree

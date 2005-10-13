@@ -1,7 +1,6 @@
 package Tree::Persist::File;
 
-use Tree::Persist::Base;
-our @ISA = qw( Tree::Persist::Base );
+use base qw( Tree::Persist::Base );
 
 use Scalar::Util qw( blessed );
 

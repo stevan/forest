@@ -5,31 +5,42 @@ use warnings;
 
 sub connect {
     my $class = shift;
-    my ($opts) = @_;
 
-    use Tree::Persist::File::XML;
+    my $obj = $class->_instantiate( @_ );
 
-    my $self = Tree::Persist::File::XML->new( $opts );
+    $obj->reload;
 
-    $self->reload;
-
-    $self->_install_handlers;
-
-    return $self;
+    return $obj;
 }
 
 sub create_datastore {
     my $class = shift;
+
+    my $obj = $class->_instantiate( @_ );
+
+    $obj->{_changes} = 1;
+    $obj->commit;
+
+    return $obj;
+}
+
+sub _instantiate {
+    my $class = shift;
     my ($opts) = @_;
 
-    my $self = Tree::Persist::File::XML->new( $opts );
+    my $type = delete $opts->{type};
+    $type ||= 'File';
 
-    $self->{_changes} = 1;
-    $self->commit;
+    use Tree::Persist::File::XML;
+    use Tree::Persist::DB::SelfReferential;
 
-    $self->_install_handlers;
+    my $obj =
+        $type eq 'File' ? Tree::Persist::File::XML->new( $opts ) :
+        $type eq 'DB'   ? Tree::Persist::DB::SelfReferential->new( $opts ) :
+        die "Unknown type '$type'"
+    ;
 
-    return $self;
+    return $obj;
 }
 
 1;

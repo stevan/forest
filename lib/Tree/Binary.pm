@@ -4,8 +4,7 @@ package Tree::Binary;
 use Contextual::Return;
 use Scalar::Util qw( blessed );
 
-use Tree;
-our @ISA = qw( Tree );
+use base qw( Tree );
 
 sub _init {
     my $self = shift;

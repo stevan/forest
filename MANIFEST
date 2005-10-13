@@ -6,6 +6,8 @@ lib/Tree.pm
 lib/Tree/Binary.pm
 lib/Tree/Persist.pm
 lib/Tree/Persist/Base.pm
+lib/Tree/Persist/DB.pm
+lib/Tree/Persist/DB/SelfReferential.pm
 lib/Tree/Persist/File.pm
 lib/Tree/Persist/File/XML.pm
 t/000_interface.t
@@ -32,6 +34,7 @@ t/Tree_Persist/001_load_from_file.t
 t/Tree_Persist/002_save_to_file.t
 t/Tree_Persist/003_associate_with_file.t
 t/Tree_Persist/004_autocommit.t
+t/Tree_Persist/005_load_from_db.t
 t/998_pod.t
 t/999_pod_coverage.t
 t/tests.pm

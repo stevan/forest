@@ -1,7 +1,6 @@
 package Tree::Persist::File::XML;
 
-use Tree::Persist::File;
-our @ISA = qw( Tree::Persist::File );
+use base qw( Tree::Persist::File );
 
 use Scalar::Util qw( blessed refaddr );
 use XML::Parser;
