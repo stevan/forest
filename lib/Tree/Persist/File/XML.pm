@@ -24,10 +24,8 @@ sub reload {
                     $stack[-1]->add_child( $node );
                 }
                 else {
-                    $self->{_tree} = $node;
+                    $self->set_tree( $node );
                 }
-
-                $self->{_mapping}{refaddr($node)} = $linenum++;
 
                 push @stack, $node;
             },

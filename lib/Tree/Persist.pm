@@ -13,16 +13,7 @@ sub connect {
 
     $self->reload;
 
-    my $sub = sub {
-        $self->{_changes}++;
-        $self->commit if $self->autocommit;
-    };
-
-    $self->{_tree}->add_event_handler({
-        add_child    => $sub,
-        remove_child => $sub,
-        value        => $sub,
-    });
+    $self->_install_handlers;
 
     return $self;
 }
@@ -32,10 +23,13 @@ sub create_datastore {
     my ($opts) = @_;
 
     my $self = Tree::Persist::File::XML->new( $opts );
+
     $self->{_changes} = 1;
     $self->commit;
 
-    return $class;
+    $self->_install_handlers;
+
+    return $self;
 }
 
 1;
@@ -59,7 +53,8 @@ This is meant to be a transparent persistence layer for Tree and its children. I
 
 =item * B<connect({ %opts })>
 
-This will return a Tree::Persist object. C<%opts> includes:
+This will return an object that will provide persistence. It will B<not> be an
+object that inherits from Tree::Persist. C<%opts> includes:
 
 =over 4
 
@@ -75,7 +70,8 @@ This is a boolean option that determines whether or not changes to the tree will
 
 =item * B<create_datastore({ %opts })>
 
-This will create a new datastore for a tree. C<%opts> includes;
+This will create a new datastore for a tree. It will then return the object
+used to create that datastore, as if you had called L<connect()> on it. C<%opts> includes;
 
 =over 4
 
@@ -92,6 +88,9 @@ This is the filename that is used as the XML datastore. It I<will> be B<overwrit
 =back
 
 =head2 Behaviors
+
+These behaviors apply to the object returned from L<connect()> or
+L<create_datastore()>.
 
 =over 4
 
