@@ -27,7 +27,7 @@ my $build = Module::Build->new(
         'Scalar::Util'    => '1.10',
     },
     create_makefile_pl => 'traditional',
-#    recursive_test_files => 1,
+    recursive_test_files => 1,
     add_to_cleanup => [
         'META.yml', '*.bak', '*.gz', 'Makefile.PL',
     ],
