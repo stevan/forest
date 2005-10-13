@@ -14,7 +14,7 @@ use_ok( $CLASS )
 
 {
     my $persist = $CLASS->connect({
-        filename => catfile( qw( t datafiles tree1.xml ) ),
+        filename => catfile( qw( t Tree_Persist datafiles tree1.xml ) ),
     });
 
     my $tree = $persist->tree();
@@ -29,7 +29,7 @@ use_ok( $CLASS )
 
 {
     my $persist = $CLASS->connect({
-        filename => catfile( qw( t datafiles tree2.xml ) ),
+        filename => catfile( qw( t Tree_Persist datafiles tree2.xml ) ),
     });
 
     my $tree = $persist->tree();

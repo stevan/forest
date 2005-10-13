@@ -17,7 +17,7 @@ my $CLASS = 'Tree::Persist';
 use_ok( $CLASS )
     or Test::More->builder->BAILOUT( "Cannot load $CLASS" );
 
-my $dirname = catfile( qw( t datafiles ) );
+my $dirname = catfile( qw( t Tree_Persist datafiles ) );
 
 my $cleaner = Test::File::Cleaner->new( $dirname );
 

@@ -42,7 +42,7 @@ can_ok( $CLASS, @{ $methods{class} } );
 delete @existing_methods{@{$methods{class}}};
 
 my $persist = $CLASS->connect({
-    filename => catfile( qw( t datafiles tree1.xml ) ),
+    filename => catfile( qw( t Tree_Persist datafiles tree1.xml ) ),
 });
 TODO: {
     local $TODO = "Hmm...";

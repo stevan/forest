@@ -71,7 +71,7 @@ This is a boolean option that determines whether or not changes to the tree will
 =item * B<create_datastore({ %opts })>
 
 This will create a new datastore for a tree. It will then return the object
-used to create that datastore, as if you had called L<connect()> on it. C<%opts> includes;
+used to create that datastore, as if you had called L<connect()>. C<%opts> includes;
 
 =over 4
 

@@ -16,7 +16,7 @@ use Test::File::Cleaner;
 use Test::File::Contents;
 use Scalar::Util qw( refaddr );
 
-my $dirname = catfile( qw( t datafiles ) );
+my $dirname = catfile( qw( t Tree_Persist datafiles ) );
 
 my $cleaner = Test::File::Cleaner->new( $dirname );
 
