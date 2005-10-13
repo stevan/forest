@@ -3,23 +3,13 @@ package Tree::Persist;
 use strict;
 use warnings;
 
-use Tree;
-use XML::Parser;
-
-use Scalar::Util qw( blessed refaddr );
-
-my $pad = ' ' x 4;
-
 sub connect {
     my $class = shift;
     my ($opts) = @_;
 
-    my $self = bless {
-        _filename => $opts->{filename},
-        _tree => undef,
-        _autocommit => (exists $opts->{autocommit} ? $opts->{autocommit} : 1),
-        _changes => 0,
-    }, $class;
+    use Tree::Persist::File::XML;
+
+    my $self = Tree::Persist::File::XML->new( $opts );
 
     $self->reload;
 
@@ -41,126 +31,11 @@ sub create_datastore {
     my $class = shift;
     my ($opts) = @_;
 
-    $class->commit( $opts );
+    my $self = Tree::Persist::File::XML->new( $opts );
+    $self->{_changes} = 1;
+    $self->commit;
 
     return $class;
-}
-
-sub reload {
-    my $self = shift;
-
-    my $linenum = 0;
-    my @stack;
-    my $parser = XML::Parser->new(
-        Handlers => {
-            Start => sub {
-                shift;
-                my ($name, %args) = @_;
-
-                my $node = $args{class}->new( $args{value} );
-
-                if ( @stack ) {
-                    $stack[-1]->add_child( $node );
-                }
-                else {
-                    $self->{_tree} = $node;
-                }
-
-                $self->{_mapping}{refaddr($node)} = $linenum++;
-
-                push @stack, $node;
-            },
-            End => sub {
-                $linenum++;
-                pop @stack;
-            },
-        },
-    );
-
-    $parser->parsefile( $self->{_filename} );
-
-    return $self;
-}
-
-sub commit {
-    my $self = shift;
-
-    my ($opts) = @_;
-
-    my $fh;
-    if ( blessed $self ) {
-        return unless $self->{_changes};
-
-        open $fh, '>', $self->{_filename}
-            or die "Cannot open '$self->{_filename}' for writing: $!\n";
-    }
-    else {
-        open $fh, '>', $opts->{filename}
-            or die "Cannot open '$opts->{filename}' for writing: $!\n";
-    }
-
-    print $fh $self->_build_string( $opts->{tree} || $self->{_tree} );
-
-    close $fh;
-
-    $self->{_changes} = 0 if blessed $self;
-
-    return $self;
-}
-
-sub _build_string {
-    my $self = shift;
-    my ($tree) = @_;
-
-    my $str = '';
-
-    my $curr_depth = $tree->depth;
-    my @closer;
-    foreach my $node ( $tree->traverse ) {
-        my $new_depth = $node->depth;
-        $str .= pop(@closer) while @closer && $curr_depth-- >= $new_depth;
-
-        $curr_depth = $new_depth;
-        $str .= ($pad x $curr_depth)
-                . '<node class="'
-                . blessed($node)
-                . '" value="'
-                . $node->value
-                . '">' . $/;
-        push @closer, ($pad x $curr_depth) . "</node>\n";
-    }
-    $str .= pop(@closer) while @closer;
-
-    return $str;
-}
-
-sub autocommit {
-    my $self = shift;
-
-    return 0 unless blessed $self;
-
-    if ( @_ ) {
-        (my $old, $self->{_autocommit}) = ($self->{_autocommit}, shift );
-        return $old;
-    }
-    else {
-        return $self->{_autocommit};
-    }
-}
-
-sub rollback {
-    my $self = shift;
-
-    $self->reload if $self->{_changes};
-
-    $self->{_changes} = 0;
-
-    return $self;
-}
-
-sub tree {
-    my $self = shift;
-    return $self->{_tree};
 }
 
 1;

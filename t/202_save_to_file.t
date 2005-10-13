@@ -27,8 +27,8 @@ my $cleaner = Test::File::Cleaner->new( $dirname );
     my $tree = Tree->new( 'root' );
 
     my $persist = $CLASS->create_datastore({
-        filename => $filename,
         tree => $tree,
+        filename => $filename,
     });
 
     file_exists_ok( $filename, 'Tree1 file exists' ); 
@@ -52,8 +52,8 @@ __END_FILE__
     );
 
     my $persist = $CLASS->create_datastore({
-        filename => $filename,
         tree => $tree,
+        filename => $filename,
     });
 
     file_exists_ok( $filename, 'Tree2 file exists' ); 

@@ -5,6 +5,9 @@ MANIFEST			This list of files
 lib/Tree.pm
 lib/Tree/Binary.pm
 lib/Tree/Persist.pm
+lib/Tree/Persist/Base.pm
+lib/Tree/Persist/File.pm
+lib/Tree/Persist/File/XML.pm
 t/000_interface.t
 t/001_root_node.t
 t/002_null_object.t
