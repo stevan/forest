@@ -1,5 +1,8 @@
 package Tree::Persist::File::XML;
 
+use strict;
+use warnings;
+
 use base qw( Tree::Persist::File );
 
 use Scalar::Util qw( blessed refaddr );

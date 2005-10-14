@@ -10,6 +10,7 @@ lib/Tree/Persist/DB.pm
 lib/Tree/Persist/DB/SelfReferential.pm
 lib/Tree/Persist/File.pm
 lib/Tree/Persist/File/XML.pm
+sql/self_referential.sql
 t/000_interface.t
 t/001_root_node.t
 t/002_null_object.t

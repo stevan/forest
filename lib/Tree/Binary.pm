@@ -1,5 +1,7 @@
-
 package Tree::Binary;
+
+use strict;
+use warnings;
 
 use Contextual::Return;
 use Scalar::Util qw( blessed );

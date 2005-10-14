@@ -1,5 +1,8 @@
 package Tree::Persist::File;
 
+use strict;
+use warnings;
+
 use base qw( Tree::Persist::Base );
 
 use Scalar::Util qw( blessed );
