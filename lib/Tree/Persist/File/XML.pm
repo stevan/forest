@@ -14,6 +14,7 @@ sub reload {
 
     my $linenum = 0;
     my @stack;
+    my $tree;
     my $parser = XML::Parser->new(
         Handlers => {
             Start => sub {
@@ -26,7 +27,7 @@ sub reload {
                     $stack[-1]->add_child( $node );
                 }
                 else {
-                    $self->set_tree( $node );
+                    $tree = $node;
                 }
 
                 push @stack, $node;
@@ -39,6 +40,8 @@ sub reload {
     );
 
     $parser->parsefile( $self->{_filename} );
+
+    $self->set_tree( $tree );
 
     return $self;
 }

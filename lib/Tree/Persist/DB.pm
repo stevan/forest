@@ -18,6 +18,15 @@ sub new {
 }
 
 sub commit {
+    my $self = shift;
+
+    return unless $self->{_changes};
+
+    $self->_commit;
+
+    $self->{_changes} = 0;
+
+    return $self;
 }
 
 1;

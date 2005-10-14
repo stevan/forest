@@ -5,6 +5,8 @@ use warnings;
 
 use base qw( Tree::Persist::DB );
 
+use Scalar::Util qw( blessed );
+
 use Tree;
 
 sub new {
@@ -36,11 +38,9 @@ sub reload {
     $sth->finish;
 
     my $tree = $class->new( $value );
-    $self->set_tree( $tree );
 
-    $self->{_mapping} = {
-        $id => $tree,
-    };
+    $self->{_mapping} ||= {};
+    $self->{_mapping}{$id} = $tree;
 
     my @parents = ( $id );
     while ( my $parent_id = shift @parents ) {
@@ -60,6 +60,49 @@ sub reload {
 
         $sth_child->finish;
     }
+
+    $self->set_tree( $tree );
+
+    return $self;
+}
+
+sub _commit {
+    my $self = shift;
+
+    my $dbh = $self->{_dbh};
+    my %sql = $self->_build_sql;
+
+    my $tree = $self->tree;
+
+    my ($id) = do {
+        my $sth = $dbh->prepare( $sql{next_id} );
+        $sth->execute;
+        $sth->fetchrow_array;
+    };
+
+    my $sth = $dbh->prepare( $sql{create_node} );
+    $sth->execute(
+        $id, undef, blessed($tree), $tree->value,
+    );
+
+    $self->{_mapping} ||= {};
+    $self->{_mapping}{ $id } = $tree;
+
+    my @parents = ( $id );
+    while ( my $parent_id = shift @parents ) {
+        my $parent = $self->{_mapping}{$parent_id};
+
+        foreach my $child ($parent->children) {
+            $sth->execute(
+                ++$id, $parent_id, blessed($child), $child->value,
+            );
+
+            $self->{_mapping}{$id} = $child;
+            push @parents, $id;
+        }
+    }
+
+    $sth->finish;
 
     return $self;
 }
@@ -82,6 +125,18 @@ SELECT $self->{_id_col}        AS id
       ,$self->{_value_col}     AS value
   FROM $self->{_table} AS tree
  WHERE tree.$self->{_parent_id_col} = ?
+__END_SQL__
+        next_id => <<"__END_SQL__",
+SELECT MAX($self->{_id_col}) + 1
+  FROM $self->{_table}
+__END_SQL__
+        create_node => <<"__END_SQL__",
+INSERT INTO $self->{_table} (
+    $self->{_id_col}
+   ,$self->{_parent_id_col}
+   ,$self->{_class_col}
+   ,$self->{_value_col}
+) VALUES ( ?, ?, ?, ? )
 __END_SQL__
     );
 

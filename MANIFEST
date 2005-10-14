@@ -36,6 +36,7 @@ t/Tree_Persist/002_save_to_file.t
 t/Tree_Persist/003_associate_with_file.t
 t/Tree_Persist/004_autocommit.t
 t/Tree_Persist/005_load_from_db.t
+t/Tree_Persist/006_save_to_db.t
 t/998_pod.t
 t/999_pod_coverage.t
 t/tests.pm
