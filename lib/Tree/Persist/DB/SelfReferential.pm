@@ -5,7 +5,7 @@ use warnings;
 
 use base qw( Tree::Persist::DB );
 
-use Scalar::Util qw( blessed );
+use Scalar::Util qw( blessed refaddr );
 
 use Tree;
 
@@ -41,6 +41,7 @@ sub reload {
 
     $self->{_mapping} ||= {};
     $self->{_mapping}{$id} = $tree;
+    $tree->{_id} = $id;
 
     my @parents = ( $id );
     while ( my $parent_id = shift @parents ) {
@@ -56,6 +57,7 @@ sub reload {
             $parent->add_child( $node );
             push @parents, $id;
             $self->{_mapping}{$id} = $node;
+            $node->{_id} = $id;
         }
 
         $sth_child->finish;
@@ -74,31 +76,34 @@ sub _commit {
 
     my $tree = $self->tree;
 
-    my ($id) = do {
+    my $next_id = do {
         my $sth = $dbh->prepare( $sql{next_id} );
         $sth->execute;
         $sth->fetchrow_array;
     };
 
+    my $root_id = $tree->{_id} ||= $next_id++;
+
     my $sth = $dbh->prepare( $sql{create_node} );
     $sth->execute(
-        $id, undef, blessed($tree), $tree->value,
+        $root_id, undef, blessed($tree), $tree->value,
     );
 
     $self->{_mapping} ||= {};
-    $self->{_mapping}{ $id } = $tree;
+    $self->{_mapping}{ $root_id } = $tree;
 
-    my @parents = ( $id );
+    my @parents = ( $root_id );
     while ( my $parent_id = shift @parents ) {
         my $parent = $self->{_mapping}{$parent_id};
 
         foreach my $child ($parent->children) {
+            my $child_id = $child->{_id} ||= $next_id++;
             $sth->execute(
-                ++$id, $parent_id, blessed($child), $child->value,
+                $child_id, $parent_id, blessed($child), $child->value,
             );
 
-            $self->{_mapping}{$id} = $child;
-            push @parents, $id;
+            $self->{_mapping}{$child_id} = $child;
+            push @parents, $child_id;
         }
     }
 
@@ -131,7 +136,7 @@ SELECT MAX($self->{_id_col}) + 1
   FROM $self->{_table}
 __END_SQL__
         create_node => <<"__END_SQL__",
-INSERT INTO $self->{_table} (
+REPLACE INTO $self->{_table} (
     $self->{_id_col}
    ,$self->{_parent_id_col}
    ,$self->{_class_col}

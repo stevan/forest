@@ -13,6 +13,7 @@ sub new {
 
     $self->{_dbh} = $opts->{dbh};
     $self->{_table} = $opts->{table};
+    $self->{_actions} = [];
 
     return $self;
 }
@@ -27,6 +28,15 @@ sub commit {
     $self->{_changes} = 0;
 
     return $self;
+}
+
+sub _remove_child_handler {
+    my $self = shift;
+
+    return sub {
+        $self->{_changes}++;
+        $self->commit if $self->autocommit;
+    };
 }
 
 1;

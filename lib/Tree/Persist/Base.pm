@@ -63,18 +63,37 @@ sub set_tree {
 sub _install_handlers {
     my $self = shift;
 
-    my $sub = sub {
-        $self->{_changes}++;
-        $self->commit if $self->autocommit;
-    };
-
     $self->{_tree}->add_event_handler({
-        add_child    => $sub,
-        remove_child => $sub,
-        value        => $sub,
+        add_child    => $self->_add_child_handler,
+        remove_child => $self->_remove_child_handler,
+        value        => $self->_value_handler,
     });
 
     return $self;
+}
+
+sub _add_child_handler {
+    my $self = shift;
+    return sub {
+        $self->{_changes}++;
+        $self->commit if $self->autocommit;
+    };
+}
+
+sub _remove_child_handler {
+    my $self = shift;
+    return sub {
+        $self->{_changes}++;
+        $self->commit if $self->autocommit;
+    };
+}
+
+sub _value_handler {
+    my $self = shift;
+    return sub {
+        $self->{_changes}++;
+        $self->commit if $self->autocommit;
+    };
 }
 
 1;
