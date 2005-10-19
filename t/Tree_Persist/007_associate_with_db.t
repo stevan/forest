@@ -5,7 +5,7 @@ use Test::More;
 
 use t::tests qw( %runs );
 
-plan tests => 9 + 1 * $runs{stats}{plan};
+plan tests => 5 + 1 * $runs{stats}{plan};
 
 my $CLASS = 'Tree::Persist';
 use_ok( $CLASS )
@@ -88,6 +88,16 @@ sub get_values {
 
     $tree->remove_child( $child );
 
+    $values = get_values( $dbh );
+    is_deeply(
+        $values,
+        [
+            { id => 1, parent_id => undef, class => 'Tree', value => 'root' },
+            { id => 2, parent_id => undef, class => 'Tree', value => 'child' },
+            { id => 3, parent_id =>     1, class => 'Tree', value => 'child2' },
+        ],
+        "After first remove_child, everything ok",
+    );
 }
 __END__
 
