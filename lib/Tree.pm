@@ -316,7 +316,7 @@ sub set_value {
     my $old_value = $self->SUPER::value();
     $self->SUPER::set_value( @_ );
 
-    $self->event( 'value', $self, $new_value, $old_value );
+    $self->event( 'value', $self, $old_value, $new_value );
 
     return $self;
 }
@@ -548,8 +548,8 @@ row ids.
 
 It is recommended that you store your metadata in a subhashref and not in the
 top-level metadata hashref, keyed by your package name. L<Tree::Persist> does
-this, using the key "TREE_PERSIST". This will help prevent clobbering of
-metadata.
+this, using a unique key for each persistence layer associated with that tree.
+This will help prevent clobbering of metadata.
 
 =back
 

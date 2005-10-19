@@ -89,9 +89,9 @@ sub _add_child_handler {
     return sub {
         my ($parent, @children) = @_;
         push @{$self->{_changes}}, {
-            action => 'add',
+            action => 'add_child',
             parent => $parent,
-            children => @children,
+            children => [ @children ],
         };
         $self->commit if $self->autocommit;
     };
@@ -102,9 +102,9 @@ sub _remove_child_handler {
     return sub {
         my ($parent, @children) = @_;
         push @{$self->{_changes}}, {
-            action => 'remove',
+            action => 'remove_child',
             parent => $parent,
-            children => @children,
+            children => [ @children ],
         };
         $self->commit if $self->autocommit;
     };

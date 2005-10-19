@@ -5,7 +5,7 @@ use Test::More;
 
 use t::tests qw( %runs );
 
-plan tests => 5 + 1 * $runs{stats}{plan};
+plan tests => 8 + 1 * $runs{stats}{plan};
 
 my $CLASS = 'Tree::Persist';
 use_ok( $CLASS )
@@ -59,14 +59,25 @@ sub get_values {
     );
     is( $tree->value, 'root', "The tree's value was loaded correctly" );
 
-    my $child = Tree->new( 'child' );
-    $tree->add_child( $child );
+    $tree->set_value( 'toor' );
 
     my $values = get_values( $dbh );
     is_deeply(
         $values,
         [
-            { id => 1, parent_id => undef, class => 'Tree', value => 'root' },
+            { id => 1, parent_id => undef, class => 'Tree', value => 'toor' },
+        ],
+        "After set_value on parent, everything ok.",
+    );
+
+    my $child = Tree->new( 'child' );
+    $tree->add_child( $child );
+
+    $values = get_values( $dbh );
+    is_deeply(
+        $values,
+        [
+            { id => 1, parent_id => undef, class => 'Tree', value => 'toor' },
             { id => 2, parent_id =>     1, class => 'Tree', value => 'child' },
         ],
         "After first add_child, everything ok",
@@ -79,7 +90,7 @@ sub get_values {
     is_deeply(
         $values,
         [
-            { id => 1, parent_id => undef, class => 'Tree', value => 'root' },
+            { id => 1, parent_id => undef, class => 'Tree', value => 'toor' },
             { id => 2, parent_id =>     1, class => 'Tree', value => 'child' },
             { id => 3, parent_id =>     1, class => 'Tree', value => 'child2' },
         ],
@@ -92,17 +103,36 @@ sub get_values {
     is_deeply(
         $values,
         [
-            { id => 1, parent_id => undef, class => 'Tree', value => 'root' },
+            { id => 1, parent_id => undef, class => 'Tree', value => 'toor' },
             { id => 2, parent_id => undef, class => 'Tree', value => 'child' },
             { id => 3, parent_id =>     1, class => 'Tree', value => 'child2' },
         ],
         "After first remove_child, everything ok",
     );
+
+    $child2->set_value( 'New value' );
+
+    $values = get_values( $dbh );
+    is_deeply(
+        $values,
+        [
+            { id => 1, parent_id => undef, class => 'Tree', value => 'toor' },
+            { id => 2, parent_id => undef, class => 'Tree', value => 'child' },
+            { id => 3, parent_id => 1, class => 'Tree', value => 'New value' },
+        ],
+        "After child set_value, everything ok",
+    );
+
+    $child->set_value( 'Not reflected' );
+
+    $values = get_values( $dbh );
+    is_deeply(
+        $values,
+        [
+            { id => 1, parent_id => undef, class => 'Tree', value => 'toor' },
+            { id => 2, parent_id => undef, class => 'Tree', value => 'child' },
+            { id => 3, parent_id => 1, class => 'Tree', value => 'New value' },
+        ],
+        "After removed child set_value, the DB wasn't affected",
+    );
 }
-__END__
-
-    $child2->value( 'New value' );
-
-__END_FILE__
-}
-
