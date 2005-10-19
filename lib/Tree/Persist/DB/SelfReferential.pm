@@ -41,7 +41,7 @@ sub reload {
 
     $self->{_mapping} ||= {};
     $self->{_mapping}{$id} = $tree;
-    $tree->{_id} = $id;
+    $tree->meta->{TREE_PERSIST}{id} = $id;
 
     my @parents = ( $id );
     while ( my $parent_id = shift @parents ) {
@@ -57,7 +57,7 @@ sub reload {
             $parent->add_child( $node );
             push @parents, $id;
             $self->{_mapping}{$id} = $node;
-            $node->{_id} = $id;
+            $node->meta->{TREE_PERSIST}{id} = $id;
         }
 
         $sth_child->finish;
@@ -82,7 +82,7 @@ sub _create {
         $sth->fetchrow_array;
     };
 
-    my $root_id = $tree->{_id} ||= $next_id++;
+    my $root_id = $tree->meta->{TREE_PERSIST}{id} ||= $next_id++;
 
     my $sth = $dbh->prepare( $sql{create_node} );
     $sth->execute(
@@ -97,7 +97,7 @@ sub _create {
         my $parent = $self->{_mapping}{$parent_id};
 
         foreach my $child ($parent->children) {
-            my $child_id = $child->{_id} ||= $next_id++;
+            my $child_id = $child->meta->{TREE_PERSIST}{id} ||= $next_id++;
             $sth->execute(
                 $child_id, $parent_id, blessed($child), $child->value,
             );
