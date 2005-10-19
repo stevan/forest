@@ -12,7 +12,7 @@ sub new {
     my $self = bless {
         _tree => undef,
         _autocommit => (exists $opts->{autocommit} ? $opts->{autocommit} : 1),
-        _changes => 0,
+        _changes => [],
     }, $class;
 
     if ( exists $opts->{tree} ) {
@@ -37,9 +37,21 @@ sub autocommit {
 sub rollback {
     my $self = shift;
 
-    $self->reload if $self->{_changes};
+    if ( @{$self->{_changes}} ) {
+        $self->reload;
+        $self->{_changes} = [];
+    }
 
-    $self->{_changes} = 0;
+    return $self;
+}
+
+sub commit {
+    my $self = shift;
+
+    if ( @{$self->{_changes}} ) {
+        $self->_commit;
+        $self->{_changes} = [];
+    }
 
     return $self;
 }
@@ -75,7 +87,12 @@ sub _install_handlers {
 sub _add_child_handler {
     my $self = shift;
     return sub {
-        $self->{_changes}++;
+        my ($parent, @children) = @_;
+        push @{$self->{_changes}}, {
+            action => 'add',
+            parent => $parent,
+            children => @children,
+        };
         $self->commit if $self->autocommit;
     };
 }
@@ -83,7 +100,12 @@ sub _add_child_handler {
 sub _remove_child_handler {
     my $self = shift;
     return sub {
-        $self->{_changes}++;
+        my ($parent, @children) = @_;
+        push @{$self->{_changes}}, {
+            action => 'remove',
+            parent => $parent,
+            children => @children,
+        };
         $self->commit if $self->autocommit;
     };
 }
@@ -91,7 +113,13 @@ sub _remove_child_handler {
 sub _value_handler {
     my $self = shift;
     return sub {
-        $self->{_changes}++;
+        my ($node, $old, $new) = @_;
+        push @{$self->{_changes}}, {
+            action => 'change_value',
+            node => $node,
+            old_value => $old,
+            new_value => $new,
+        };
         $self->commit if $self->autocommit;
     };
 }

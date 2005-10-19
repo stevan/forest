@@ -18,26 +18,5 @@ sub new {
     return $self;
 }
 
-sub commit {
-    my $self = shift;
-
-    return unless $self->{_changes};
-
-    $self->_commit;
-
-    $self->{_changes} = 0;
-
-    return $self;
-}
-
-sub _remove_child_handler {
-    my $self = shift;
-
-    return sub {
-        $self->{_changes}++;
-        $self->commit if $self->autocommit;
-    };
-}
-
 1;
 __END__

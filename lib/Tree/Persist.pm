@@ -18,7 +18,8 @@ sub create_datastore {
 
     my $obj = $class->_instantiate( @_ );
 
-    $obj->{_changes} = 1;
+    #XXX This is such a hack!
+    push @{$obj->{_changes}}, {};
     $obj->commit;
 
     return $obj;

@@ -18,10 +18,8 @@ sub new {
     return $self;
 }
 
-sub commit {
+sub _commit {
     my $self = shift;
-
-    return unless $self->{_changes};
 
     open my $fh, '>', $self->{_filename}
         or die "Cannot open '$self->{_filename}' for writing: $!\n";
@@ -29,8 +27,6 @@ sub commit {
     print $fh $self->_build_string( $self->{_tree} );
 
     close $fh;
-
-    $self->{_changes} = 0;
 
     return $self;
 }
