@@ -31,7 +31,7 @@ my %methods = (
     public => [ qw(
         is_root is_leaf
         add_child remove_child has_child
-        root parent children
+        root set_root parent children
         height width depth size
         error_handler error last_error
         value set_value
@@ -44,7 +44,7 @@ my %methods = (
 #    book_keeping => [qw(
 #    )],
     imported => [qw(
-        blessed refaddr
+        blessed refaddr weaken
         GLOBREF NUM SCALARREF SCALAR VALUE OBJREF VOID LIST NONVOID BOOL REF STR DEFAULT HASHREF ARRAYREF CODEREF
     )],
 );

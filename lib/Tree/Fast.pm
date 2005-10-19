@@ -27,9 +27,6 @@ sub _init {
     $self->{_parent} = $self->_null,
     $self->{_children} = [];
     $self->{_value} = $value,
-    $self->{_root} = undef,
-
-    $self->set_root( $self );
 
     return $self;
 }
@@ -60,7 +57,6 @@ sub add_child {
 
     for my $node ( @nodes ) {
         $node->set_parent( $self );
-        $node->set_root( $self->root );
     }
 
     if ( defined $index ) {
@@ -86,7 +82,6 @@ sub remove_child {
     for my $idx (sort { $b <=> $a } @indices) {
         my $node = splice @{$self->{_children}}, $idx, 1;
         $node->set_parent( $node->_null );
-        $node->set_root( $node );
 
         push @return, $node;
     }
@@ -122,28 +117,6 @@ sub children {
             return @{$self->{_children}};
         }
     }
-}
-
-sub root {
-    my $self = shift;
-    return $self->{_root};
-}
-
-sub set_root {
-    my $self = shift;
-
-    $self->{_root} = shift;
-    weaken( $self->{_root} );
-
-    # Propagate the root-change down to all children
-    # Because this is called from DESTROY, we need to verify
-    # that the child still exists because destruction in Perl5
-    # is neither ordered nor timely.
-
-    $_->set_root( $self->{_root} )
-        for grep { $_ } @{$self->{_children}};
-
-    return $self;
 }
 
 sub value {

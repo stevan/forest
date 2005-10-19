@@ -7,7 +7,7 @@ use warnings;
 
 our $VERSION = '1.00';
 
-use Scalar::Util qw( blessed refaddr );
+use Scalar::Util qw( blessed refaddr weaken );
 use Contextual::Return;
 
 use base 'Tree::Fast';
@@ -57,6 +57,9 @@ sub _init {
         remove_child => [],
         value        => [],
     };
+
+    $self->{_root} = undef,
+    $self->set_root( $self );
 
     return $self;
 }
@@ -123,6 +126,7 @@ sub add_child {
     $self->SUPER::add_child( (defined $index ? $index : () ), @nodes );
 
     for my $node ( @nodes ) {
+        $node->set_root( $self->root );
         $node->_fix_depth;
     }
 
@@ -175,7 +179,11 @@ sub remove_child {
 
     my @return = $self->SUPER::remove_child( @indices );
 
-    $_->_fix_depth for @return;
+    for my $node ( @return ) {
+        $node->set_root( $node );
+        $node->_fix_depth;
+    }
+
     $self->_fix_height;
     $self->_fix_width;
 
@@ -248,6 +256,28 @@ sub has_child {
 }
 
 # These are the smart accessors
+
+sub root {
+    my $self = shift;
+    return $self->{_root};
+}
+
+sub set_root {
+    my $self = shift;
+
+    $self->{_root} = shift;
+    weaken( $self->{_root} );
+
+    # Propagate the root-change down to all children
+    # Because this is called from DESTROY, we need to verify
+    # that the child still exists because destruction in Perl5
+    # is neither ordered nor timely.
+
+    $_->set_root( $self->{_root} )
+        for grep { $_ } @{$self->{_children}};
+
+    return $self;
+}
 
 for my $name ( qw( height width depth ) ) {
     no strict 'refs';
