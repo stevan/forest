@@ -61,6 +61,8 @@ sub _init {
     $self->{_root} = undef,
     $self->set_root( $self );
 
+    $self->{_meta} = {};
+
     return $self;
 }
 
@@ -293,6 +295,11 @@ for my $name ( qw( height width depth ) ) {
 
         return $self->{"_$name"};
     };
+}
+
+sub meta {
+    my $self = shift;
+    return $self->{_meta};
 }
 
 sub size {
@@ -532,6 +539,17 @@ This will return the number of nodes within C<$tree>. A leaf has a size of 1. A 
 =item * B<value([$value])>
 
 This will return the value stored in the node. If $value is passed in, it will set the value stored in the node to $value, then return $value.
+
+=item * B<meta()>
+
+This will return a hashref that can be used to store whatever metadata the client
+wishes to store. For example, L<Tree::Persist::DB> uses this to store database
+row ids.
+
+It is recommended that you store your metadata in a subhashref and not in the
+top-level metadata hashref, keyed by your package name. L<Tree::Persist> does
+this, using the key "TREE_PERSIST". This will help prevent clobbering of
+metadata.
 
 =back
 

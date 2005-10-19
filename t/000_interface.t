@@ -37,6 +37,7 @@ my %methods = (
         value set_value
         clone mirror traverse
         add_event_handler event
+        meta
     )],
     private => [ qw(
         _null _fix_width _fix_height _fix_depth _init

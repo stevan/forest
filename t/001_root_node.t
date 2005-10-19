@@ -5,7 +5,7 @@ use Test::More;
 
 use t::tests qw( %runs );
 
-plan tests => 24 + 3 * $runs{stats}{plan};
+plan tests => 25 + 3 * $runs{stats}{plan};
 
 my $CLASS = 'Tree';
 use_ok( $CLASS )
@@ -37,6 +37,9 @@ use_ok( $CLASS )
 
     is( $tree->root( 'foo' ), $tree, "Attempting to set the root outside the tree hierarchy acts as a getter" );
     is( $tree->root, $tree, "... and doesn't change the value" );
+
+    $tree->meta->{foo} = 1;
+    is( $tree->meta->{foo}, 1, "Meta works." );
 }
 
 {
