@@ -68,7 +68,7 @@ sub reload {
     return $self;
 }
 
-sub _commit {
+sub _create {
     my $self = shift;
 
     my $dbh = $self->{_dbh};
@@ -111,6 +111,11 @@ sub _commit {
 
     return $self;
 }
+
+*_commit = \&_create;
+
+#sub _commit {
+#}
 
 sub _build_sql {
     my $self = shift;

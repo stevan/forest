@@ -18,7 +18,7 @@ sub new {
     return $self;
 }
 
-sub _commit {
+sub _create {
     my $self = shift;
 
     open my $fh, '>', $self->{_filename}
@@ -30,6 +30,8 @@ sub _commit {
 
     return $self;
 }
+
+*_commit = \&_create;
 
 1;
 __END__

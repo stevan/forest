@@ -13,7 +13,6 @@ sub new {
 
     $self->{_dbh} = $opts->{dbh};
     $self->{_table} = $opts->{table};
-    $self->{_actions} = [];
 
     return $self;
 }
