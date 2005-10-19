@@ -30,7 +30,7 @@ use_ok( $CLASS )
     is( $tree->root, $tree, "The root's root is itself" );
 
     is( $tree->value, undef, "The root's value is undef" );
-    is( $tree->value( 'foobar' ), 'foobar', "Setting value() returns the value passed in" );
+    is( $tree->set_value( 'foobar' ), $tree, "Setting value() chains" );
     is( $tree->value(), 'foobar', "Calling value() returns the value passed in" );
 
     is_deeply( $tree->mirror, $tree, "A single-node tree's mirror is itself" );
@@ -52,7 +52,7 @@ use_ok( $CLASS )
 
     is( $tree->root, $tree, "The root's root is itself" );
     is( $tree->value, 'payload', "The root's value is undef" );
-    is( $tree->value( 'foobar' ), 'foobar', "Setting value() returns the value passed in" );
+    is( $tree->set_value( 'foobar' ), $tree, "Setting value() chains" );
     is( $tree->value(), 'foobar', "Setting value() returns the value passed in" );
 
     is_deeply( $tree->mirror, $tree, "A single-node tree's mirror is itself" );
@@ -71,7 +71,7 @@ use_ok( $CLASS )
 
     is( $tree->root, $tree, "The root's root is itself" );
     is( $tree->value, 'payload', "The root's value is undef" );
-    is( $tree->value( 'foobar' ), 'foobar', "Setting value() returns the value passed in" );
+    is( $tree->set_value( 'foobar' ), $tree, "Setting value() chains" );
     is( $tree->value(), 'foobar', "Setting value() returns the value passed in" );
 
     is_deeply( $tree->mirror, $tree, "A single-node tree's mirror is itself" );

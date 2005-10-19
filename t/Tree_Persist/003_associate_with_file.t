@@ -77,7 +77,7 @@ __END_FILE__
 </node>
 __END_FILE__
 
-    $child2->value( 'New value' );
+    $child2->set_value( 'New value' );
 
     file_contents_is( $filename, <<__END_FILE__, '... and the contents are good' );
 <node class="Tree" value="root">

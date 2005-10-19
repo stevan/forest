@@ -17,11 +17,11 @@ isa_ok( $clone, $CLASS );
 isnt( refaddr($clone), refaddr($tree), "The clone is a different reference from the tree" );
 cmp_deeply( $clone, $tree, "The clone has all the same info as the tree" );
 
-$tree->value( 'bar' );
+$tree->set_value( 'bar' );
 
 ok( !eq_deeply( $clone, $tree ), "The tree changed, but the clone didn't track" );
 
-$tree->value( 'foo' );
+$tree->set_value( 'foo' );
 
 cmp_deeply( $clone, $tree, "The tree changed back, so they're equivalent" );
 

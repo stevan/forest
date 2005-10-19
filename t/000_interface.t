@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 8;
+use Test::More tests => 7;
 
 my $CLASS = 'Tree';
 use_ok( $CLASS )
@@ -34,18 +34,17 @@ my %methods = (
         root parent children
         height width depth size
         error_handler error last_error
-        value
+        value set_value
         clone mirror traverse
         add_event_handler event
     )],
     private => [ qw(
         _null _fix_width _fix_height _fix_depth _init
     )],
-    book_keeping => [qw(
-        DESTROY import
-    )],
+#    book_keeping => [qw(
+#    )],
     imported => [qw(
-        weaken blessed refaddr
+        blessed refaddr
         GLOBREF NUM SCALARREF SCALAR VALUE OBJREF VOID LIST NONVOID BOOL REF STR DEFAULT HASHREF ARRAYREF CODEREF
     )],
 );
@@ -57,7 +56,7 @@ delete @existing_methods{@{$methods{class}}};
 my $tree = $CLASS->new();
 isa_ok( $tree, $CLASS );
 
-for my $type ( qw( public private book_keeping imported ) ) {
+for my $type ( qw( public private imported ) ) {
     can_ok( $tree, @{ $methods{ $type } } );
     delete @existing_methods{@{$methods{ $type }}};
 }

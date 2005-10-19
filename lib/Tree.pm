@@ -5,26 +5,12 @@ use 5.6.0;
 use strict;
 use warnings;
 
-our $VERSION = '0.99_00';
+our $VERSION = '1.00';
 
-use Scalar::Util qw( blessed refaddr weaken );
+use Scalar::Util qw( blessed refaddr );
 use Contextual::Return;
 
-my %CONFIG = (
-    use_weak_refs => 1,
-);
-
-sub import {
-    shift;
-    for (@_) {
-        if ( lc($_) eq 'no_weak_refs' ) {
-            $CONFIG{ use_weak_refs } = 0;
-        }
-        elsif ( lc($_) eq 'use_weak_refs' ) {
-            $CONFIG{ use_weak_refs } = 1;
-        }
-    }
-}
+use base 'Tree::Fast';
 
 # These are the class methods
 
@@ -54,27 +40,10 @@ sub DIE   { return $error_handlers{ 'die' } }
 # The default error handler is quiet
 my $ERROR_HANDLER = $error_handlers{ 'quiet' };
 
-sub new {
-    my $class = shift;
-
-    return $class->clone( @_ )
-        if blessed $class;
-
-    my $self = bless {}, $class;
-
-    $self->_init( @_ );
-
-    return $self;
-}
-
 sub _init {
     my $self = shift;
-    my ($value) = @_;
 
-    $self->{_parent} = $self->_null,
-    $self->{_children} = [];
-    $self->{_root} = undef,
-    $self->{_value} = $value,
+    $self->SUPER::_init( @_ );
 
     $self->{_height} = 1,
     $self->{_width} = 1,
@@ -88,8 +57,6 @@ sub _init {
         remove_child => [],
         value        => [],
     };
-
-    $self->root( $self );
 
     return $self;
 }
@@ -153,22 +120,10 @@ sub add_child {
         }
     }
 
-    for my $node ( @nodes ) {
-        $node->parent( $self );
-        $node->root( $self->root );
-        $node->_fix_depth;
-    }
+    $self->SUPER::add_child( (defined $index ? $index : () ), @nodes );
 
-    if ( defined $index ) {
-        if ( $index ) {
-            splice @{$self->children}, $index, 0, @nodes;
-        }
-        else {
-            unshift @{$self->children}, @nodes;
-        }
-    }
-    else {
-        push @{$self->{_children}}, @nodes;
+    for my $node ( @nodes ) {
+        $node->_fix_depth;
     }
 
     $self->_fix_height;
@@ -218,16 +173,9 @@ sub remove_child {
         }
     }
 
-    my @return;
-    for my $idx (sort { $b <=> $a } @indices) {
-        my $node = splice @{$self->{_children}}, $idx, 1;
-        $node->parent( $node->_null );
-        $node->root( $node );
-        $node->_fix_depth;
+    my @return = $self->SUPER::remove_child( @indices );
 
-        push @return, $node;
-    }
-
+    $_->_fix_depth for @return;
     $self->_fix_height;
     $self->_fix_width;
 
@@ -238,30 +186,6 @@ sub remove_child {
         ARRAYREF { \@return }
         SCALAR { $return[0] }
     );
-}
-
-sub clone {
-    my $self = shift;
-
-    return $self->new(@_) unless blessed $self;
-
-    my $value = @_ ? shift : $self->value;
-    my $clone = ref($self)->new( $value );
-
-    if ( my @children = @{$self->children} ) {
-        $clone->add_child( map { $_->clone } @children );
-    }
-
-    return $clone;
-}
-
-sub mirror {
-    my $self = shift;
-
-    @{$self->children} = reverse @{$self->children};
-    $_->mirror for $self->children;
-
-    return $self;
 }
 
 sub add_event_handler {
@@ -323,55 +247,7 @@ sub has_child {
     ;
 }
 
-use constant PRE_ORDER   => 1;
-use constant POST_ORDER  => 2;
-use constant LEVEL_ORDER => 3;
-
-sub traverse {
-    my $self = shift;
-    my $order = shift || $self->PRE_ORDER;
-
-    my @list;
-
-    if ( $order eq $self->PRE_ORDER ) {
-        @list = ($self);
-        push @list, map { $_->traverse( $order ) } $self->children;
-    }
-    elsif ( $order eq $self->POST_ORDER ) {
-        @list = map { $_->traverse( $order ) } $self->children;
-        push @list, $self;
-    }
-    elsif ( $order eq $self->LEVEL_ORDER ) {
-        my @queue = ($self);
-        while ( my $node = shift @queue ) {
-            push @list, $node;
-            push @queue, $node->children;
-        }
-    }
-    else {
-        return $self->error( "traverse(): '$order' is an illegal traversal order" );
-    }
-
-    return @list;
-}
-
 # These are the smart accessors
-
-sub children {
-    my $self = shift;
-    if ( @_ ) {
-        my @idx = @_;
-        return @{$self->{_children}}[@idx];
-    }
-    else {
-        if ( caller->isa( __PACKAGE__ ) ) {
-            return wantarray ? @{$self->{_children}} : $self->{_children};
-        }
-        else {
-            return @{$self->{_children}};
-        }
-    }
-}
 
 for my $name ( qw( height width depth ) ) {
     no strict 'refs';
@@ -389,36 +265,6 @@ for my $name ( qw( height width depth ) ) {
     };
 }
 
-sub parent {
-    my $self = shift;
-
-    if ( @_ && caller->isa( __PACKAGE__ ) ) {
-        $self->{_parent} = shift;
-        weaken( $self->{_parent} ) if $CONFIG{ use_weak_refs };
-    }
-
-    return $self->{_parent};
-}
-
-sub root {
-    my $self = shift;
-
-    if ( @_ && caller->isa( __PACKAGE__ ) ) {
-        $self->{_root} = shift;
-        weaken( $self->{_root} ) if $CONFIG{ use_weak_refs };
-
-        # Propagate the root-change down to all children
-        # Because this is called from DESTROY, we need to verify
-        # that the child still exists because destruction in Perl5
-        # is neither ordered nor timely.
-
-        $_->root( $self->{_root} )
-            for grep { $_ } $self->children;
-    }
-
-    return $self->{_root};
-}
-
 sub size {
     my $self = shift;
     my $size = 1;
@@ -426,14 +272,16 @@ sub size {
     return $size;
 }
 
-sub value {
+sub set_value {
     my $self = shift;
-    if (@_) {
-        my $old_value = $self->{_value};
-        $self->{_value} = shift;
-        $self->event( 'value', $self, $old_value );
-    }
-    return $self->{_value};
+    my ($new_value) = @_;
+
+    my $old_value = $self->SUPER::value();
+    $self->SUPER::set_value( @_ );
+
+    $self->event( 'value', $self, $new_value, $old_value );
+
+    return $self;
 }
 
 # These are the error-handling functions
@@ -467,10 +315,6 @@ sub last_error {
 }
 
 # These are private convenience methods
-
-sub _null {
-    return Tree::Null->new;
-}
 
 sub _fix_height {
     my $self = shift;
@@ -514,52 +358,6 @@ sub _fix_depth {
     $_->_fix_depth for $self->children;
 
     return $self;
-}
-
-# These are the book-keeping methods
-
-sub DESTROY {
-    my $self = shift;
-
-    return if $CONFIG{ use_weak_refs };
-
-    $self->root( $self->_null );
-    foreach my $child (grep { $_ } $self->children) {
-        $child->parent( $child->_null );
-    }
-}
-
-package Tree::Null;
-
-#XXX Add this in once it's been thought out
-#our @ISA = qw( Tree );
-
-# You want to be able to interrogate the null object as to
-# its class, so we don't override isa() as we do can()
-
-use overload
-    '""' => sub { return "" },
-    '0+' => sub { return 0 },
-    'bool' => sub { return },
-        fallback => 1,
-;
-
-{
-    my $singleton = bless \my($x), __PACKAGE__;
-    sub new { return $singleton }
-    sub AUTOLOAD { return $singleton }
-    sub can { return sub { return $singleton } }
-}
-
-# The null object can do anything
-sub isa {
-    my ($proto, $class) = @_;
-
-    if ( $class =~ /^Tree(?:::.*)?$/ ) {
-        return 1;
-    }
-
-    return $proto->SUPER::isa( $class );
 }
 
 1;

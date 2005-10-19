@@ -49,9 +49,9 @@ is( $stack[2], "Removed $child2 from $child", "remove_child event" );
 $tree->remove_child( $child );
 cmp_ok( @stack, '==', 3, "Events trigger on the actor, not the acted-upon" );
 
-$tree->value( 'new value' );
+$tree->set_value( 'new value' );
 
-is( $stack[3], "Value changed: root from $tree", "remove_child event" );
+is( $stack[3], "Value changed: new value root from $tree", "remove_child event" );
 
 $tree->value();
 

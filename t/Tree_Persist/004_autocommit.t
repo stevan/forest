@@ -43,7 +43,7 @@ __END_FILE__
 
     my $tree = $persist->tree;
 
-    $tree->value( 'foo' );
+    $tree->set_value( 'foo' );
 
     file_contents_is( $filename, <<__END_FILE__, "Shoudn't change anything with autocommit off" );
 <node class="Tree" value="root">
@@ -57,7 +57,7 @@ __END_FILE__
 </node>
 __END_FILE__
 
-    $tree->value( 'bar' );
+    $tree->set_value( 'bar' );
 
     file_contents_is( $filename, <<__END_FILE__, "No change ..." );
 <node class="Tree" value="foo">
