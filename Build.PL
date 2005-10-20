@@ -6,8 +6,7 @@ use strict;
 use warnings;
 
 my $build = Module::Build->new(
-    dist_name => 'Forest',
-    dist_version_from => 'lib/Tree.pm',
+    module_name => 'Forest',
     license => 'perl',
     requires => {
         'perl'         => '5.6.0',

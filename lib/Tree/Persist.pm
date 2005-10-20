@@ -8,7 +8,7 @@ sub connect {
 
     my $obj = $class->_instantiate( @_ );
 
-    $obj->reload;
+    $obj->_reload;
 
     return $obj;
 }
@@ -120,17 +120,12 @@ This is a no-op if autocommit is true.
 
 =item * B<rollback()>
 
-This will undo all changes made to the tree since the last commit. Essentially, it performs a reload() only if autocommit is false.
+This will undo all changes made to the tree since the last commit. If there
+were any changes, it will reload the tree from the datastore.
 
 This is a no-op if autocommit is true.
 
 B<NOTE>: Any references to any of the nodes in the tree as it was before rollback() is called will B<not> refer to the same node of C<$persist->tree> after rollback().
-
-=item * B<reload()>
-
-This will throw out the current tree and reload it from the datastore.
-
-B<NOTE>: Any references to any of the nodes in the tree as it was before reload() is called will B<not> refer to the same node of C<$persist->tree> after reload().
 
 =back
 

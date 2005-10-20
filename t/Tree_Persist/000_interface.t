@@ -25,10 +25,10 @@ my %methods = (
     )],
     public => [ qw(
         autocommit tree
-        commit rollback reload
+        commit rollback
     )],
     private => [ qw(
-        _build_string
+        _build_string _set_tree _reload _init
     )],
     book_keeping => [qw(
     )],

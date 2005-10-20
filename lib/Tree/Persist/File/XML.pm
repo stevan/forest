@@ -9,7 +9,7 @@ use Scalar::Util qw( blessed refaddr );
 use XML::Parser;
 use Tree;
 
-sub reload {
+sub _reload {
     my $self = shift;
 
     my $linenum = 0;
@@ -41,7 +41,7 @@ sub reload {
 
     $parser->parsefile( $self->{_filename} );
 
-    $self->set_tree( $tree );
+    $self->_set_tree( $tree );
 
     return $self;
 }
@@ -65,6 +65,7 @@ sub _build_string {
                 . '<node class="'
                 . blessed($node)
                 . '" value="'
+                #XXX Need to encode the value.
                 . $node->value
                 . '">' . $/;
         push @closer, ($pad x $curr_depth) . "</node>\n";
@@ -76,3 +77,60 @@ sub _build_string {
 
 1;
 __END__
+
+=head1 NAME
+
+Tree::Persist::File::XML - a handler for Tree persistence
+
+=head1 SYNOPSIS
+
+Please see L<Tree::Persist> for how to use this module.
+
+=head1 DESCRIPTION
+
+This module is a plugin for L<Tree::Persist> to store a L<Tree> to an XML
+file.
+
+=head1 PARAMETERS
+
+This class requires no additional parameters than are specified by its parent,
+L<Tree::Persist::File>.
+
+=head1 XML SPEC
+
+The XML used is very simple. Each element is called "node". The node contains
+two attributes - "class", which represents the L<Tree> class to build this
+node for, and "value", which is the serialized value contained in the node (as
+retrieved by the C<value()> method.) Parent-child relationships are represented
+by the parent containing the child.
+
+NOTE: This plugin will currently only handle values that are strings or have a
+stringification method.
+
+=head1 TODO
+
+=over 4
+
+=item *
+
+Currently, the value is not XML-encoded.
+
+=back
+
+=head1 AUTHORS
+
+Rob Kinyon E<lt>rob.kinyon@iinteractive.comE<gt>
+
+Stevan Little E<lt>stevan.little@iinteractive.comE<gt>
+
+Thanks to Infinity Interactive for generously donating our time.
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright 2004, 2005 by Infinity Interactive, Inc.
+
+L<http://www.iinteractive.com>
+
+This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself. 
+
+=cut

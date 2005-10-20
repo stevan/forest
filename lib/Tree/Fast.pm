@@ -56,7 +56,7 @@ sub add_child {
     }
 
     for my $node ( @nodes ) {
-        $node->set_parent( $self );
+        $node->_set_parent( $self );
     }
 
     if ( defined $index ) {
@@ -81,7 +81,7 @@ sub remove_child {
     my @return;
     for my $idx (sort { $b <=> $a } @indices) {
         my $node = splice @{$self->{_children}}, $idx, 1;
-        $node->set_parent( $node->_null );
+        $node->_set_parent( $node->_null );
 
         push @return, $node;
     }
@@ -94,7 +94,7 @@ sub parent {
     return $self->{_parent};
 }
 
-sub set_parent {
+sub _set_parent {
     my $self = shift;
 
     $self->{_parent} = shift;
@@ -212,3 +212,199 @@ sub isa {
 
 1;
 __END__
+
+=head1 NAME
+
+Tree::Fast - the fastest possible implementation of a tree in pure Perl
+
+=head1 SYNOPSIS
+
+=head1 DESCRIPTION
+
+This is meant to be the core imlpementation for L<Tree>, stripped down as much
+as possible. There is no error-checking, bounds-checking, event-handling,
+convenience methods, or anything else of the sort. If you want something fuller-
+featured, please look at L<Tree>, which is a wrapper around L<Tree::Fast>.
+
+=head1 METHODS
+
+=head2 Constructor
+
+=over 4
+
+=item B<new([$value])>
+
+This will return a Tree object. It will accept one parameter which, if passed, will become the value (accessible by L<value()>). All other parameters will be ignored.
+
+If you call C<$tree->new([$value])>, it will instead call C<clone()>, then set the value of the clone to $value.
+
+=item B<clone()>
+
+This will return a clone of C<$tree>. The clone will be a root tree, but all children will be cloned.
+
+If you call <Tree->clone([$value])>, it will instead call C<new()>.
+
+B<NOTE:> the value is merely a shallow copy. This means that all references will be kept.
+
+=back
+
+=head2 Behaviors
+
+=over 4
+
+=item B<add_child([ $idx ], @nodes)>
+
+This will add all the @nodes as children of C<$tree>. If the first parameter
+is a number, @nodes will be added starting at that index. If C<$idx> is negative, it will start that many in from the end. So, C<$idx == -1> will add @nodes before the last element of the children. If $idx is undefined, then it act as a push(). If $idx is 0, then it will act as an unshift.
+
+=item B<remove_child(@nodes)>
+
+This will remove all the @nodes from the children of C<$tree>. You can either pass in the actual child object you wish to remove, the index of the child you wish to remove, or a combination of both.
+
+=item B<mirror()>
+
+This will modify the tree such that it is a mirror of what it was before. This means that the order of all children is reversed.
+
+B<NOTE>: This is a destructive action. It I<will> modify the tree's internal structure. If you wish to get a mirror, yet keep the original tree intact, use C<my $mirror = $tree->clone->mirror;>
+
+=item B<traverse( [$order] )>
+
+This will return a list of the nodes in the given traversal order. The default traversal order is pre-order.
+
+The various traversal orders do the following steps:
+
+=over 4
+
+=item * Pre-order (aka Prefix traversal)
+
+This will return the node, then the first sub tree in pre-order traversal, then the next sub tree, etc.
+
+Use C<$tree->PRE_ORDER> as the C<$order>.
+
+=item * Post-order (aka Prefix traversal)
+
+This will return the each sub-tree in post-order traversal, then the node.
+
+Use C<$tree->POST_ORDER> as the C<$order>.
+
+=item * Level-order (aka Prefix traversal)
+
+This will return the node, then the all children of the node, then all grandchildren of the node, etc.
+
+Use C<$tree->LEVEL_ORDER> as the C<$order>.
+
+=back
+
+=back
+
+All behaviors will reset last_error().
+
+=head2 State Queries
+
+=over 4
+
+=item * B<has_child(@nodes)>
+
+If called in a boolean context, this will return true is C<$tree> has each of the @nodes as a child. If called in a list context, it will map back the list of indices for each of the @nodes. If called in a scalar, non-boolean context, it will return back the index for C<$nodes[0]>.
+
+=back
+
+=head2 Accessors
+
+=over 4
+
+=item * B<parent()>
+
+This will return the parent of C<$tree>.
+
+=item * B<children( [ $idx, [$idx, ..] ] )>
+
+This will return the children of C<$tree>. If called in list context, it will return all the children. If called in scalar context, it will return the number of children.
+
+You may optionally pass in a list of indices to retrieve. This will return the children in the order you asked for them. This is very much like an arrayslice.
+
+=item * B<value()>
+
+This will return the value stored in the node.
+
+=item * B<set_value([$value])>
+
+This will set the value stored in the node to $value, then return $self.
+
+=back
+
+=head1 NULL TREE
+
+If you call C<$self->parent> on a root node, it will return a Tree::Null
+object. This is an implementation of the Null Object pattern optimized for
+usage with L<Forest>. It will evaluate as false in every case (using L<overload>) and all methods called on it will return a Tree::Null object.
+
+=head2 Notes
+
+=over 4
+
+=item * Tree::Null does B<not> inherit from anything. This is so that all the methods will go through AUTOLOAD vs. the actual method.
+
+=item * However, calling isa() on a Tree::Null object will report that it is-a any object that is either Tree or in the Tree:: hierarchy.
+
+=item * The Tree::Null object is a singleton.
+
+=item * The Tree::Null object I<is> defined, though. I couldn't find a way to make it evaluate as undefined. That may be a good thing.
+
+=back
+
+=head1 BUGS
+
+None that we are aware of.
+
+The test suite for Tree 1.0 is based very heavily on the test suite for L<Test::Simple>, which has been heavily tested and used in a number of other major distributions, such as L<Catalyst> and rt.cpan.org.
+
+=head1 CODE COVERAGE
+
+We use L<Devel::Cover> to test the code coverage of our tests. Below is the L<Devel::Cover> report on this module's test suite. We use TDD, which is why our coverage is so high.
+
+The coverage report is in L<Forest>.
+ 
+=head1 TODO
+
+=over 4
+
+=item * traverse()
+
+Need to add contextual awareness by providing an iterating closure (object?) in scalar context.
+
+=item * N-ary Proofs
+
+Need to generalize some of the btree proofs to N-ary trees, if possible.
+
+=item * Traversals and memory
+
+Need tests for what happens with a traversal list and deleted nodes, particularly w.r.t. how memory is handled - should traversals weaken if use_weak_refs is in force?
+
+=back
+
+=head1 ACKNOWLEDGEMENTS
+
+=over 4
+
+=item * Stevan Little for writing L<Tree::Simple>, upon which Tree is based.
+
+=back
+
+=head1 AUTHORS
+
+Rob Kinyon E<lt>rob.kinyon@iinteractive.comE<gt>
+
+Stevan Little E<lt>stevan.little@iinteractive.comE<gt>
+
+Thanks to Infinity Interactive for generously donating our time.
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright 2004, 2005 by Infinity Interactive, Inc.
+
+L<http://www.iinteractive.com>
+
+This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself. 
+
+=cut

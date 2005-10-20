@@ -59,7 +59,7 @@ sub _init {
     };
 
     $self->{_root} = undef,
-    $self->set_root( $self );
+    $self->_set_root( $self );
 
     $self->{_meta} = {};
 
@@ -128,7 +128,7 @@ sub add_child {
     $self->SUPER::add_child( (defined $index ? $index : () ), @nodes );
 
     for my $node ( @nodes ) {
-        $node->set_root( $self->root );
+        $node->_set_root( $self->root );
         $node->_fix_depth;
     }
 
@@ -182,7 +182,7 @@ sub remove_child {
     my @return = $self->SUPER::remove_child( @indices );
 
     for my $node ( @return ) {
-        $node->set_root( $node );
+        $node->_set_root( $node );
         $node->_fix_depth;
     }
 
@@ -264,7 +264,7 @@ sub root {
     return $self->{_root};
 }
 
-sub set_root {
+sub _set_root {
     my $self = shift;
 
     $self->{_root} = shift;
@@ -275,7 +275,7 @@ sub set_root {
     # that the child still exists because destruction in Perl5
     # is neither ordered nor timely.
 
-    $_->set_root( $self->{_root} )
+    $_->_set_root( $self->{_root} )
         for grep { $_ } @{$self->{_children}};
 
     return $self;
@@ -311,12 +311,11 @@ sub size {
 
 sub set_value {
     my $self = shift;
-    my ($new_value) = @_;
 
-    my $old_value = $self->SUPER::value();
+    my $old_value = $self->value();
     $self->SUPER::set_value( @_ );
 
-    $self->event( 'value', $self, $old_value, $new_value );
+    $self->event( 'value', $self, $old_value );
 
     return $self;
 }
@@ -536,9 +535,13 @@ This is the distance from the root. It's useful for things like pretty-printing 
 
 This will return the number of nodes within C<$tree>. A leaf has a size of 1. A parent has a size equal to the 1 plus the sum of all the sizes of its children.
 
-=item * B<value([$value])>
+=item * B<value()>
 
-This will return the value stored in the node. If $value is passed in, it will set the value stored in the node to $value, then return $value.
+This will return the value stored in the node.
+
+=item * B<set_value([$value])>
+
+This will set the value stored in the node to $value, then return $self.
 
 =item * B<meta()>
 
@@ -599,21 +602,21 @@ Forest provides for basic event handling. You may choose to register one or more
 
 =item * add_child
 
-This event will trigger as the last step in an add_child() call.
+This event will trigger as the last step in an L<add_child()> call.
 
 The parameters will be C<( $self, @args )> where C<@args> is the arguments passed into the add_child() call.
 
 =item * remove_child
 
-This event will trigger as the last step in an remove_child() call.
+This event will trigger as the last step in an L<remove_child()> call.
 
 The parameters will be C<( $self, @args )> where C<@args> is the arguments passed into the remove_child() call.
 
 =item * value
 
-This event will trigger as if the value of a node has changed.
+This event will trigger as the last step in a L<set_value()> call.
 
-The parameters will be C<( $self, $old_value )> where C<$old_value> is what the value was before it was changed. The new value can be accessed through C<$self->value()>.
+The parameters will be C<( $self, $old_value, $new_value )> where C<$old_value> is what the value was before it was changed. The new value can be accessed through C<$self->value()>.
 
 =back
 

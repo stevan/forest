@@ -31,7 +31,7 @@ my %methods = (
     public => [ qw(
         is_root is_leaf
         add_child remove_child has_child
-        root set_root parent children
+        root parent children
         height width depth size
         error_handler error last_error
         value set_value
@@ -40,7 +40,7 @@ my %methods = (
         meta
     )],
     private => [ qw(
-        _null _fix_width _fix_height _fix_depth _init
+        _null _fix_width _fix_height _fix_depth _init _set_root
     )],
 #    book_keeping => [qw(
 #    )],

@@ -41,14 +41,14 @@ sub _set_get_child {
         $self->children->[$index] = $node;
 
         if ( $node ) {
-            $node->set_parent( $self );
-            $node->set_root( $self->root );
+            $node->_set_parent( $self );
+            $node->_set_root( $self->root );
             $node->_fix_depth;
         }
 
         if ( $old ) {
-            $old->set_parent( $old->_null );
-            $old->set_root( $old->_null );
+            $old->_set_parent( $old->_null );
+            $old->_set_root( $old->_null );
             $old->_fix_depth;
         }
 
