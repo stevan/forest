@@ -94,6 +94,8 @@ sub _create {
 
     $self->{_mapping}{ $root_id } = $tree;
 
+    #XXX Convert this to a level-order traversal, once traversals are
+    # implemented as closures
     my @parents = ( $tree );
     while ( my $parent = shift @parents ) {
         my $parent_id = $parent->meta->{$ref_addr}{id};
@@ -102,7 +104,7 @@ sub _create {
             $sth->execute(
                 $child_id, $parent_id, blessed($child), $child->value,
             );
-
+    
             push @parents, $child;
         }
     }
