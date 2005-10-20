@@ -284,16 +284,10 @@ sub _set_root {
 for my $name ( qw( height width depth ) ) {
     no strict 'refs';
 
-    *{ __PACKAGE__ . "::$name" } = sub {
+    *{ __PACKAGE__ . "::${name}" } = sub {
         use strict;
-
         my $self = shift;
-
-        if ( @_ && caller->isa( __PACKAGE__ ) ) {
-            $self->{"_$name"} = shift;
-        }
-
-        return $self->{"_$name"};
+        return $self->{"_${name}"};
     };
 }
 
@@ -361,7 +355,7 @@ sub _fix_height {
         $height = $temp_height if $height < $temp_height;
     }
 
-    $self->height( $height );
+    $self->{_height} = $height;
 
     $self->parent->_fix_height;
 
@@ -374,7 +368,7 @@ sub _fix_width {
     my $width = 0;
     $width += $_->width for $self->children;
 
-    $self->width( $width || 1 );
+    $self->{_width} = $width || 1;
 
     $self->parent->_fix_width;
 
@@ -385,10 +379,10 @@ sub _fix_depth {
     my $self = shift;
 
     if ( $self->is_root ) {
-        $self->depth( 0 );
+        $self->{_depth} = 0;
     }
     else {
-        $self->depth( $self->parent->depth + 1 );
+        $self->{_depth} = $self->parent->depth + 1;
     }
 
     $_->_fix_depth for $self->children;

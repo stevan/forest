@@ -3,7 +3,7 @@ use warnings;
 
 use Test::More;
 
-plan tests => 16;
+plan tests => 20;
 
 my $CLASS = 'Tree::Persist';
 use_ok( $CLASS )
@@ -34,12 +34,18 @@ __END_FILE__
 
     my $persist = $CLASS->connect({
         filename => $filename,
+        autocommit => 0,
     });
 
-    ok( $persist->autocommit, "Autocommit defaults to true" );
+    ok( !$persist->autocommit, "Autocommit takes the value passed in." );
+
+    ok( !$persist->autocommit( 1 ), "Setting autocommit returns the old value" );
+    ok( $persist->autocommit, "After setting it to true, it's now true" );
 
     ok( $persist->autocommit( 0 ), "Setting autocommit returns the old value" );
     ok( !$persist->autocommit, "After setting it to false, it's now false" );
+
+    $persist->autocommit( 0 );
 
     my $tree = $persist->tree;
 
@@ -95,6 +101,8 @@ __END_FILE__
         filename => $filename,
     });
 
+    ok( $persist->autocommit, "Autocommit defaults to true." );
+
     my $modtime = -M $filename;
 
     sleep 1;
@@ -105,4 +113,13 @@ __END_FILE__
 
     # Need to track changes made to the tree
     cmp_ok( $modtime, '==', $new_modtime, "commit() with autocommit() on is a no-op" );
+
+    sleep 1;
+
+    $persist->rollback;
+
+    $new_modtime = -M $filename;
+
+    # Need to track changes made to the tree
+    cmp_ok( $modtime, '==', $new_modtime, "rollback() with autocommit() on is a no-op" );
 }

@@ -13,6 +13,10 @@ my $build = Module::Build->new(
         'Scalar::Util' => '1.10',
         'Contextual::Return' => '0.0.2',
     },
+    optional => {
+        'DBI' => '1.41',
+        'XML::Parser' => '0.01',
+    },
     build_requires => {
         'Test::More'      => '0.47',
         'Test::Deep'      => '0.088',

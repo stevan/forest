@@ -39,25 +39,23 @@ sub _reload {
 
     my $tree = $class->new( $value );
 
-    $self->{_mapping} ||= {};
-    $self->{_mapping}{$id} = $tree;
-    $tree->meta->{refaddr $self}{id} = $id;
+    my $ref_addr = refaddr $self;
 
-    my @parents = ( $id );
-    while ( my $parent_id = shift @parents ) {
+    $tree->meta->{$ref_addr}{id} = $id;
+
+    my @parents = ( $tree );
+    while ( my $parent = shift @parents ) {
         my $sth_child = $self->{_dbh}->prepare( $sql{ fetch_children } );
-        $sth_child->execute( $parent_id );
-
-        my $parent = $self->{_mapping}{ $parent_id };
+        $sth_child->execute( $parent->meta->{$ref_addr}{id} );
 
         $sth_child->bind_columns( \my ($id, $class, $value) );
 
         while ($sth_child->fetch) {
             my $node = $class->new( $value );
             $parent->add_child( $node );
-            push @parents, $id;
-            $self->{_mapping}{$id} = $node;
-            $node->meta->{refaddr $self}{id} = $id;
+            $node->meta->{$ref_addr}{id} = $id;
+
+            push @parents, $node;
         }
 
         $sth_child->finish;
@@ -81,31 +79,31 @@ sub _create {
         $sth->fetchrow_array;
     };
 
-    my $root_id = $tree->meta->{refaddr $self}{id} ||= $next_id++;
+    my $ref_addr = refaddr $self;
+
+    my $root_id = $tree->meta->{$ref_addr}{id} ||= $next_id++;
 
     my $sth = $dbh->prepare( $sql{create_node} );
     my $parent_id = $tree->parent
-        ? $tree->parent->meta->{refaddr $self}{id}
+        ? $tree->parent->meta->{$ref_addr}{id}
         : undef;
+
     $sth->execute(
         $root_id, $parent_id, blessed($tree), $tree->value,
     );
 
-    $self->{_mapping} ||= {};
     $self->{_mapping}{ $root_id } = $tree;
 
-    my @parents = ( $root_id );
-    while ( my $parent_id = shift @parents ) {
-        my $parent = $self->{_mapping}{$parent_id};
-
+    my @parents = ( $tree );
+    while ( my $parent = shift @parents ) {
+        my $parent_id = $parent->meta->{$ref_addr}{id};
         foreach my $child ($parent->children) {
             my $child_id = $child->meta->{refaddr $self}{id} ||= $next_id++;
             $sth->execute(
                 $child_id, $parent_id, blessed($child), $child->value,
             );
 
-            $self->{_mapping}{$child_id} = $child;
-            push @parents, $child_id;
+            push @parents, $child;
         }
     }
 

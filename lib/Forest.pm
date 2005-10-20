@@ -20,16 +20,16 @@ We use L<Devel::Cover> to test the code coverage of our tests. Below is the L<De
   ---------------------------- ------ ------ ------ ------ ------ ------ ------
   File                           stmt branch   cond    sub    pod   time  total
   ---------------------------- ------ ------ ------ ------ ------ ------ ------
-  blib/lib/Tree.pm              100.0  100.0   95.0  100.0  100.0   72.4   99.7
-  blib/lib/Tree/Binary.pm       100.0  100.0   66.7  100.0  100.0    6.4   97.8
-  blib/lib/Tree/Fast.pm         100.0   96.4   66.7  100.0  100.0   17.1   99.0
-  blib/lib/Tree/Persist.pm      100.0   75.0  100.0  100.0  100.0    0.5   97.6
-  .../lib/Tree/Persist/Base.pm  100.0   75.0   50.0  100.0  100.0    0.9   95.3
+  blib/lib/Tree.pm              100.0  100.0  100.0  100.0  100.0   79.7  100.0
+  blib/lib/Tree/Binary.pm       100.0  100.0   66.7  100.0  100.0    4.3   97.8
+  blib/lib/Tree/Fast.pm         100.0   96.4   66.7  100.0  100.0   12.4   99.0
+  blib/lib/Tree/Persist.pm      100.0   75.0  100.0  100.0  100.0    0.6   97.6
+  .../lib/Tree/Persist/Base.pm  100.0   87.5  100.0  100.0  100.0    0.8   98.1
   blib/lib/Tree/Persist/DB.pm   100.0    n/a    n/a  100.0    n/a    0.1  100.0
-  ...ist/DB/SelfReferential.pm  100.0   87.5   53.8  100.0    n/a    1.7   94.4
+  ...ist/DB/SelfReferential.pm  100.0   87.5   44.4  100.0    n/a    1.4   94.9
   .../lib/Tree/Persist/File.pm  100.0   50.0    n/a  100.0    n/a    0.3   96.7
   .../Tree/Persist/File/XML.pm  100.0  100.0  100.0  100.0    n/a    0.5  100.0
-  Total                         100.0   93.4   77.6  100.0  100.0  100.0   98.1
+  Total                         100.0   95.0   81.0  100.0  100.0  100.0   98.6
   ---------------------------- ------ ------ ------ ------ ------ ------ ------
 
 =head1 AUTHORS
