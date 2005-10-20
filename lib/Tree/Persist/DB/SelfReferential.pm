@@ -256,6 +256,11 @@ The *_col attributes are currently hard-coded.
 
 =back
 
+=head1 CODE COVERAGE
+
+We use L<Devel::Cover> to test the code coverage of our tests. Please see L<Forest>
+for the coverage report.
+
 =head1 AUTHORS
 
 Rob Kinyon E<lt>rob.kinyon@iinteractive.comE<gt>

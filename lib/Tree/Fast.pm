@@ -359,12 +359,6 @@ None that we are aware of.
 
 The test suite for Tree 1.0 is based very heavily on the test suite for L<Test::Simple>, which has been heavily tested and used in a number of other major distributions, such as L<Catalyst> and rt.cpan.org.
 
-=head1 CODE COVERAGE
-
-We use L<Devel::Cover> to test the code coverage of our tests. Below is the L<Devel::Cover> report on this module's test suite. We use TDD, which is why our coverage is so high.
-
-The coverage report is in L<Forest>.
- 
 =head1 TODO
 
 =over 4
@@ -390,6 +384,11 @@ Need tests for what happens with a traversal list and deleted nodes, particularl
 =item * Stevan Little for writing L<Tree::Simple>, upon which Tree is based.
 
 =back
+
+=head1 CODE COVERAGE
+
+We use L<Devel::Cover> to test the code coverage of our tests. Please see L<Forest>
+for the coverage report.
 
 =head1 AUTHORS
 

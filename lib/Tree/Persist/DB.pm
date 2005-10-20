@@ -57,6 +57,11 @@ Currently, the dbh and table options aren't checked for existence or validity.
 
 =back
 
+=head1 CODE COVERAGE
+
+We use L<Devel::Cover> to test the code coverage of our tests. Please see L<Forest>
+for the coverage report.
+
 =head1 AUTHORS
 
 Rob Kinyon E<lt>rob.kinyon@iinteractive.comE<gt>

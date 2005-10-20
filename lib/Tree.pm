@@ -664,27 +664,6 @@ None that we are aware of.
 
 The test suite for Tree 1.0 is based very heavily on the test suite for L<Test::Simple>, which has been heavily tested and used in a number of other major distributions, such as L<Catalyst> and rt.cpan.org.
 
-=head1 CODE COVERAGE
-
-We use L<Devel::Cover> to test the code coverage of our tests. Below is the L<Devel::Cover> report on this module's test suite. We use TDD, which is why our coverage is so high.
- 
-  ---------------------------- ------ ------ ------ ------ ------ ------ ------
-  File                           stmt branch   cond    sub    pod   time  total
-  ---------------------------- ------ ------ ------ ------ ------ ------ ------
-  blib/lib/Tree.pm              100.0   98.9   89.7  100.0  100.0   88.6   99.2
-  blib/lib/Tree/Binary.pm       100.0  100.0   66.7  100.0  100.0   10.4   97.6
-  blib/lib/Tree/Persist.pm      100.0   77.3   83.3  100.0  100.0    1.0   95.4
-  Total                         100.0   95.2   85.4  100.0  100.0  100.0   98.3
-  ---------------------------- ------ ------ ------ ------ ------ ------ ------
-
-=head2 Missing Tests
-
-=over 4
-
-=item * A test on import where something is passed in that isn't an expected value.
-
-=back
-
 =head1 TODO
 
 =over 4
@@ -719,6 +698,11 @@ for spiffiness value.
 =item * Stevan Little for writing L<Tree::Simple>, upon which Tree is based.
 
 =back
+
+=head1 CODE COVERAGE
+
+We use L<Devel::Cover> to test the code coverage of our tests. Please see L<Forest>
+for the coverage report.
 
 =head1 AUTHORS
 
