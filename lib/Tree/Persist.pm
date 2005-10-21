@@ -55,6 +55,11 @@ Tree::Persist
 
 This is meant to be a transparent persistence layer for Tree and its children. It's fully pluggable and will allow either loading, storing, and/or association with between a datastore and a tree.
 
+=head1 CAVEATS
+
+If you load a subtree, you will have access to the parent's id, but the node
+will be considered the root for the tree you are working with.
+
 =head1 METHODS
 
 =head2 Class Methods

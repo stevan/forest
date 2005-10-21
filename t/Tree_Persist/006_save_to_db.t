@@ -20,6 +20,32 @@ my $dbh = DBI->connect(
     },
 );
 
+$dbh->do( <<"__END_SQL__" );
+CREATE TEMPORARY TABLE 006_tree (
+    id INT NOT NULL PRIMARY KEY
+   ,parent_id INT REFERENCES 006_tree (id)
+   ,class VARCHAR(255) NOT NULL
+   ,value VARCHAR(255)
+)
+__END_SQL__
+
+$dbh->do( <<"__END_SQL__" );
+INSERT INTO 006_tree
+    ( id, parent_id, value, class )
+VALUES 
+    ( 1, NULL, 'root', 'Tree' )
+   ,( 2, NULL, 'root2', 'Tree' )
+   ,( 3, 2, 'child', 'Tree' )
+__END_SQL__
+
+sub get_values {
+    my $dbh = shift;
+
+    my $sth = $dbh->prepare_cached( "SELECT * FROM 006_tree WHERE id > 3 ORDER BY id" );
+    $sth->execute;
+    return $sth->fetchall_arrayref( {} );
+}
+
 {
     my $tree = Tree->new( 'root' );
 
@@ -27,22 +53,19 @@ my $dbh = DBI->connect(
         type  => 'DB',
         tree  => $tree,
         dbh   => $dbh,
-        table => 'tree',
+        table => '006_tree',
     });
 
-    my $sth = $dbh->prepare(
-        "SELECT id,parent_id,class,value FROM tree WHERE id > 3 ORDER BY id"
+    my $values = get_values( $dbh );
+    is_deeply(
+        $values,
+        [
+            { id => 4, parent_id => undef, class => 'Tree', value => 'root' },
+        ],
+        "We got back what we put in.",
     );
-    $sth->execute;
-    my $rows = $sth->fetchall_arrayref({});
 
-    my $expected = [
-        { id => 4, parent_id => undef, class => 'Tree', value => 'root' },
-    ];
-
-    is_deeply( $rows, $expected, "We put in what we expected to" );
-
-    $dbh->do( "DELETE FROM tree WHERE id > 3" );
+    $dbh->do( "DELETE FROM 006_tree WHERE id > 3" );
 }
 
 {
@@ -58,26 +81,23 @@ my $dbh = DBI->connect(
         type  => 'DB',
         tree  => $tree,
         dbh   => $dbh,
-        table => 'tree',
+        table => '006_tree',
     });
 
-    my $sth = $dbh->prepare(
-        "SELECT id,parent_id,class,value FROM tree WHERE id > 3 ORDER BY id"
+    my $values = get_values( $dbh );
+    is_deeply(
+        $values,
+        [
+            { id => 4, parent_id => undef, class => 'Tree', value => 'A' },
+            { id => 5, parent_id =>     4, class => 'Tree', value => 'B' },
+            { id => 6, parent_id =>     4, class => 'Tree', value => 'C' },
+            { id => 7, parent_id =>     4, class => 'Tree', value => 'E' },
+            { id => 8, parent_id =>     6, class => 'Tree', value => 'D' },
+        ],
+        "We got back what we put in.",
     );
-    $sth->execute;
-    my $rows = $sth->fetchall_arrayref({});
 
-    my $expected = [
-        { id => 4, parent_id => undef, class => 'Tree', value => 'A' },
-        { id => 5, parent_id =>     4, class => 'Tree', value => 'B' },
-        { id => 6, parent_id =>     4, class => 'Tree', value => 'C' },
-        { id => 7, parent_id =>     4, class => 'Tree', value => 'E' },
-        { id => 8, parent_id =>     6, class => 'Tree', value => 'D' },
-    ];
-
-    is_deeply( $rows, $expected, "We put in what we expected to" );
-
-    $dbh->do( "DELETE FROM tree WHERE id > 3" );
+    $dbh->do( "DELETE FROM 006_tree WHERE id > 3" );
 }
 
 {
@@ -93,24 +113,21 @@ my $dbh = DBI->connect(
         type  => 'DB',
         tree  => $tree,
         dbh   => $dbh,
-        table => 'tree',
+        table => '006_tree',
     });
 
-    my $sth = $dbh->prepare(
-        "SELECT id,parent_id,class,value FROM tree WHERE id > 3 ORDER BY id"
+    my $values = get_values( $dbh );
+    is_deeply(
+        $values,
+        [
+            { id => 4, parent_id => undef, class => 'Tree', value => 'A' },
+            { id => 5, parent_id =>     4, class => 'Tree', value => 'B' },
+            { id => 6, parent_id =>     4, class => 'Tree', value => 'C' },
+            { id => 7, parent_id =>     6, class => 'Tree', value => 'D' },
+            { id => 8, parent_id =>     6, class => 'Tree', value => 'E' },
+        ],
+        "We got back what we put in.",
     );
-    $sth->execute;
-    my $rows = $sth->fetchall_arrayref({});
 
-    my $expected = [
-        { id => 4, parent_id => undef, class => 'Tree', value => 'A' },
-        { id => 5, parent_id =>     4, class => 'Tree', value => 'B' },
-        { id => 6, parent_id =>     4, class => 'Tree', value => 'C' },
-        { id => 7, parent_id =>     6, class => 'Tree', value => 'D' },
-        { id => 8, parent_id =>     6, class => 'Tree', value => 'E' },
-    ];
-
-    is_deeply( $rows, $expected, "We put in what we expected to" );
-
-    $dbh->do( "DELETE FROM tree WHERE id > 3" );
+    $dbh->do( "DELETE FROM 006_tree WHERE id > 3" );
 }

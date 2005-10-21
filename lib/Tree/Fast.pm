@@ -28,6 +28,8 @@ sub _init {
     $self->{_children} = [];
     $self->{_value} = $value,
 
+    $self->{_meta} = {};
+
     return $self;
 }
 
@@ -130,6 +132,11 @@ sub set_value {
     $self->{_value} = $_[0];
 
     return $self;
+}
+
+sub meta {
+    my $self = shift;
+    return $self->{_meta};
 }
 
 sub mirror {
@@ -330,6 +337,17 @@ This will return the value stored in the node.
 =item * B<set_value([$value])>
 
 This will set the value stored in the node to $value, then return $self.
+
+=item * B<meta()>
+
+This will return a hashref that can be used to store whatever metadata the client
+wishes to store. For example, L<Tree::Persist::DB> uses this to store database
+row ids.
+
+It is recommended that you store your metadata in a subhashref and not in the
+top-level metadata hashref, keyed by your package name. L<Tree::Persist> does
+this, using a unique key for each persistence layer associated with that tree.
+This will help prevent clobbering of metadata.
 
 =back
 

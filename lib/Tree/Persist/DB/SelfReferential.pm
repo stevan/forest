@@ -33,7 +33,7 @@ sub _reload {
     my $sth = $self->{_dbh}->prepare( $sql{ fetch } );
     $sth->execute( $self->{_id} );
 
-    my ($id, $parent, $class, $value) = $sth->fetchrow_array();
+    my ($id, $parent_id, $class, $value) = $sth->fetchrow_array();
 
     $sth->finish;
 
@@ -42,6 +42,7 @@ sub _reload {
     my $ref_addr = refaddr $self;
 
     $tree->meta->{$ref_addr}{id} = $id;
+    $tree->meta->{$ref_addr}{parent_id} = $parent_id;
 
     my @parents = ( $tree );
     while ( my $parent = shift @parents ) {
@@ -54,6 +55,7 @@ sub _reload {
             my $node = $class->new( $value );
             $parent->add_child( $node );
             $node->meta->{$ref_addr}{id} = $id;
+            $node->meta->{$ref_addr}{parent_id} = $parent_id;
 
             push @parents, $node;
         }
@@ -88,11 +90,11 @@ sub _create {
         ? $tree->parent->meta->{$ref_addr}{id}
         : undef;
 
+    $tree->meta->{$ref_addr}{parent_id} = $parent_id;
+
     $sth->execute(
         $root_id, $parent_id, blessed($tree), $tree->value,
     );
-
-    $self->{_mapping}{ $root_id } = $tree;
 
     #XXX Convert this to a level-order traversal, once traversals are
     # implemented as closures
@@ -100,7 +102,8 @@ sub _create {
     while ( my $parent = shift @parents ) {
         my $parent_id = $parent->meta->{$ref_addr}{id};
         foreach my $child ($parent->children) {
-            my $child_id = $child->meta->{refaddr $self}{id} ||= $next_id++;
+            my $child_id = $child->meta->{$ref_addr}{id} ||= $next_id++;
+            $child->meta->{$ref_addr}{parent_id} = $parent_id;
             $sth->execute(
                 $child_id, $parent_id, blessed($child), $child->value,
             );
@@ -120,12 +123,14 @@ sub _commit {
     my $dbh = $self->{_dbh};
     my %sql = $self->_build_sql;
 
+    my $ref_addr = refaddr $self;
+
     foreach my $change ( @{$self->{_changes}} ) {
         if ( $change->{action} eq 'change_value' ) {
             my $sth = $dbh->prepare_cached( $sql{set_value} );
             $sth->execute(
                 $change->{new_value},
-                $change->{node}->meta->{refaddr $self}{id},
+                $change->{node}->meta->{$ref_addr}{id},
             );
             $sth->finish;
         }
@@ -139,7 +144,7 @@ sub _commit {
                 my $sth = $dbh->prepare_cached( $sql{set_parent} );
                 $sth->execute(
                     undef,
-                    $child->meta->{refaddr $self}{id},
+                    $child->meta->{$ref_addr}{id},
                 );
                 $sth->finish;
             }

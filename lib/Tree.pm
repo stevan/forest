@@ -61,8 +61,6 @@ sub _init {
     $self->{_root} = undef,
     $self->_set_root( $self );
 
-    $self->{_meta} = {};
-
     return $self;
 }
 
@@ -289,11 +287,6 @@ for my $name ( qw( height width depth ) ) {
         my $self = shift;
         return $self->{"_${name}"};
     };
-}
-
-sub meta {
-    my $self = shift;
-    return $self->{_meta};
 }
 
 sub size {

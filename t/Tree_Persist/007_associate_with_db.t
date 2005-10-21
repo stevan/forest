@@ -5,7 +5,7 @@ use Test::More;
 
 use t::tests qw( %runs );
 
-plan tests => 8 + 1 * $runs{stats}{plan};
+plan tests => 10 + 2 * $runs{stats}{plan};
 
 my $CLASS = 'Tree::Persist';
 use_ok( $CLASS )
@@ -24,8 +24,8 @@ $dbh->do( <<"__END_SQL__" );
 CREATE TEMPORARY TABLE 007_tree (
     id INT NOT NULL PRIMARY KEY
    ,parent_id INT REFERENCES 007_tree (id)
+   ,class VARCHAR(255) NOT NULL
    ,value VARCHAR(255)
-   ,class VARCHAR(255)
 )
 __END_SQL__
 
@@ -135,4 +135,36 @@ sub get_values {
         ],
         "After removed child set_value, the DB wasn't affected",
     );
+
+    my $grandchild = Tree->new( 'grandchild' );
+    $child2->add_child( $grandchild );
+
+    $values = get_values( $dbh );
+    is_deeply(
+        $values,
+        [
+            { id => 1, parent_id => undef, class => 'Tree', value => 'toor' },
+            { id => 2, parent_id => undef, class => 'Tree', value => 'child' },
+            { id => 3, parent_id => 1, class => 'Tree', value => 'New value' },
+            { id => 4, parent_id => 3, class => 'Tree', value => 'grandchild' },
+        ],
+        "After removed child set_value, the DB wasn't affected",
+    );
+
+}
+
+{
+    my $persist = $CLASS->connect({
+        type  => 'DB',
+        dbh   => $dbh,
+        table => '007_tree',
+        id    => 3,
+    });
+
+    my $tree = $persist->tree;
+
+    $runs{stats}{func}->( $tree,
+        height => 2, width => 1, depth => 0, size => 2, is_root => 1, is_leaf => 0,
+    );
+    is( $tree->value, 'New value', "The tree's value was loaded correctly" );
 }
