@@ -7,7 +7,7 @@ use base qw( Tree::Persist::DB );
 
 use Scalar::Util qw( blessed refaddr );
 
-use Tree;
+our $VERSION = '0.99_01';
 
 sub _init {
     my $class = shift;
@@ -17,10 +17,10 @@ sub _init {
 
     $self->{_id} = $opts->{id};
 
-    $self->{_id_col} = 'id';
-    $self->{_parent_id_col} = 'parent_id';
-    $self->{_value_col} = 'value';
-    $self->{_class_col} = 'class';
+    $self->{ _id_col        } = $opts->{ id_col        } || 'id';
+    $self->{ _parent_id_col } = $opts->{ parent_id_col } || 'parent_id';
+    $self->{ _value_col     } = $opts->{ value_col     } || 'value';
+    $self->{ _class_col     } = $opts->{ class_col     } || 'class';
 
     return $self;
 }
@@ -37,6 +37,7 @@ sub _reload {
 
     $sth->finish;
 
+    eval "use $class";
     my $tree = $class->new( $value );
 
     my $ref_addr = refaddr $self;
@@ -52,6 +53,7 @@ sub _reload {
         $sth_child->bind_columns( \my ($id, $class, $value) );
 
         while ($sth_child->fetch) {
+            eval "use $class";
             my $node = $class->new( $value );
             $parent->add_child( $node );
             $node->meta->{$ref_addr}{id} = $id;
@@ -214,8 +216,11 @@ Please see L<Tree::Persist> for how to use this module.
 =head1 DESCRIPTION
 
 This module is a plugin for L<Tree::Persist> to store a L<Tree> to a
-self-referential DB table. This is where a table contains an id and a
-parent_id column that refers back to another row's id.
+self-referential DB table. This is where a table contains an id column for the
+row and a parent_id column that refers back to another row's id (which is the
+parent row).
+
+This is the simplest way to store a tree datastructure in a database.
 
 =head1 PARAMETERS
 
@@ -224,24 +229,24 @@ parameters are required by connect():
 
 =over 4
 
-=item * id
+=item * id (required)
 
 This is the id for the root node of the tree. By specifying this, you can both
 store more that one tree in a table as well as only load a subtree.
 
-=item * id_col
+=item * id_col (optional)
 
 This is the column name for the id field. It defaults to "id".
 
-=item * parent_id_col
+=item * parent_id_col (optional)
 
 This is the column name for the parent_id field. It defaults to "parent_id".
 
-=item * value_col
+=item * value_col (optional)
 
 This is the column name for the value field. It defaults to "value".
 
-=item * class_col
+=item * class_col (optional)
 
 This is the column name for the class field. It defaults to "class".
 
@@ -257,14 +262,14 @@ To date, only MySQL has been tested.
 
 =item *
 
-The *_col attributes are currently hard-coded.
+Provide for a way to default the class to 'Tree' if no class_col is provided.
+Also, allow for the classname to be passed into the constructor.
 
 =back
 
-=head1 CODE COVERAGE
+=head1 BUGS/TODO/CODE COVERAGE
 
-We use L<Devel::Cover> to test the code coverage of our tests. Please see L<Forest>
-for the coverage report.
+Please see the relevant sections of L<Forest>.
 
 =head1 AUTHORS
 

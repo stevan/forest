@@ -5,7 +5,7 @@ use 5.6.0;
 use strict;
 use warnings;
 
-our $VERSION = '1.00';
+our $VERSION = '0.99_01';
 
 use Scalar::Util qw( blessed refaddr weaken );
 use Contextual::Return;
@@ -386,13 +386,50 @@ __END__
 
 =head1 NAME
 
-Tree - the basic implementation of a tree
+Tree - an N-ary tree
 
 =head1 SYNOPSIS
 
+  my $tree = Tree->new( 'root' );
+  my $child = Tree->new( 'child' );
+  $tree->add_child( $child );
+
+  $tree->add_child( { at => 0 }, Tree->new( 'first child' ) );
+  $tree->add_child( { at => -1 }, Tree->new( 'last child' ) );
+
+  $tree->set_value( 'toor' );
+  my $value = $tree->value;
+
+  my @children = $tree->children;
+  my @some_children = $tree->children( 0, 2 );
+
+  my $height = $tree->height;
+  my $width  = $tree->width;
+  my $depth  = $tree->depth;
+  my $size   = $tree->size;
+
+  if ( $tree->has_child( $child ) ) {
+      $tree->remove_child( $child );
+  }
+
+  $tree->remove_child( 0 );
+
+  my @nodes = $tree->traverse( $tree->POST_ORDER );
+  my $clone = $tree->clone;
+  my $mirror = $tree->clone->mirror;
+
+  $tree->add_event_handler({
+      add_child    => sub { ... },
+      remove_child => sub { ... },
+      value        => sub { ... },
+  });
+
 =head1 DESCRIPTION
 
-This is meant to be a full-featured replacement for L<Tree::Simple>.
+This is meant to be a full-featured N-ary tree representation with
+configurable error-handling and a simple events system that allows for
+transparent persistence to a variety of datastores. It is derived from
+L<Tree::Simple>, but has a simpler interface and much, much more.
 
 =head1 METHODS
 
@@ -403,10 +440,10 @@ This is meant to be a full-featured replacement for L<Tree::Simple>.
 =item B<new([$value])>
 
 This will return a Tree object. It will accept one parameter which, if passed,
-will become the value (accessible by L<value()>). All other parameters will be
+will become the value (accessible by C<value()>). All other parameters will be
 ignored.
 
-If you call C<$tree->new([$value])>, it will instead call C<clone()>, then set
+If you call C<$tree-E<gt>new([$value])>, it will instead call C<clone()>, then set
 the value of the clone to $value.
 
 =item B<clone()>
@@ -414,7 +451,7 @@ the value of the clone to $value.
 This will return a clone of C<$tree>. The clone will be a root tree, but all
 children will be cloned.
 
-If you call <Tree->clone([$value])>, it will instead call C<new()>.
+If you call L<Tree-E<gt>clone([$value])>, it will instead call C<new()>.
 
 B<NOTE:> the value is merely a shallow copy. This means that all references
 will be kept.
@@ -427,7 +464,7 @@ will be kept.
 
 =item B<add_child([$options], @nodes)>
 
-This will add all the @nodes as children of C<$tree>. $options is a optional
+This will add all the C<@nodes> as children of C<$tree>. $options is a optional
 unblessed hashref that specifies options for add_child(). The optional
 parameters are:
 
@@ -435,7 +472,7 @@ parameters are:
 
 =item * at
 
-This specifies the index to add @nodes at. If specified, this will be passed
+This specifies the index to add C<@nodes> at. If specified, this will be passed
 into splice(). The only exceptions are if this is 0, it will act as an
 unshift(). If it is unset or undefined, it will act as a push().
 
@@ -443,7 +480,7 @@ unshift(). If it is unset or undefined, it will act as a push().
 
 =item B<remove_child([$options], @nodes)>
 
-This will remove all the @nodes from the children of C<$tree>. You can either
+This will remove all the C<@nodes> from the children of C<$tree>. You can either
 pass in the actual child object you wish to remove, the index of the child you
 wish to remove, or a combination of both.
 
@@ -457,7 +494,7 @@ means that the order of all children is reversed.
 
 B<NOTE>: This is a destructive action. It I<will> modify the tree's internal
 structure. If you wish to get a mirror, yet keep the original tree intact, use
-C<my $mirror = $tree->clone->mirror;>
+C<my $mirror = $tree-E<gt>clone-E<gt>mirror;>
 
 =item B<traverse( [$order] )>
 
@@ -473,20 +510,20 @@ The various traversal orders do the following steps:
 This will return the node, then the first sub tree in pre-order traversal,
 then the next sub tree, etc.
 
-Use C<$tree->PRE_ORDER> as the C<$order>.
+Use C<$tree-E<gt>PRE_ORDER> as the C<$order>.
 
 =item * Post-order (aka Prefix traversal)
 
 This will return the each sub-tree in post-order traversal, then the node.
 
-Use C<$tree->POST_ORDER> as the C<$order>.
+Use C<$tree-E<gt>POST_ORDER> as the C<$order>.
 
 =item * Level-order (aka Prefix traversal)
 
 This will return the node, then the all children of the node, then all
 grandchildren of the node, etc.
 
-Use C<$tree->LEVEL_ORDER> as the C<$order>.
+Use C<$tree-E<gt>LEVEL_ORDER> as the C<$order>.
 
 =back
 
@@ -509,8 +546,8 @@ This will return true is C<$tree> has no children and false otherwise.
 =item * B<has_child(@nodes)>
 
 If called in a boolean context, this will return true is C<$tree> has each of
-the @nodes as a child. If called in a list context, it will map back the list
-of indices for each of the @nodes. If called in a scalar, non-boolean context,
+the C<@nodes> as a child. If called in a list context, it will map back the list
+of indices for each of the C<@nodes>. If called in a scalar, non-boolean context,
 it will return back the index for C<$nodes[0]>.
 
 =back
@@ -658,7 +695,7 @@ This event will trigger as the last step in a L<set_value()> call.
 
 The parameters will be C<( $self, $old_value, $new_value )> where
 C<$old_value> is what the value was before it was changed. The new value can
-be accessed through C<$self->value()>.
+be accessed through C<$self-E<gt>value()>.
 
 =back
 
@@ -685,7 +722,7 @@ will fire every time the appropriate event occurs anywhere in the tree.
 
 =head1 NULL TREE
 
-If you call C<$self->parent> on a root node, it will return a Tree::Null
+If you call C<$self-E<gt>parent> on a root node, it will return a Tree::Null
 object. This is an implementation of the Null Object pattern optimized for
 usage with L<Tree>. It will evaluate as false in every case (using
 L<overload>) and all methods called on it will return a Tree::Null object.
@@ -717,41 +754,46 @@ make it evaluate as undefined. That may be a good thing.
 
 =head1 CIRCULAR REFERENCES
 
-Copy the text from L<Tree::Simple>, rewording appropriately.
+Please q.v. L<Forest> for more info on this topic.
 
-=head1 BUGS
-
-None that we are aware of.
-
-The test suite for Tree 1.0 is based very heavily on the test suite for
-L<Test::Simple>, which has been heavily tested and used in a number of other
-major distributions, such as L<Catalyst> and rt.cpan.org.
-
-=head1 TODO
+=head1 WHAT'S NOT HERE
 
 =over 4
 
-=item * traverse()
+=item * The Visitor pattern
 
-Need to add contextual awareness by providing an iterating closure (object?)
-in scalar context.
+I have deliberately chosen to not implement the Visitor pattern as described
+by Gamma et al. Given a sufficiently powerful C<traverse()> and Perl's
+capabilities, an explicit visitor object is almost always unneeded. If you
+want one, it's easy to write one yourself. Here's a simple one I wrote in 5
+minutes:
 
-=item * N-ary Proofs
+  package My::Visitor;
 
-Need to generalize some of the btree proofs to N-ary trees, if possible.
+  sub new {
+      my $class = shift;
+      my $opts  = @_;
 
-=item * Traversals and memory
+      return bless {
+          tree => $opts->{tree},
+          action => $opts->{action},
+      }, $class;
+  }
 
-Need tests for what happens with a traversal list and deleted nodes,
-particularly w.r.t. how memory is handled - should traversals weaken if
-use_weak_refs is in force?
+  sub visit {
+      my $self = shift;
+      my ($mode) = @_;
 
-=item * Remove all uses of Contextual::Return
-
-Contrary to recommendation by Damian in PBP - this is a UI nightmare solely
-for spiffiness value.
+      foreach my $node ( $self->{tree}->traverse( $mode ) ) {
+          $self->{action}->( $node );
+      }
+  }
 
 =back
+
+=head1 BUGS/TODO/CODE COVERAGE
+
+Please see the relevant sections of L<Forest>.
 
 =head1 ACKNOWLEDGEMENTS
 
@@ -760,11 +802,6 @@ for spiffiness value.
 =item * Stevan Little for writing L<Tree::Simple>, upon which Tree is based.
 
 =back
-
-=head1 CODE COVERAGE
-
-We use L<Devel::Cover> to test the code coverage of our tests. Please see
-L<Forest> for the coverage report.
 
 =head1 AUTHORS
 

@@ -2,19 +2,23 @@ use strict;
 use warnings;
 
 use Test::More;
+
+eval "use XML::Parser";
+plan skip_all => "XML::Parser required for testing File plugin" if $@;
+
+plan tests => 11;
+
 use Test::File;
 use Test::File::Cleaner;
 use Test::File::Contents;
 
 use File::Spec::Functions qw( catfile );
 
-#use t::tests qw( %runs );
-
-plan tests => 10;
-
 my $CLASS = 'Tree::Persist';
 use_ok( $CLASS )
     or Test::More->builder->BAILOUT( "Cannot load $CLASS" );
+
+use_ok( 'Tree' );
 
 my $dirname = catfile( qw( t Tree_Persist datafiles ) );
 

@@ -5,6 +5,8 @@ use warnings;
 
 use base qw( Tree::Persist::Base );
 
+our $VERSION = '0.99_01';
+
 sub _init {
     my $class = shift;
     my ($opts) = @_;
@@ -26,8 +28,8 @@ Tree::Persist::DB - the base class for DB plugins for Tree persistence
 
 =head1 DESCRIPTION
 
-This class is a base class for the Tree::Persist::DB::* hierarchy, which
-provides DB plugins for Tree persistence.
+This class is the base class for the Tree::Persist::DB::* hierarchy, which
+provides DB plugins for Tree persistence through L<Tree::Persist>.
 
 =head1 PARAMETERS
 
@@ -36,12 +38,12 @@ following parameters are required by connect():
 
 =over 4
 
-=item * dbh
+=item * dbh (required)
 
 This is the $dbh that is already connected to the right database and schema
 with the appropriate user. This is required.
 
-=item * table
+=item * table (required)
 
 This is the table name that contains the tree. This is required.
 
@@ -57,10 +59,9 @@ Currently, the dbh and table options aren't checked for existence or validity.
 
 =back
 
-=head1 CODE COVERAGE
+=head1 BUGS/TODO/CODE COVERAGE
 
-We use L<Devel::Cover> to test the code coverage of our tests. Please see L<Forest>
-for the coverage report.
+Please see the relevant sections of L<Forest>.
 
 =head1 AUTHORS
 
@@ -76,6 +77,7 @@ Copyright 2004, 2005 by Infinity Interactive, Inc.
 
 L<http://www.iinteractive.com>
 
-This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself. 
+This library is free software; you can redistribute it and/or modify it under
+the same terms as Perl itself.
 
 =cut

@@ -7,7 +7,8 @@ use base qw( Tree::Persist::File );
 
 use Scalar::Util qw( blessed refaddr );
 use XML::Parser;
-use Tree;
+
+our $VERSION = '0.99_01';
 
 sub _reload {
     my $self = shift;
@@ -21,6 +22,7 @@ sub _reload {
                 shift;
                 my ($name, %args) = @_;
 
+                eval "use $args{class}";
                 my $node = $args{class}->new( $args{value} );
 
                 if ( @stack ) {
@@ -117,10 +119,9 @@ Currently, the value is not XML-encoded.
 
 =back
 
-=head1 CODE COVERAGE
+=head1 BUGS/TODO/CODE COVERAGE
 
-We use L<Devel::Cover> to test the code coverage of our tests. Please see L<Forest>
-for the coverage report.
+Please see the relevant sections of L<Forest>.
 
 =head1 AUTHORS
 

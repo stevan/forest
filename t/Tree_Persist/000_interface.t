@@ -2,7 +2,7 @@ use strict;
 use warnings;
 
 use File::Spec::Functions qw( catfile );
-use Test::More tests => 7;
+use Test::More tests => 3;
 
 my $CLASS = 'Tree::Persist';
 use_ok( $CLASS )
@@ -24,11 +24,8 @@ my %methods = (
         connect create_datastore _instantiate
     )],
     public => [ qw(
-        autocommit tree
-        commit rollback
     )],
     private => [ qw(
-        _build_string _set_tree _reload _init
     )],
     book_keeping => [qw(
     )],
@@ -40,20 +37,6 @@ my %methods = (
 # These are the class methods
 can_ok( $CLASS, @{ $methods{class} } );
 delete @existing_methods{@{$methods{class}}};
-
-my $persist = $CLASS->connect({
-    filename => catfile( qw( t Tree_Persist datafiles tree1.xml ) ),
-});
-TODO: {
-    local $TODO = "Hmm...";
-    isa_ok( $persist, $CLASS );
-}
-
-for my $type ( qw( public private book_keeping imported ) ) {
-    next unless @{$methods{$type}};
-    can_ok( $persist, @{ $methods{ $type } } );
-    delete @existing_methods{@{$methods{ $type }}};
-}
 
 if ( my @k = keys %existing_methods ) {
     ok( 0, "We need to account for '" . join ("','", @k) . "'" );

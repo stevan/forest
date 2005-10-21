@@ -5,11 +5,13 @@ use Test::More;
 
 #use t::tests qw( %runs );
 
-plan tests => 4;
+plan tests => 5;
 
 my $CLASS = 'Tree::Persist';
 use_ok( $CLASS )
     or Test::More->builder->BAILOUT( "Cannot load $CLASS" );
+
+use_ok( 'Tree' );
 
 use DBI;
 my $dbh = DBI->connect(

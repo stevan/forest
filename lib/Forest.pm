@@ -1,6 +1,6 @@
 package Forest;
 
-our $VERSION = '1.00';
+our $VERSION = '0.99_01';
 
 1;
 __END__
@@ -13,9 +13,45 @@ Forest - the distribution for L<Tree> and friends
 
 Forest is the name for a group of related modules that all deal with trees. 
 
+B<NOTE:> This is currently a developer release. The API is nearly-completely
+frozen, but we reserve the right to make incompatible changes. When 1.0 is
+released, its API I<will> be backwards-compatible.
+
+=head1 CIRCULAR REFERENCES
+
+All the modules in this distribution use L<Scalar::Util>'s C<weaken()> to
+avoid circular references. This avoids the problem of circular references in
+all cases.
+
+=head1 BUGS
+
+None that we are aware of.
+
+The test suite for Forest is based very heavily on the test suite for
+L<Test::Simple>, which has been tested extensively and is used in a number of
+major applications/distributions, such as L<Catalyst> and rt.cpan.org.
+
+=head1 TODO
+
+=over 4
+
+=item * traverse()
+
+Need to add contextual awareness by providing an iterating closure (object?)
+in scalar context.
+
+=item * Traversals and memory
+
+Need tests for what happens with a traversal list and deleted nodes,
+particularly w.r.t. how memory is handled - should traversals weaken?
+
+=back
+
 =head1 CODE COVERAGE
 
-We use L<Devel::Cover> to test the code coverage of our tests. Below is the L<Devel::Cover> report on this module's test suite. We use TDD, which is why our coverage is so high.
+We use L<Devel::Cover> to test the code coverage of our tests. Below is the
+L<Devel::Cover> report on this module's test suite. We use TDD, which is why
+our coverage is so high.
  
   ---------------------------- ------ ------ ------ ------ ------ ------ ------
   File                           stmt branch   cond    sub    pod   time  total
@@ -46,6 +82,7 @@ Copyright 2004, 2005 by Infinity Interactive, Inc.
 
 L<http://www.iinteractive.com>
 
-This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself. 
+This library is free software; you can redistribute it and/or modify it under
+the same terms as Perl itself. 
 
 =cut

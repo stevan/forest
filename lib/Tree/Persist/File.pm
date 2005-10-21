@@ -7,6 +7,8 @@ use base qw( Tree::Persist::Base );
 
 use Scalar::Util qw( blessed );
 
+our $VERSION = '0.99_01';
+
 sub _init {
     my $class = shift;
     my ($opts) = @_;
@@ -52,7 +54,7 @@ parameters are required by connect():
 
 =over 4
 
-=item * filename
+=item * filename (required)
 
 This is the filename that will be used as the datastore.
 
@@ -68,10 +70,9 @@ Currently, the filename parameter isn't checked for validity or existence.
 
 =back
 
-=head1 CODE COVERAGE
+=head1 BUGS/TODO/CODE COVERAGE
 
-We use L<Devel::Cover> to test the code coverage of our tests. Please see L<Forest>
-for the coverage report.
+Please see the relevant sections of L<Forest>.
 
 =head1 AUTHORS
 

@@ -3,7 +3,7 @@ package Tree::Fast;
 use strict;
 use warnings;
 
-our $VERSION = '1.00';
+our $VERSION = '0.99_01';
 
 use Scalar::Util qw( blessed weaken );
 
@@ -221,12 +221,32 @@ Tree::Fast - the fastest possible implementation of a tree in pure Perl
 
 =head1 SYNOPSIS
 
+  my $tree = Tree->new( 'root' );
+  my $child = Tree->new( 'child' );
+  $tree->add_child( {}, $child );
+
+  $tree->add_child( { at => 0 }, Tree->new( 'first child' ) );
+  $tree->add_child( { at => -1 }, Tree->new( 'last child' ) );
+
+  my @children = $tree->children;
+  my @some_children = $tree->children( 0, 2 );
+
+  if ( $tree->has_child( $child ) ) {
+      $tree->remove_child( $child );
+  }
+
+  $tree->remove_child( 0 );
+
+  my @nodes = $tree->traverse( $tree->POST_ORDER );
+  my $clone = $tree->clone;
+  my $mirror = $tree->clone->mirror;
+
 =head1 DESCRIPTION
 
-This is meant to be the core imlpementation for L<Tree>, stripped down as much
+This is meant to be the core implementation for L<Tree>, stripped down as much
 as possible. There is no error-checking, bounds-checking, event-handling,
 convenience methods, or anything else of the sort. If you want something fuller-
-featured, please look at L<Tree>, which is a wrapper around L<Tree::Fast>.
+featured, please look at L<Tree>, which is a wrapper around Tree::Fast.
 
 =head1 METHODS
 
@@ -240,7 +260,7 @@ This will return a Tree object. It will accept one parameter which, if passed,
 will become the value (accessible by L<value()>). All other parameters will be
 ignored.
 
-If you call C<$tree->new([$value])>, it will instead call C<clone()>, then set
+If you call C<$tree-E<gt>new([$value])>, it will instead call C<clone()>, then set
 the value of the clone to $value.
 
 =item B<clone()>
@@ -248,7 +268,7 @@ the value of the clone to $value.
 This will return a clone of C<$tree>. The clone will be a root tree, but all
 children will be cloned.
 
-If you call <Tree->clone([$value])>, it will instead call C<new()>.
+If you call C<Tree-E<gt>clone([$value])>, it will instead call C<new()>.
 
 B<NOTE:> the value is merely a shallow copy. This means that all references
 will be kept.
@@ -290,7 +310,7 @@ means that the order of all children is reversed.
 
 B<NOTE>: This is a destructive action. It I<will> modify the tree's internal
 structure. If you wish to get a mirror, yet keep the original tree intact, use
-C<my $mirror = $tree->clone->mirror;>
+C<my $mirror = $tree-E<gt>clone-E<gt>mirror;>
 
 =item B<traverse( [$order] )>
 
@@ -306,20 +326,20 @@ The various traversal orders do the following steps:
 This will return the node, then the first sub tree in pre-order traversal,
 then the next sub tree, etc.
 
-Use C<$tree->PRE_ORDER> as the C<$order>.
+Use C<$tree-E<gt>PRE_ORDER> as the C<$order>.
 
 =item * Post-order (aka Prefix traversal)
 
 This will return the each sub-tree in post-order traversal, then the node.
 
-Use C<$tree->POST_ORDER> as the C<$order>.
+Use C<$tree-E<gt>POST_ORDER> as the C<$order>.
 
 =item * Level-order (aka Prefix traversal)
 
 This will return the node, then the all children of the node, then all
 grandchildren of the node, etc.
 
-Use C<$tree->LEVEL_ORDER> as the C<$order>.
+Use C<$tree-E<gt>LEVEL_ORDER> as the C<$order>.
 
 =back
 
@@ -381,7 +401,7 @@ This will help prevent clobbering of metadata.
 
 =head1 NULL TREE
 
-If you call C<$self->parent> on a root node, it will return a Tree::Null
+If you call C<$self-E<gt>parent> on a root node, it will return a Tree::Null
 object. This is an implementation of the Null Object pattern optimized for
 usage with L<Forest>. It will evaluate as false in every case (using
 L<overload>) and all methods called on it will return a Tree::Null object.
@@ -411,34 +431,9 @@ make it evaluate as undefined. That may be a good thing.
 
 =back
 
-=head1 BUGS
+=head1 BUGS/TODO/CODE COVERAGE
 
-None that we are aware of.
-
-The test suite for Tree 1.0 is based very heavily on the test suite for
-L<Test::Simple>, which has been heavily tested and used in a number of other
-major distributions, such as L<Catalyst> and rt.cpan.org.
-
-=head1 TODO
-
-=over 4
-
-=item * traverse()
-
-Need to add contextual awareness by providing an iterating closure (object?)
-in scalar context.
-
-=item * N-ary Proofs
-
-Need to generalize some of the btree proofs to N-ary trees, if possible.
-
-=item * Traversals and memory
-
-Need tests for what happens with a traversal list and deleted nodes,
-particularly w.r.t. how memory is handled - should traversals weaken if
-use_weak_refs is in force?
-
-=back
+Please see the relevant sections of L<Forest>.
 
 =head1 ACKNOWLEDGEMENTS
 
@@ -447,11 +442,6 @@ use_weak_refs is in force?
 =item * Stevan Little for writing L<Tree::Simple>, upon which Tree is based.
 
 =back
-
-=head1 CODE COVERAGE
-
-We use L<Devel::Cover> to test the code coverage of our tests. Please see
-L<Forest> for the coverage report.
 
 =head1 AUTHORS
 

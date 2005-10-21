@@ -5,6 +5,8 @@ use warnings;
 
 use Scalar::Util qw( blessed );
 
+our $VERSION = '0.99_01';
+
 sub new {
     my $class = shift;
 
@@ -143,15 +145,25 @@ Tree::Persist::Base - The base class for the Tree persistence plugin hierarchy
 
 This provides a useful baseclass for all the L<Tree::Persist> plugins.
 
+=head1 PARAMETERS
+
+=over 4
+
+=item * autocommit (optional)
+
+This will be the initial setting for the autocommit value. (Please see
+C<autocommit()> for more info.)
+
 =head1 METHODS
 
 =over 4
 
-=item * new
+=item * new({ %opts })
 
-This is the constructor.
+This is the constructor. C<%opts> is the set of parameters described in
+L<Tree::Persist>.
 
-=item * autocommit
+=item * autocommit( [$autocommit] )
 
 If called without any parameters, this will return the current autocommit
 setting. If called with a parameter, it will set the autocommit flag to the
@@ -164,7 +176,7 @@ NOTE: If you turn autocommit off, then back on, it will B<not> issue a commit
 until the next change occurs. At that time, it will commit all changes that
 have occurred since the last commit.
 
-=item * commit
+=item * commit()
 
 If any changes are queued up, this will write them to the database. If there
 are no changes, this is a no-op.
@@ -180,10 +192,9 @@ This will return the tree that is being persisted.
 
 =back
 
-=head1 CODE COVERAGE
+=head1 BUGS/TODO/CODE COVERAGE
 
-We use L<Devel::Cover> to test the code coverage of our tests. Please see L<Forest>
-for the coverage report.
+Please see the relevant sections of L<Forest>.
 
 =head1 AUTHORS
 

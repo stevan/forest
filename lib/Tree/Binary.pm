@@ -8,6 +8,8 @@ use Scalar::Util qw( blessed );
 
 use base qw( Tree );
 
+our $VERSION = '0.99_01';
+
 sub _init {
     my $self = shift;
     $self->SUPER::_init( @_ );
@@ -122,7 +124,7 @@ If you do not pass in any parameters, then it will act as a getter for the speci
 
 If you pass in a child, it will act as a setter for the specific child, setting the child to the passed-in value and returning the $tree. (Thus, this method chains.)
 
-If you wish to unset the child, do C<$tree->left( undef );>
+If you wish to unset the child, do C<$treeE<gt>left( undef );>
 
 =item * B<traverse( [$order] )>
 

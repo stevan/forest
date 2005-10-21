@@ -3,6 +3,8 @@ package Tree::Persist;
 use strict;
 use warnings;
 
+our $VERSION = '0.99_01';
+
 sub connect {
     my $class = shift;
 
@@ -51,14 +53,39 @@ Tree::Persist
 
 =head1 SYNOPSIS
 
+  my $persist = Tree::Persist->new({
+      ...
+  });
+
+  my $tree = $persist->tree.
+
+  $persist->autocommit( 0 );
+
+  $tree->set_value( 'foo' );
+
 =head1 DESCRIPTION
 
-This is meant to be a transparent persistence layer for Tree and its children. It's fully pluggable and will allow either loading, storing, and/or association with between a datastore and a tree.
+This is a transparent persistence layer for Tree and its children. It's fully
+pluggable and will allow either loading, storing, and/or association with
+between a datastore and a tree.
 
-=head1 CAVEATS
+B<NOTE:> If you load a subtree, you will have access to the parent's id, but
+the node will be considered the root for the tree you are working with.
 
-If you load a subtree, you will have access to the parent's id, but the node
-will be considered the root for the tree you are working with.
+=head1 PLUGINS
+
+The plugins that have been written are:
+
+=over 4
+
+=item * L<Tree::Persist::DB::SelfReferential>
+
+=item * L<Tree::Persist::File::XML>
+
+=back
+
+Please refer to their documentation for the appropriate options for
+C<connect()> and C<create_datastore()>.
 
 =head1 METHODS
 
@@ -69,49 +96,27 @@ will be considered the root for the tree you are working with.
 =item * B<connect({ %opts })>
 
 This will return an object that will provide persistence. It will B<not> be an
-object that inherits from Tree::Persist. C<%opts> includes:
-
-=over 4
-
-=item * Required: filename
-
-This is the filename that is used as the XML datastore. The filename must exist and be in the appropriate format.
-
-=item * Optional: autocommit
-
-This is a boolean option that determines whether or not changes to the tree will committed to the datastore immediately or not. The default is true.
-
-=back
+object that inherits from Tree::Persist.
 
 =item * B<create_datastore({ %opts })>
 
 This will create a new datastore for a tree. It will then return the object
-used to create that datastore, as if you had called L<connect()>. C<%opts> includes;
-
-=over 4
-
-=item * Required: tree
-
-This is the tree that will be used to create the datastore.
-
-=item * Required: filename
-
-This is the filename that is used as the XML datastore. It I<will> be B<overwritten> if it exists.
-
-=back
+used to create that datastore, as if you had called L<connect()>.
 
 =back
 
 =head2 Behaviors
 
-These behaviors apply to the object returned from L<connect()> or
-L<create_datastore()>.
+These behaviors apply to the object returned from C<connect()> or
+C<create_datastore()>.
 
 =over 4
 
 =item * B<autocommit()>
 
-This is a boolean option that determines whether or not changes to the tree will committed to the datastore immediately or not. The default is true. This will return the current setting.
+This is a boolean option that determines whether or not changes to the tree
+will committed to the datastore immediately or not. The default is true. This
+will return the current setting.
 
 =item * B<tree()>
 
@@ -119,7 +124,8 @@ This returns the tree.
 
 =item * B<commit()>
 
-This will save all changes made to the tree associated with this Tree::Persist object.
+This will save all changes made to the tree associated with this Tree::Persist
+object.
 
 This is a no-op if autocommit is true.
 
@@ -130,22 +136,15 @@ were any changes, it will reload the tree from the datastore.
 
 This is a no-op if autocommit is true.
 
-B<NOTE>: Any references to any of the nodes in the tree as it was before rollback() is called will B<not> refer to the same node of C<$persist->tree> after rollback().
+B<NOTE>: Any references to any of the nodes in the tree as it was before
+rollback() is called will B<not> refer to the same node of C<$persistE<gt>tree>
+after rollback().
 
 =back
 
-=head1 ACKNOWLEDGEMENTS
+=head1 BUGS/TODO/CODE COVERAGE
 
-=over 4
-
-=item * 
-
-=back
-
-=head1 CODE COVERAGE
-
-We use L<Devel::Cover> to test the code coverage of our tests. Please see L<Forest>
-for the coverage report.
+Please see the relevant sections of L<Forest>.
 
 =head1 AUTHORS
 
