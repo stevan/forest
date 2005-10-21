@@ -40,7 +40,7 @@ my %methods = (
         meta
     )],
     private => [ qw(
-        _null _fix_width _fix_height _fix_depth _init _set_root
+        _null _fix_width _fix_height _fix_depth _init _set_root _strip_options
     )],
 #    book_keeping => [qw(
 #    )],

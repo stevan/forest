@@ -5,7 +5,7 @@ use Test::More;
 
 use t::tests qw( %runs );
 
-plan tests => 1 + 14 * $runs{error}{plan};
+plan tests => 1 + 12 * $runs{error}{plan};
 
 my $CLASS = 'Tree';
 use_ok( $CLASS )
@@ -44,27 +44,19 @@ $runs{error}{func}->( $root, %defaults,
 );
 
 $runs{error}{func}->( $root, %defaults,
-    args => [ at => $child1, $bad_node2 ], error => "add_child(): '$child1' is not a legal index",
+    args => [ { at => $child1 }, $bad_node2 ], error => "add_child(): '$child1' is not a legal index",
 );
 
 $runs{error}{func}->( $root, %defaults,
-    args => [ $child1, at => $bad_node2 ], error => "add_child(): '$bad_node2' is not a legal index",
+    args => [ { at => $bad_node2 }, $child1 ], error => "add_child(): '$bad_node2' is not a legal index",
 );
 
 $runs{error}{func}->( $root, %defaults,
-    args => [ $child1, at => 1 ], error => "add_child(): '1' is out-of-bounds",
+    args => [ { at => 1 }, $child1 ], error => "add_child(): '1' is out-of-bounds",
 );
 
 $runs{error}{func}->( $root, %defaults,
-    args => [ $child1, at => -1 ], error => "add_child(): '-1' is out-of-bounds",
-);
-
-$runs{error}{func}->( $root, %defaults,
-    args => [ at => 1, $child1 ], error => "add_child(): '1' is out-of-bounds",
-);
-
-$runs{error}{func}->( $root, %defaults,
-    args => [ at => -1, $child1 ], error => "add_child(): '-1' is out-of-bounds",
+    args => [ { at => -1 }, $child1 ], error => "add_child(): '-1' is out-of-bounds",
 );
 
 $runs{error}{func}->( $root, %defaults,

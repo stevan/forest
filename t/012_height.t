@@ -108,7 +108,7 @@ use_ok( $CLASS )
     my $G = $CLASS->new('G');
     isa_ok($G, 'Tree');
 
-    $E->add_child( at => 0, $G);
+    $E->add_child( { at => 0 }, $G);
 
     #        |
     #       <D>
