@@ -38,6 +38,10 @@ following parameters are required by connect():
 
 =over 4
 
+=item * type (required)
+
+For any DB::* plugin to be used, the type must be 'DB' (case-sensitive).
+
 =item * dbh (required)
 
 This is the $dbh that is already connected to the right database and schema

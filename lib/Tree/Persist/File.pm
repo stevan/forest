@@ -54,6 +54,10 @@ parameters are required by connect():
 
 =over 4
 
+=item * type (required)
+
+For any File::* plugin to be used, the type must be 'File' (case-sensitive).
+
 =item * filename (required)
 
 This is the filename that will be used as the datastore.
