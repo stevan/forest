@@ -3,13 +3,22 @@ use warnings;
 
 use Test::More;
 
-#use t::tests qw( %runs );
-
-plan tests => 6;
+plan tests => 16;
 
 my $CLASS = 'Tree::Binary';
 use_ok( $CLASS )
     or Test::More->builder->BAILOUT( "Cannot load $CLASS" );
+
+my $c;
+my @order;
+sub convert {
+    my $c = shift;
+    my @l;
+    while ( my $n = $c->() ) {
+        push @l, $n;
+    }
+    return @l;
+}
 
 {
     my $tree = $CLASS->new( 'A' )
@@ -33,7 +42,7 @@ use_ok( $CLASS )
                      )
                 ;
 
-    my @order = $tree->traverse( $tree->IN_ORDER );
+    @order = $tree->traverse( $tree->IN_ORDER );
     is_deeply(
         [ map { $_->value } @order ],
         [ qw( C B D A F E G ) ],
@@ -44,6 +53,48 @@ use_ok( $CLASS )
         [ map { $_->value } $tree->traverse() ],
         [ qw( A B C D E F G ) ],
         "pre-order traversal works correctly",
+    );
+
+    TODO: {
+        local $TODO = "How am I going to do this??";
+
+        @order = convert( $c = $tree->traverse( $tree->IN_ORDER ) );
+        is_deeply(
+            [ map { $_->value } @order ],
+            [ qw( C B D A F E G ) ],
+            "The tree's ordering for in-order traversal is correct",
+        );
+
+        @order = convert( $c = $tree->traverse() );
+        is_deeply(
+            [ map { $_->value } @order ],
+            [ qw( A B C D E F G ) ],
+            "pre-order traversal works correctly",
+        );
+
+        @order = convert( $c = $tree->traverse( $tree->PRE_ORDER ) );
+        is_deeply(
+            [ map { $_->value } @order ],
+            [ qw( A B C D E F G ) ],
+            "pre-order traversal works correctly",
+        );
+
+        SKIP: {
+            skip "Null trees aren't psychic", 1;
+            @order = convert( $c = $tree->traverse( $tree->POST_ORDER ) );
+            is_deeply(
+                [ map { $_->value } @order ],
+                [ qw( C D B G F E A ) ],
+                "post-order traversal works correctly",
+            );
+        }
+    }
+
+    @order = convert( $c = $tree->traverse( $tree->LEVEL_ORDER ) );
+    is_deeply(
+        [ map { $_->value } @order ],
+        [ qw( A B E C D F G ) ],
+        "level-order traversal works correctly",
     );
 
     my $mirror = $tree->clone->mirror;
@@ -100,4 +151,46 @@ use_ok( $CLASS )
         [ reverse @results ],
         "... the in-order traversal of the mirror is the reverse of the in-order traversal of the original tree",
     );
+
+    TODO: {
+        local $TODO = "How am I going to do this??";
+
+        @order = convert( $c = $tree->traverse( $tree->IN_ORDER ) );
+        is_deeply(
+            [ @order ],
+            [ 1, 5, 10, 20, 3, 4, 5, 90, 7, 91, 6 ],
+            "The tree's ordering for in-order traversal is correct",
+        );
+
+        @order = convert( $c = $tree->traverse() );
+        is_deeply(
+            [ map { $_->value } @order ],
+            [ 4, 6, 5, 7, 90, 91, 20, 1, 10, 5, 3 ],
+            "pre-order traversal works correctly",
+        );
+
+        @order = convert( $c = $tree->traverse( $tree->PRE_ORDER ) );
+        is_deeply(
+            [ map { $_->value } @order ],
+            [ 4, 6, 5, 7, 90, 91, 20, 1, 10, 5, 3 ],
+            "pre-order traversal works correctly",
+        );
+
+        SKIP: {
+            skip "Null trees aren't psychic", 1;
+            @order = convert( $c = $tree->traverse( $tree->POST_ORDER ) );
+            is_deeply(
+                [ map { $_->value } @order ],
+                [ 5, 10, 1, 3, 20, 90, 91, 7, 5, 6, 4 ],
+                "post-order traversal works correctly",
+            );
+        }
+
+        @order = convert( $c = $tree->traverse( $tree->LEVEL_ORDER ) );
+        is_deeply(
+            [ map { $_->value } @order ],
+            [ 4, 6, 20, 1, 3, 5, 10, 7, 5, 90, 91 ],
+            "level-order traversal works correctly",
+        );
+    }
 }

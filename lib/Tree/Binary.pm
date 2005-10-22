@@ -76,20 +76,102 @@ sub children {
 
 use constant IN_ORDER => 4;
 
+# One of the things we have to do in a traversal is to remove all of the
+# Tree::Null elements that are appended to the tree to make this a complete
+# binary tree. The user isn't going to expect them, because they're an
+# internal nicety.
+
 sub traverse {
     my $self = shift;
     my $order = shift || $self->PRE_ORDER;
 
-    if ( $order == $self->IN_ORDER ) {
-        # Remove all the Tree::Null elements
-        return grep { $_ } (
-            $self->left->traverse( $order ),
-            $self,
-            $self->right->traverse( $order ),
-        );
+    if ( wantarray ) {
+        if ( $order == $self->IN_ORDER ) {
+            return grep { $_ } (
+                $self->left->traverse( $order ),
+                $self,
+                $self->right->traverse( $order ),
+            );
+        }
+        else {
+            return grep { $_ } $self->SUPER::traverse( $order );
+        }
     }
+    else {
+        my $closure;
 
-    return grep { $_ } $self->SUPER::traverse( $order );
+        if ( $order eq $self->IN_ORDER ) {
+            sub _self { $_[0] }
+            my @meths = qw( left _self right );
+
+            my @stack = ( $self );
+
+            $closure = sub {
+            };
+        }
+        elsif ( $order eq $self->PRE_ORDER ) {
+            my $next_node = $self;
+            my @stack = ( $self );
+            my @next_idx = ( 0 );
+            $closure = sub {
+                my $node = $next_node || return;
+
+                while ( @stack && !exists $stack[0]->{_children}[ $next_idx[0] ] ) {
+                    shift @stack;
+                    shift @next_idx;
+                }
+
+                if ( @stack ) {
+                    $next_node = $stack[0]->{_children}[ $next_idx[0] ];
+                    $next_idx[0]++;
+                    if ( $next_node ) {
+                        unshift @stack, $next_node;
+                        unshift @next_idx, 0;
+                    }
+                }
+                else {
+                    $next_node = undef;
+                }
+
+                return $node;
+            };
+        }
+        elsif ( $order eq $self->POST_ORDER ) {
+            my @stack = ( $self );
+            my @next_idx = ( 0 );
+            while ( @{ $stack[0]->{_children} } ) {
+                unshift @stack, $stack[0]->{_children}[0];
+                unshift @next_idx, 0;
+            }
+
+            $closure = sub {
+                my $node = $stack[0] || return;
+
+                shift @stack; shift @next_idx;
+                $next_idx[0]++;
+
+                while ( @stack && exists $stack[0]->{_children}[ $next_idx[0] ] ) {
+                    unshift @stack, $stack[0]->{_children}[ $next_idx[0] ];
+                    unshift @next_idx, 0;
+                }
+
+                return $node;
+            };
+        }
+        elsif ( $order eq $self->LEVEL_ORDER ) {
+            my @nodes = ($self);
+            $closure = sub {
+                my $node = shift @nodes || return;
+                push @nodes, @{$node->{_children}};
+                return $node;
+            };
+        }
+        else {
+            return $self->error( "traverse(): '$order' is an illegal traversal order" );
+        }
+
+        return $closure;
+    }
 }
 
 1;
@@ -100,6 +182,25 @@ __END__
 Tree::Binary - An implementation of a binary tree
 
 =head1 SYNOPSIS
+
+  my $tree = Tree::Binary->new( 'root' );
+
+  my $left = Tree::Binary->new( 'left' );
+  $tree->left( $left );
+
+  my $right = Tree::Binary->new( 'left' );
+  $tree->right( $right );
+
+  my $right_child = $tree->right;
+
+  $tree->right( undef ); # Unset the right child.
+
+  my @nodes = $tree->traverse( $tree->POST_ORDER );
+
+  my $traversal = $tree->traverse( $tree->IN_ORDER );
+  while ( my $node = $traversal->() ) {
+      # Do something with $node here
+  }
 
 =head1 DESCRIPTION
 
@@ -118,18 +219,30 @@ provided or overriden.
 
 =item * C<left([$child])> / C<right([$child])>
 
-These access the left and right children, respectively. They are mutators, which means that their behavior changes depending on if you pass in a value.
+These access the left and right children, respectively. They are mutators,
+which means that their behavior changes depending on if you pass in a value.
 
-If you do not pass in any parameters, then it will act as a getter for the specific child, return the child (if set) or undef (if not).
+If you do not pass in any parameters, then it will act as a getter for the
+specific child, return the child (if set) or undef (if not).
 
-If you pass in a child, it will act as a setter for the specific child, setting the child to the passed-in value and returning the $tree. (Thus, this method chains.)
+If you pass in a child, it will act as a setter for the specific child,
+setting the child to the passed-in value and returning the $tree. (Thus, this
+method chains.)
 
 If you wish to unset the child, do C<$treeE<gt>left( undef );>
 
 =item * B<traverse( [$order] )>
 
-Tree::Binary provides a fourth ordering, called IN_ORDER. All other traversals
-are handed off L<Tree>'s traverse() method.
+When called in list context (C<my @traversal = $tree-E<gt>traverse()>), this will
+return a list of the nodes in the given traversal order. When called in scalar
+context (C<my $traversal = $tree-E<gt>traverse()>), this will return a closure
+that will, over successive calls, iterate over the nodes in the given
+traversal order. When finished it will return false.
+
+The default traversal order is pre-order.
+
+In addition to the traversal orders provided by L<Tree>, Tree::Binary provides
+in-order traversals.
 
 =over 4
 
@@ -143,90 +256,13 @@ node (if any).
 
 =back
 
-=head1 BUGS
+B<NOTE:> You have access to all the methods provided by L<Tree>, but it is not
+recommended that you use many of them, unless you know what you're doing. This
+list includes C<add_child()> and C<remove_child()>.
 
-None that we are aware of.
+=head1 BUGS/TODO/CODE COVERAGE
 
-The test suite for Tree 1.0 is based very heavily on the test suite for L<Test::Simple>, which has been heavily tested and used in a number of other major distributions, such as L<Catalyst> and rt.cpan.org.
-
-=head1 NOTES
-
-These are items to consider adding in general.
-
-=over 4
-
-=item * Partial balancing
-
-Creating an AVL search tree
-
-=item * BTree
-
-A special m-ary balanced tree.
-
-=over 4
-
-=item 1 The root either is a leaf or has 2+ children
-
-=item 2 Every node (except root/leaf) has between ceil(m/2) and m children
-
-=item 3 Every path from root to leaf is the same size
-
-=back
-
-=item * 2-3 Tree
-
-A BTree of order 3.
-
-=over 4
-
-=item 1 All nodes have 2 or 3 children
-
-=item 2 The leaves, traversed from left to right, are ordered.
-
-=item 3 Insertion
-
-Locate where it should be and add it. If the parent's children > 3, split it into two nodes with 2 children and add the 2nd to the parent. Continue up to the root, adding a new root, if needed.
-
-=item 4 Deletion
-
-Locate the leaf and remove it. If the parent's children < 2, merge it with an adjacent sibling, removing it from its parent. Continue up to the root, removing the root, if needed.
-
-=back
-
-=item * Red-Black
-
-=over 4
-
-=item 1 Every node has 2 children colored either red or black
-
-=item 2 Every leaf is black
-
-=item 3 Every red node has 2 black children
-
-=item 4 Every path from the root to a leaf contains the same number of black children (called the I<black-height>)
-
-=back
-
-Special case is an AA tree. This requires that right children must always be red. q.v. L<http://en.wikipedia.org/wiki/AA_tree> for more info.
-
-=item * Andersson
-
-q.v. L<http://www.eternallyconfuzzled.com/tuts/andersson.html>
-
-=item * Splay
-
-q.v. L<http://en.wikipedia.org/wiki/Splay_tree>
-
-=item * Scapegoat
-
-q.v. L<http://en.wikipedia.org/wiki/Scapegoat_tree>
-
-=back
-
-=head1 CODE COVERAGE
-
-We use L<Devel::Cover> to test the code coverage of our tests. Please see L<Forest>
-for the coverage report.
+Please see the relevant sections of L<Forest>.
 
 =head1 AUTHORS
 
@@ -242,6 +278,7 @@ Copyright 2004, 2005 by Infinity Interactive, Inc.
 
 L<http://www.iinteractive.com>
 
-This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself. 
+This library is free software; you can redistribute it and/or modify it under
+the same terms as Perl itself.
 
 =cut

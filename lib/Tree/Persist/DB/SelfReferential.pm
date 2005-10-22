@@ -85,33 +85,21 @@ sub _create {
 
     my $ref_addr = refaddr $self;
 
-    my $root_id = $tree->meta->{$ref_addr}{id} ||= $next_id++;
-
     my $sth = $dbh->prepare( $sql{create_node} );
-    my $parent_id = $tree->parent
-        ? $tree->parent->meta->{$ref_addr}{id}
-        : undef;
 
-    $tree->meta->{$ref_addr}{parent_id} = $parent_id;
+    my $traversal = $tree->traverse( $tree->LEVEL_ORDER );
+    while ( my $node = $traversal->() ) {
+        my $node_id
+            = $node->meta->{$ref_addr}{id}
+            = $next_id++;
 
-    $sth->execute(
-        $root_id, $parent_id, blessed($tree), $tree->value,
-    );
+        my $parent_id
+            = $node->meta->{$ref_addr}{parent_id}
+            = eval { $node->parent->meta->{$ref_addr}{id} };
 
-    #XXX Convert this to a level-order traversal, once traversals are
-    # implemented as closures
-    my @parents = ( $tree );
-    while ( my $parent = shift @parents ) {
-        my $parent_id = $parent->meta->{$ref_addr}{id};
-        foreach my $child ($parent->children) {
-            my $child_id = $child->meta->{$ref_addr}{id} ||= $next_id++;
-            $child->meta->{$ref_addr}{parent_id} = $parent_id;
-            $sth->execute(
-                $child_id, $parent_id, blessed($child), $child->value,
-            );
-    
-            push @parents, $child;
-        }
+        $sth->execute(
+            $node_id, $parent_id, blessed( $node ), $node->value,
+        );
     }
 
     $sth->finish;

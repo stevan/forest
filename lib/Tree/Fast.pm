@@ -151,28 +151,95 @@ sub traverse {
     my $self = shift;
     my $order = shift || $self->PRE_ORDER;
 
-    my @list;
+    if ( wantarray ) {
+        my @list;
 
-    if ( $order eq $self->PRE_ORDER ) {
-        @list = ($self);
-        push @list, map { $_->traverse( $order ) } @{$self->{_children}};
-    }
-    elsif ( $order eq $self->POST_ORDER ) {
-        @list = map { $_->traverse( $order ) } @{$self->{_children}};
-        push @list, $self;
-    }
-    elsif ( $order eq $self->LEVEL_ORDER ) {
-        my @queue = ($self);
-        while ( my $node = shift @queue ) {
-            push @list, $node;
-            push @queue, @{$node->{_children}};
+        if ( $order eq $self->PRE_ORDER ) {
+            @list = ($self);
+            push @list, map { $_->traverse( $order ) } @{$self->{_children}};
         }
+        elsif ( $order eq $self->POST_ORDER ) {
+            @list = map { $_->traverse( $order ) } @{$self->{_children}};
+            push @list, $self;
+        }
+        elsif ( $order eq $self->LEVEL_ORDER ) {
+            my @queue = ($self);
+            while ( my $node = shift @queue ) {
+                push @list, $node;
+                push @queue, @{$node->{_children}};
+            }
+        }
+        else {
+            return $self->error( "traverse(): '$order' is an illegal traversal order" );
+        }
+
+        return @list;
     }
     else {
-        return $self->error( "traverse(): '$order' is an illegal traversal order" );
-    }
+        my $closure;
 
-    return @list;
+        if ( $order eq $self->PRE_ORDER ) {
+            my $next_node = $self;
+            my @stack = ( $self );
+            my @next_idx = ( 0 );
+            $closure = sub {
+                my $node = $next_node || return;
+
+                while ( @stack && !exists $stack[0]->{_children}[ $next_idx[0] ] ) {
+                    shift @stack;
+                    shift @next_idx;
+                }
+
+                if ( @stack ) {
+                    $next_node = $stack[0]->{_children}[ $next_idx[0]++ ];
+                    if ( $next_node ) {
+                        unshift @stack, $next_node;
+                        unshift @next_idx, 0;
+                    }
+                }
+                else {
+                    $next_node = undef;
+                }
+
+                return $node;
+            };
+        }
+        elsif ( $order eq $self->POST_ORDER ) {
+            my @stack = ( $self );
+            my @next_idx = ( 0 );
+            while ( @{ $stack[0]->{_children} } ) {
+                unshift @stack, $stack[0]->{_children}[0];
+                unshift @next_idx, 0;
+            }
+
+            $closure = sub {
+                my $node = $stack[0] || return;
+
+                shift @stack; shift @next_idx;
+                $next_idx[0]++;
+
+                while ( @stack && exists $stack[0]->{_children}[ $next_idx[0] ] ) {
+                    unshift @stack, $stack[0]->{_children}[ $next_idx[0] ];
+                    unshift @next_idx, 0;
+                }
+
+                return $node;
+            };
+        }
+        elsif ( $order eq $self->LEVEL_ORDER ) {
+            my @nodes = ($self);
+            $closure = sub {
+                my $node = shift @nodes || return;
+                push @nodes, @{$node->{_children}};
+                return $node;
+            };
+        }
+        else {
+            return $self->error( "traverse(): '$order' is an illegal traversal order" );
+        }
+
+        return $closure;
+    }
 }
 
 sub _null {
@@ -238,6 +305,12 @@ Tree::Fast - the fastest possible implementation of a tree in pure Perl
   $tree->remove_child( 0 );
 
   my @nodes = $tree->traverse( $tree->POST_ORDER );
+
+  my $traversal = $tree->traverse( $tree->POST_ORDER );
+  while ( my $node = $traversal->() ) {
+      # Do something with $node here
+  }
+
   my $clone = $tree->clone;
   my $mirror = $tree->clone->mirror;
 
@@ -314,8 +387,13 @@ C<my $mirror = $tree-E<gt>clone-E<gt>mirror;>
 
 =item B<traverse( [$order] )>
 
-This will return a list of the nodes in the given traversal order. The default
-traversal order is pre-order.
+When called in list context (C<my @traversal = $tree-E<gt>traverse()>), this will
+return a list of the nodes in the given traversal order. When called in scalar
+context (C<my $traversal = $tree-E<gt>traverse()>), this will return a closure
+that will, over successive calls, iterate over the nodes in the given
+traversal order. When finished it will return false.
+
+The default traversal order is pre-order.
 
 The various traversal orders do the following steps:
 

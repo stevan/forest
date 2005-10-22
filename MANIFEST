@@ -28,6 +28,7 @@ t/013_width.t
 t/014_clone.t
 t/015_traverse.t
 t/016_events.t
+t/017_traverse_scalar.t
 t/Tree_Binary/000_binary_trees.t
 t/Tree_Binary/001_mirror.t
 t/Tree_Persist/000_interface.t
