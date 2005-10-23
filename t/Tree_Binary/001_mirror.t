@@ -55,6 +55,20 @@ sub convert {
         "pre-order traversal works correctly",
     );
 
+    @order = convert( $c = $tree->traverse() );
+    is_deeply(
+        [ map { $_->value } @order ],
+        [ qw( A B C D E F G ) ],
+        "pre-order traversal works correctly",
+    );
+
+    @order = convert( $c = $tree->traverse( $tree->PRE_ORDER ) );
+    is_deeply(
+        [ map { $_->value } @order ],
+        [ qw( A B C D E F G ) ],
+        "pre-order traversal works correctly",
+    );
+
     TODO: {
         local $TODO = "How am I going to do this??";
 
@@ -63,20 +77,6 @@ sub convert {
             [ map { $_->value } @order ],
             [ qw( C B D A F E G ) ],
             "The tree's ordering for in-order traversal is correct",
-        );
-
-        @order = convert( $c = $tree->traverse() );
-        is_deeply(
-            [ map { $_->value } @order ],
-            [ qw( A B C D E F G ) ],
-            "pre-order traversal works correctly",
-        );
-
-        @order = convert( $c = $tree->traverse( $tree->PRE_ORDER ) );
-        is_deeply(
-            [ map { $_->value } @order ],
-            [ qw( A B C D E F G ) ],
-            "pre-order traversal works correctly",
         );
 
         SKIP: {
@@ -185,12 +185,12 @@ sub convert {
                 "post-order traversal works correctly",
             );
         }
-
-        @order = convert( $c = $tree->traverse( $tree->LEVEL_ORDER ) );
-        is_deeply(
-            [ map { $_->value } @order ],
-            [ 4, 6, 20, 1, 3, 5, 10, 7, 5, 90, 91 ],
-            "level-order traversal works correctly",
-        );
     }
+
+    @order = convert( $c = $tree->traverse( $tree->LEVEL_ORDER ) );
+    is_deeply(
+        [ map { $_->value } @order ],
+        [ 4, 20, 6, 1, 3, 5, 10, 7, 5, 90, 91 ],
+        "level-order traversal works correctly",
+    );
 }

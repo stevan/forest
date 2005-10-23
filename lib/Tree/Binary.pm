@@ -116,7 +116,7 @@ sub traverse {
             $closure = sub {
                 my $node = $next_node || return;
 
-                while ( @stack && !exists $stack[0]->{_children}[ $next_idx[0] ] ) {
+                while ( @stack && ! $stack[0]->{_children}[ $next_idx[0] ] ) {
                     shift @stack;
                     shift @next_idx;
                 }
@@ -162,7 +162,7 @@ sub traverse {
             my @nodes = ($self);
             $closure = sub {
                 my $node = shift @nodes || return;
-                push @nodes, @{$node->{_children}};
+                push @nodes, grep { $_ } @{$node->{_children}};
                 return $node;
             };
         }
