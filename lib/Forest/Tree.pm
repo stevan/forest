@@ -5,7 +5,7 @@ use Moose::Autobox;
 
 use version; our $VERSION = qv('0.0.1');
 
-has 'node' => (is  => 'rw', isa => 'Any');
+has 'node' => (is => 'rw'); # isa => Any ,... which amounts to a NOOP
 
 has 'uid'  => (
     is      => 'rw', 
