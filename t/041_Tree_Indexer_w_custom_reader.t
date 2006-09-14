@@ -23,10 +23,12 @@ use ok 'Forest::Tree::Indexer::SimpleUIDIndexer';
             $t->uid($t->node);
             $t;
         };
-        
     }
     
     my $reader = My::Tree::Reader->new(source => \*DATA);
+    isa_ok($reader, 'My::Tree::Reader');    
+    isa_ok($reader, 'Forest::Tree::Reader::SimpleTextFile');    
+    
     $reader->load;
 
     my $index = Forest::Tree::Indexer::SimpleUIDIndexer->new(tree => $reader->tree);

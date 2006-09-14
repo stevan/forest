@@ -18,3 +18,5 @@ use ok 'Forest::Tree::Writer::SimpleHTML';
 
 use ok 'Forest::Tree::Indexer';
 use ok 'Forest::Tree::Indexer::SimpleUIDIndexer';
+
+use ok 'Forest::Tree::Service';

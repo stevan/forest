@@ -6,9 +6,8 @@ use Moose::Autobox;
 use version; our $VERSION = qv('0.0.1');
 
 has 'tree' => (
-    is          => 'rw',
-    isa         => 'Forest::Tree',
-    is_weak_ref => 1,
+    is  => 'rw',
+    isa => 'Forest::Tree',
 );
 
 has 'index' => (

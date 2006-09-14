@@ -32,7 +32,8 @@ method load => sub {
     while (@lines) {
         my $line = shift @lines;
         
-        last unless $line;
+        next if $line =~ /^#/;
+        next unless $line;
         
         my ($depth, $node) = self->parse_line($line);
         

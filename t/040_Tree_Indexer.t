@@ -14,6 +14,8 @@ use ok 'Forest::Tree::Indexer::SimpleUIDIndexer';
 
 {
     my $reader = Forest::Tree::Reader::SimpleTextFile->new(source => \*DATA);
+    isa_ok($reader, 'Forest::Tree::Reader::SimpleTextFile');
+    
     $reader->load;
 
     my $index = Forest::Tree::Indexer::SimpleUIDIndexer->new(tree => $reader->tree);
