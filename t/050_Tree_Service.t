@@ -49,7 +49,7 @@ is($service->get_tree_as_json('1.2.2'),
 '... got the error JSON');
 
 is($service->get_children_of_tree_as_json('1.0'),
-'[{"uid":"1.1","node":"1.1","is_leaf":1},{"uid":"1.2","node":"1.2","is_leaf":0}]',
+'{"parent_uid":"1.0","children":[{"uid":"1.1","node":"1.1","is_leaf":1},{"uid":"1.2","node":"1.2","is_leaf":0}]}',
 '... got the children as JSON');
 
 is($service->get_children_of_tree_as_json('1.33'),

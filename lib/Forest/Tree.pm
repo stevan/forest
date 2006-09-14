@@ -14,13 +14,6 @@ has 'uid'  => (
     default => sub { ($_[0] =~ /\((.*?)\)$/)[0] }
 );
 
-has 'depth' => (
-    reader  => 'depth',
-    writer  => '_set_depth',
-    isa     => 'Int',
-    default => -1,
-);
-
 has 'parent' => (
     reader      => 'parent',
     writer      => '_set_parent',   
@@ -31,11 +24,7 @@ has 'parent' => (
         'add_sibling'       => 'add_child',
         'get_sibling_at'    => 'get_child_at',
         'insert_sibling_at' => 'insert_child_at',
-    },    
-    trigger     => sub {
-        my ($self) = @_;
-        $self->_set_depth($self->parent->depth + 1)
-    },    
+    },       
 );
 
 has 'children' => (
@@ -48,6 +37,10 @@ has 'children' => (
 
 method is_root => sub { !self->has_parent       };
 method is_leaf => sub { !self->children->length };
+
+## depth 
+
+method depth => sub { (self->parent || return -1)->depth + 1 };
 
 ## child management
 
@@ -76,6 +69,8 @@ method get_child_at => sub {
 method child_count => sub { self->children->length };
 
 no Moose;
+
+__PACKAGE__->meta->make_immutable(inline_accessors => 0);
 
 1;
 

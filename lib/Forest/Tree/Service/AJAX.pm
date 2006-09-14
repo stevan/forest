@@ -12,9 +12,9 @@ with 'Forest::Tree::Service';
 method _prepare_tree_for_JSON => sub {
     my ($tree) = @_;
     +{
-        uid     => $tree->uid,
-        node    => $tree->node,
-        is_leaf => $tree->is_leaf ? 1 : 0,
+        uid        => $tree->uid,
+        node       => $tree->node,
+        is_leaf    => $tree->is_leaf ? 1 : 0,
     }
 };
 
@@ -43,10 +43,10 @@ method get_children_of_tree_as_json => sub {
         unless (blessed $tree && $tree->isa('Forest::Tree'));
     
     return JSON::Syck::Dump(
-        $tree->children->map(sub {
-            my $t = shift;
-            self->_prepare_tree_for_JSON($t)          
-        })
+        {
+            parent_uid => $tree_id,
+            children   => $tree->children->map(sub { self->_prepare_tree_for_JSON($_[0]) })
+        }
     );
 };
 
