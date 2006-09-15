@@ -6,6 +6,7 @@ use warnings;
 use Data::Dumper;
 use Template;
 use FindBin;
+use Getopt::Long;
 
 use lib $FindBin::Bin . '/../lib';
 
@@ -14,7 +15,11 @@ use Forest::Tree::Reader::SimpleTextFile;
 use Forest::Tree::Indexer::SimpleUIDIndexer;
 use Forest::Tree::Service::AJAX;
 
-open(TREE, "<", $FindBin::Bin . "/test.tree") || die "Could not open the tree file";
+my $tree = $FindBin::Bin . "/test.tree";
+
+GetOptions('t=s' => \$tree);
+
+open(TREE, "<", $tree) || die "Could not open the tree file :  $tree : because : $!";
 
 my $reader = Forest::Tree::Reader::SimpleTextFile->new(
     tree   => Forest::Tree->new(node => 'root', uid => 'root'),
@@ -24,6 +29,8 @@ my $reader = Forest::Tree::Reader::SimpleTextFile->new(
 warn "... loading tree";
 $reader->load;
 warn "+ tree loaded";
+
+close TREE || die "Could not close the tree file : $tree";
 
 my $index = Forest::Tree::Indexer::SimpleUIDIndexer->new(tree => $reader->tree);
 
@@ -49,6 +56,7 @@ my $service = Forest::Tree::Service::AJAX->new(tree_index => $index);
     }
 }
     
-Forest::Tree::Service::AJAX::Server->new()->run();    
+my $server = Forest::Tree::Service::AJAX::Server->new();
+$server->run();    
 
 1;
