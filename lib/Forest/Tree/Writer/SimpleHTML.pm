@@ -9,24 +9,24 @@ with 'Forest::Tree::Writer';
 
 sub output {
     my ($self) = @_;
-    my $out;
+    my $out;    
     
-    #sub {
-    #    my $f = shift;
-    #    sub {
-    #        my $t      = shift;
-    #        my $indent = ('    ' x $t->depth);
-    #        
-    #        $out .= ($indent . '<li>' . ($t->node || '\undef') . '</li>' . "\n")
-    #            unless $t->depth == -1;
-    #            
-    #        unless ($t->is_leaf) {
-    #            $out .= ($indent . '<ul>' . "\n");
-    #            $t->children->map($f);
-    #            $out .= ($indent . '</ul>' . "\n");      
-    #        }      
-    #    }
-    #}->y->($self->tree);
+    my $traversal;
+    $traversal = sub {
+        my $t      = shift;
+        my $indent = ('    ' x $t->depth);
+        
+        $out .= ($indent . '<li>' . ($t->node || '\undef') . '</li>' . "\n")
+            unless $t->depth == -1;
+            
+        unless ($t->is_leaf) {
+            $out .= ($indent . '<ul>' . "\n");
+            map { $traversal->($_) } @{$t->children};
+            $out .= ($indent . '</ul>' . "\n");      
+        }      
+    };
+    
+    $traversal->($self->tree);
     
     return $out;
 }
