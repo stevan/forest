@@ -4,8 +4,11 @@ use strict;
 use warnings;
 
 use Test::More no_plan => 1;
+use Test::Exception;
 
-use ok 'Forest::Tree';
+BEGIN {
+    use_ok('Forest::Tree');
+};
 
 my $t = Forest::Tree->new();
 isa_ok($t, 'Forest::Tree');
@@ -95,5 +98,15 @@ ok(!$child_3->is_root, '... this is no longer a root');
 ok($child_3->is_leaf, '... but this is still a leaf');
 is($child_3->parent, $t, '... its parent is tree');
 is($child_3->depth, 0, '... the child now has a depth of 1');
+
+throws_ok {
+    $t->add_child([]);    
+} qr/Child parameter must be a Forest\:\:Tree not/, '... throws exception';
+
+throws_ok {
+    $t->add_child({});    
+} qr/Child parameter must be a Forest\:\:Tree not/, '... throws exception';
+
+
 
 

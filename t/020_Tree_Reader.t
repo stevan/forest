@@ -6,10 +6,11 @@ use warnings;
 use Test::More no_plan => 1;
 use Test::Exception;
 
-use ok 'Forest::Tree';
-
-use ok 'Forest::Tree::Reader';
-use ok 'Forest::Tree::Reader::SimpleTextFile';
+BEGIN {
+    use_ok('Forest::Tree');
+    use_ok('Forest::Tree::Reader');
+    use_ok('Forest::Tree::Reader::SimpleTextFile');
+};
 
 {
     my $reader = Forest::Tree::Reader::SimpleTextFile->new(

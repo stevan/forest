@@ -1,29 +1,23 @@
 
 package Forest::Tree::Indexer::SimpleUIDIndexer;
 use Moose;
-use Moose::Autobox;
 
-use version; our $VERSION = qv('0.0.1');
+our $VERSION = '0.0.1';
 
 with 'Forest::Tree::Indexer';
 
-method build_index => sub {
-    my $index = self->index;
+sub build_index {
+    my $self  = shift;
+    my $index = $self->index;
     
-    sub {
-        my $f = shift;
-        sub {
-            my $t = shift;
-            $index->put($t->uid, $t);    
-            $t->children->map($f);      
-        }
-    }->y->(self->tree);
+    $self->tree->traverse(sub {
+        my $t = shift;
+        $index->{$t->uid} = $t;        
+    });
     
 };
 
 no Moose;
-
-1;
 
 __END__
 

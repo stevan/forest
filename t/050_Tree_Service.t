@@ -5,13 +5,13 @@ use warnings;
 
 use Test::More no_plan => 1;
 
-use ok 'Forest::Tree';
-
-use ok 'Forest::Tree::Reader::SimpleTextFile';
-use ok 'Forest::Tree::Indexer::SimpleUIDIndexer';
-
-use ok 'Forest::Tree::Service';
-use ok 'Forest::Tree::Service::AJAX';
+BEGIN {
+    use_ok('Forest::Tree');
+    use_ok('Forest::Tree::Reader::SimpleTextFile');
+    use_ok('Forest::Tree::Indexer::SimpleUIDIndexer');
+    use_ok('Forest::Tree::Service');
+    use_ok('Forest::Tree::Service::AJAX');
+};
 
 {
     package My::Tree::Reader;

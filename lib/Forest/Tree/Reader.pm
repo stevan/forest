@@ -2,7 +2,7 @@
 package Forest::Tree::Reader;
 use Moose::Role;
 
-use version; our $VERSION = qv('0.0.1');
+our $VERSION = '0.0.1';
 
 has 'source' => (
     is       => 'ro', 

@@ -5,12 +5,12 @@ use warnings;
 
 use Test::More no_plan => 1;
 
-use ok 'Forest::Tree';
-
-use ok 'Forest::Tree::Reader::SimpleTextFile';
-
-use ok 'Forest::Tree::Indexer';
-use ok 'Forest::Tree::Indexer::SimpleUIDIndexer';
+BEGIN {
+    use_ok('Forest::Tree');
+    use_ok('Forest::Tree::Reader::SimpleTextFile');
+    use_ok('Forest::Tree::Indexer');
+    use_ok('Forest::Tree::Indexer::SimpleUIDIndexer');
+};
 
 {
     my $reader = Forest::Tree::Reader::SimpleTextFile->new(source => \*DATA);
@@ -24,7 +24,7 @@ use ok 'Forest::Tree::Indexer::SimpleUIDIndexer';
     $index->build_index;
 
     my $keys = $index->get_index_keys;
-    is(scalar @$keys, 11, '... got the right amount of keys');
+    is(scalar @$keys, 10, '... got the right amount of keys');
 
     foreach my $key (@$keys) {
         my $tree = $index->get_tree_at($key);

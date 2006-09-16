@@ -1,9 +1,8 @@
 
 package Forest::Tree::Reader::SimpleTextFile;
 use Moose;
-use Moose::Autobox;
 
-use version; our $VERSION = qv('0.0.1');
+our $VERSION = '0.0.1';
 
 with 'Forest::Tree::Reader';
 
@@ -15,19 +14,20 @@ has 'tab_width' => (
 
 ## methods
 
-method parse_line => sub {
-    my ($line) = @_;
+sub parse_line {
+    my ($self, $line) = @_;
     my ($indent, $node) = ($line =~ /^(\s*)(.*)$/);
-    my $depth = ((length $indent) / self->tab_width); 
+    my $depth = ((length $indent) / $self->tab_width); 
     return ($depth, $node);
-};
+}
 
-method load => sub {
-        
-    my $fh = *{self->source};
+sub load {
+    my $self = shift;
+    
+    my $fh    = *{$self->source};
     my @lines = map { chomp; $_ } <$fh>;
     
-    my $current_tree = self->tree;
+    my $current_tree = $self->tree;
     
     while (@lines) {
         my $line = shift @lines;
@@ -35,11 +35,11 @@ method load => sub {
         next if $line =~ /^#/;
         next unless $line;
         
-        my ($depth, $node) = self->parse_line($line);
+        my ($depth, $node) = $self->parse_line($line);
         
         #warn "Depth: $depth - Node: $node - for $line";
         
-        my $new_tree = self->create_new_subtree(node => $node);
+        my $new_tree = $self->create_new_subtree(node => $node);
         
 		if ($current_tree->is_root) {
 			$current_tree->add_child($new_tree);
@@ -70,8 +70,6 @@ method load => sub {
 };
 
 no Moose;
-
-1;
 
 __END__
 

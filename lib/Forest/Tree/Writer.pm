@@ -2,7 +2,7 @@
 package Forest::Tree::Writer;
 use Moose::Role;
 
-use version; our $VERSION = qv('0.0.1');
+our $VERSION = '0.0.1';
 
 has 'tree' => (
     is          => 'rw',
