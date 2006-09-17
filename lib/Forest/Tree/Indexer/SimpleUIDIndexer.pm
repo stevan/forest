@@ -17,7 +17,7 @@ sub build_index {
     
 };
 
-no Moose;
+no Moose; 1;
 
 __END__
 

@@ -1,7 +1,6 @@
 
 package Forest::Tree::Writer::SimpleHTML;
 use Moose;
-#use Moose::Autobox;
 
 our $VERSION = '0.0.1';
 
@@ -31,7 +30,7 @@ sub output {
     return $out;
 }
 
-no Moose;
+no Moose; 1;
 
 __END__
 

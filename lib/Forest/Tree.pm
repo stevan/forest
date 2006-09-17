@@ -27,8 +27,9 @@ has 'parent' => (
 );
 
 has 'children' => (
-    is  => 'rw',
-    isa => 'ArrayRef',
+    is      => 'rw',
+    isa     => 'ArrayRef',
+    default => sub { [] },
 );
 
 ## informational 
@@ -89,7 +90,7 @@ sub traverse {
 # considerably.
 __PACKAGE__->meta->make_immutable(inline_accessors => 0);
 
-no Moose;
+no Moose; 1;
 
 __END__
 

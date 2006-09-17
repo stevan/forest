@@ -3,6 +3,7 @@ use Module::Build;
 use strict;
 
 my $build = Module::Build->new(
+    dist_abstract => 'nothing',
     module_name => 'Forest',
     license => 'perl',
     requires => {
@@ -11,7 +12,7 @@ my $build = Module::Build->new(
         'version'        => '0',
     },
     optional => {
-        'JSON::Syck' => '0',
+#        'JSON::Syck' => '0',
     },
     build_requires => {
         'Test::More'      => '0.47',

@@ -12,6 +12,7 @@ has 'tree' => (
 has 'index' => (
     is      => 'rw',
     isa     => 'HashRef',
+    default => sub { {} },    
 );
 
 # requires 'build_index';

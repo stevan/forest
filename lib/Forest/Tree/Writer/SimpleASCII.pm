@@ -18,7 +18,7 @@ sub output {
     return $out;
 }
 
-no Moose;
+no Moose; 1;
 
 __END__
 

@@ -49,7 +49,7 @@ sub get_children_of_tree_as_json {
     );
 }
 
-no Moose;
+no Moose; 1;
 
 __END__
 

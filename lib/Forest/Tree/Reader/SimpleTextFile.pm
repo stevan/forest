@@ -24,16 +24,14 @@ sub parse_line {
 sub load {
     my $self = shift;
     
-    my $fh    = *{$self->source};
-    my @lines = map { chomp; $_ } <$fh>;
-    
+    my $fh           = *{$self->source};
     my $current_tree = $self->tree;
     
-    while (@lines) {
-        my $line = shift @lines;
+    while (my $line = <$fh>) {
         
-        next if $line =~ /^#/;
-        next unless $line;
+        chomp($line);
+        
+        next if !$line || $line =~ /^#/;
         
         my ($depth, $node) = $self->parse_line($line);
         
@@ -69,7 +67,7 @@ sub load {
     }
 };
 
-no Moose;
+no Moose; 1;
 
 __END__
 
