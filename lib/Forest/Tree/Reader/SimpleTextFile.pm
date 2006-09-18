@@ -37,7 +37,13 @@ sub load {
         
         #warn "Depth: $depth - Node: $node - for $line";
         
-        my $new_tree = $self->create_new_subtree(node => $node);
+        my $new_tree; 
+        if (blessed($node) && $node->isa('Forest::Tree')) {
+            $new_tree = $node;
+        }
+        else {
+            $new_tree = $self->create_new_subtree(node => $node);
+        }
         
 		if ($current_tree->is_root) {
 			$current_tree->add_child($new_tree);
