@@ -19,6 +19,7 @@ BEGIN {
         extends 'Forest::Tree::Reader::SimpleTextFile';
         
         sub create_new_subtree {
+            shift;
             my $t = Forest::Tree->new(@_);
             $t->uid($t->node);
             $t;
