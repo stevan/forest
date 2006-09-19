@@ -9,6 +9,8 @@ with 'Forest::Tree::Indexer';
 sub build_index {
     my $self  = shift;
     my $index = $self->index;
+
+    $index->{$self->tree->uid} = $self->tree;
     
     $self->tree->traverse(sub {
         my $t = shift;

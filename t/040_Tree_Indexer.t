@@ -24,7 +24,7 @@ BEGIN {
     $index->build_index;
 
     my $keys = $index->get_index_keys;
-    is(scalar @$keys, 10, '... got the right amount of keys');
+    is(scalar @$keys, 11, '... got the right amount of keys');
 
     foreach my $key (@$keys) {
         my $tree = $index->get_tree_at($key);

@@ -49,11 +49,11 @@ is($service->get_tree_as_json('1.2.2'),
 '{"error":"Could not find tree at index (1.2.2)"}', 
 '... got the error JSON');
 
-is($service->get_children_of_tree_as_json('1.0'),
+is($service->get_tree_as_json('1.0' => (include_children => 1)),
 '{"uid":"1.0","children":[{"uid":"1.1","node":"1.1","is_leaf":1},{"uid":"1.2","node":"1.2","is_leaf":0}],"node":"1.0","is_leaf":0}',
 '... got the children as JSON');
 
-is($service->get_children_of_tree_as_json('1.33'),
+is($service->get_tree_as_json('1.33' => (include_children => 1)),
 '{"error":"Could not find tree at index (1.33)"}', 
 '... got the error JSON');
 

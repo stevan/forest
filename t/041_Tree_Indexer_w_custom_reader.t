@@ -18,11 +18,11 @@ BEGIN {
         use Moose;
         extends 'Forest::Tree::Reader::SimpleTextFile';
         
-        method create_new_subtree => sub {
+        sub create_new_subtree {
             my $t = Forest::Tree->new(@_);
             $t->uid($t->node);
             $t;
-        };
+        }
     }
     
     my $reader = My::Tree::Reader->new(source => \*DATA);
@@ -37,7 +37,7 @@ BEGIN {
     $index->build_index;
 
     my $keys = $index->get_index_keys;
-    is(scalar @$keys, 10, '... got the right amount of keys');
+    is(scalar @$keys, 11, '... got the right amount of keys');
 
     foreach my $key (@$keys) {
         my $tree = $index->get_tree_at($key);

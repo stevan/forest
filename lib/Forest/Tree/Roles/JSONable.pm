@@ -18,10 +18,10 @@ __END__
 
 =over 4
 
-=item B<as_json (?$include_children)>
+=item B<as_json (?%options)>
 
-Return a JSON string of the invocant. Takes C<$include_children> 
-parameter to specify the depth of the tree to be dumped. 
+Return a JSON string of the invocant. Takes C<%options> 
+parameter to specify the way the tree is to be dumped. 
 
 =back
 

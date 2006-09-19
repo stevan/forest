@@ -41,14 +41,13 @@ warn "+ tree indexed";
 my $service = Forest::Tree::Service::AJAX->new(tree_index => $index);
 
 {
-    package # hide me from PAUSE
-        Forest::Tree::Service::AJAX::Server;
+    package Forest::Tree::Service::AJAX::Server;
     use base 'HTTP::Server::Simple::CGI', 'HTTP::Server::Simple::Static';
     
     sub handle_request {
         my ($self, $cgi) = @_;
         if (my $tree_id = $cgi->param('tree_id')) {
-            print $service->get_children_of_tree_as_json($tree_id)
+            print $service->get_tree_as_json($tree_id => (include_children => 1))
         }
         else {
             return $self->serve_static($cgi, $FindBin::Bin);

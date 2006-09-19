@@ -23,14 +23,14 @@ BEGIN {
             'Forest::Tree::Roles::MetaData';
     
     sub as_json {
-        my ($tree, $include_children) = @_;
+        my ($tree, %options) = @_;
 
         return JSON::Syck::Dump({
             __meta__    => $tree->meta_data,
             __uid__     => $tree->uid,
             __node__    => $tree->node,
             __is_leaf__ => $tree->is_leaf ? 1 : 0,
-            (($include_children) ? (
+            (($options{include_children}) ? (
                 children => [ map { 
                     {
                         __meta__    => $_->meta_data,
@@ -79,11 +79,11 @@ is($service->get_tree_as_json('1.2.2'),
 '{"error":"Could not find tree at index (1.2.2)"}', 
 '... got the error JSON');
 
-is($service->get_children_of_tree_as_json('1.0'),
+is($service->get_tree_as_json('1.0' => (include_children => 1)),
 '{"__uid__":"1.0","__meta__":{"inv":"0.1"},"children":[{"__uid__":"1.1","__meta__":{"inv":"1.1"},"__is_leaf__":1,"__node__":"1.1"},{"__uid__":"1.2","__meta__":{"inv":"2.1"},"__is_leaf__":0,"__node__":"1.2"}],"__is_leaf__":0,"__node__":"1.0"}',
 '... got the children as JSON');
 
-is($service->get_children_of_tree_as_json('1.33'),
+is($service->get_tree_as_json('1.33' => (include_children => 1)),
 '{"error":"Could not find tree at index (1.33)"}', 
 '... got the error JSON');
 

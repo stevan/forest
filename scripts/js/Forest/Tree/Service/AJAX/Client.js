@@ -23,7 +23,7 @@ Forest.Tree.Service.AJAX.Client.prototype.parse_JSON = function (string) {
 };
 
 Forest.Tree.Service.AJAX.Client.prototype.load_tree = function (tree_id) {
-    
+
     var node = document.getElementById(tree_id);
     
     if (node.hasChildNodes()) {
@@ -48,9 +48,14 @@ Forest.Tree.Service.AJAX.Client.prototype.load_tree = function (tree_id) {
 Forest.Tree.Service.AJAX.Client.prototype.check_state = function () {
     if (this.request.readyState == 4) {
         if (this.request.status == 200) {
-            var json  = this.request.responseText;
-            var trees = this.parse_JSON(json);
-            this.insert_trees(trees);
+            var json = this.request.responseText;
+            var tree = this.parse_JSON(json);
+            if (tree.error) {
+                alert("loading tree failed:\n- " + tree.error);
+            }
+            else { 
+                this.insert_trees(tree);
+            }
         } 
         else {
             alert("There was a problem retrieving the tree:\n" + this.request.statusText);
@@ -58,23 +63,23 @@ Forest.Tree.Service.AJAX.Client.prototype.check_state = function () {
     }
 }
 
-Forest.Tree.Service.AJAX.Client.prototype.insert_trees = function (trees) {
+Forest.Tree.Service.AJAX.Client.prototype.insert_trees = function (tree) {
     
-    var node = document.getElementById(trees.parent_uid);
+    var node = document.getElementById(tree.uid);
     var HTML = node.innerHTML;    
     
-    for (var i = 0; i < trees.children.length; i++) {
-        var tree = trees.children[i];
-        if (tree.is_leaf == 1) {
-            HTML += "<li>" + tree.node + "</li>";            
+    for (var i = 0; i < tree.children.length; i++) {
+        var child = tree.children[i];
+        if (child.is_leaf == 1) {
+            HTML += "<li>" + child.node + "</li>";            
         }
         else {
             HTML += "<li><a href=\"javascript:void(0);\" onclick=\"" + this.oid + ".load_tree('" + 
-                    tree.uid + 
+                    child.uid + 
                     "')\">" + 
-                    tree.node + 
+                    child.node + 
                     "</a></li><ul id='" +
-                    tree.uid + 
+                    child.uid + 
                     "'></ul>";        
         }
     }
