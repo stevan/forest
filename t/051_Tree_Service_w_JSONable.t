@@ -22,14 +22,19 @@ BEGIN {
        with 'Forest::Tree::Roles::JSONable',
             'Forest::Tree::Roles::MetaData';
     
-    sub as_json {
+    sub _dump_for_json {
         my $self = shift;
-        return JSON::Syck::Dump({
+        return {
            __meta__    => $self->meta_data,
            __uid__     => $self->uid,
            __node__    => $self->node,
            __is_leaf__ => $self->is_leaf ? 1 : 0,       
-       });
+       };
+    }
+    
+    sub as_json {
+        my $self = shift;
+        return JSON::Syck::Dump($self->_dump_for_json);
     }
     
     sub children_as_json {
@@ -38,12 +43,7 @@ BEGIN {
             {
                 __uid__  => $self->uid,
                 children => [ map { 
-                    {
-                        __meta__    => $_->meta_data,
-                        __uid__     => $_->uid,
-                        __node__    => $_->node,
-                        __is_leaf__ => $_->is_leaf ? 1 : 0,
-                    }            
+                    $_->_dump_for_json           
                 } @{$self->children} ]
             }
         );
@@ -53,12 +53,12 @@ BEGIN {
     use Moose;
     extends 'Forest::Tree::Reader::SimpleTextFile';
     
-    method create_new_subtree => sub {
+    sub create_new_subtree {
         my $t = My::Tree->new(@_);
         $t->uid($t->node);
         $t->meta_data->{inv} = reverse $t->node;
         $t;
-    };
+    }
     
 }
 

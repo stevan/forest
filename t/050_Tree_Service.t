@@ -18,11 +18,11 @@ BEGIN {
     use Moose;
     extends 'Forest::Tree::Reader::SimpleTextFile';
     
-    method create_new_subtree => sub {
+    sub create_new_subtree {
         my $t = Forest::Tree->new(@_);
         $t->uid($t->node);
         $t;
-    };
+    }
     
 }
 
