@@ -27,33 +27,22 @@ sub get_children_of_tree_as_json {
     return $self->return_JSON_error($tree_id)
         unless blessed($tree) && $tree->isa('Forest::Tree');
     
-    return $self->prepare_children_of_tree_for_JSON($tree);
+    return $self->prepare_tree_for_JSON($tree, 2);
 }
 
 ## util methods
 
 sub prepare_tree_for_JSON {
-    my ($self, $tree) = @_;
+    my ($self, $tree, $include_children) = @_;
 
-    return $tree->as_json
+    return $tree->as_json($include_children)
         if $tree->does('Forest::Tree::Roles::JSONable');
 
     return JSON::Syck::Dump({
         uid        => $tree->uid,
         node       => $tree->node,
         is_leaf    => $tree->is_leaf ? 1 : 0,
-    });
-}
-
-sub prepare_children_of_tree_for_JSON {
-    my ($self, $tree) = @_;
-
-    return $tree->children_as_json
-        if $tree->does('Forest::Tree::Roles::JSONable');
-
-    return JSON::Syck::Dump(
-        {
-            uid      => $tree->uid,
+        (($include_children) ? (
             children => [ map { 
                 {
                     uid        => $_->uid,
@@ -61,8 +50,8 @@ sub prepare_children_of_tree_for_JSON {
                     is_leaf    => $_->is_leaf ? 1 : 0,
                 }            
             } @{$tree->children} ]
-        }
-    );
+        ) : ())
+    });
 }
 
 sub return_JSON_error {

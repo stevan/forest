@@ -22,38 +22,33 @@ BEGIN {
        with 'Forest::Tree::Roles::JSONable',
             'Forest::Tree::Roles::MetaData';
     
-    sub _dump_for_json {
-        my $self = shift;
-        return {
-           __meta__    => $self->meta_data,
-           __uid__     => $self->uid,
-           __node__    => $self->node,
-           __is_leaf__ => $self->is_leaf ? 1 : 0,       
-       };
-    }
-    
     sub as_json {
-        my $self = shift;
-        return JSON::Syck::Dump($self->_dump_for_json);
-    }
-    
-    sub children_as_json {
-        my $self = shift;
-        return JSON::Syck::Dump(
-            {
-                __uid__  => $self->uid,
+        my ($tree, $include_children) = @_;
+
+        return JSON::Syck::Dump({
+            __meta__    => $tree->meta_data,
+            __uid__     => $tree->uid,
+            __node__    => $tree->node,
+            __is_leaf__ => $tree->is_leaf ? 1 : 0,
+            (($include_children) ? (
                 children => [ map { 
-                    $_->_dump_for_json           
-                } @{$self->children} ]
-            }
-        );
-    }    
+                    {
+                        __meta__    => $_->meta_data,
+                        __uid__     => $_->uid,
+                        __node__    => $_->node,
+                        __is_leaf__ => $_->is_leaf ? 1 : 0,
+                    }            
+                } @{$tree->children} ]
+            ) : ())
+        });
+    } 
     
     package My::Tree::Reader;
     use Moose;
     extends 'Forest::Tree::Reader::SimpleTextFile';
     
     sub create_new_subtree {
+        shift;
         my $t = My::Tree->new(@_);
         $t->uid($t->node);
         $t->meta_data->{inv} = reverse $t->node;
@@ -85,7 +80,7 @@ is($service->get_tree_as_json('1.2.2'),
 '... got the error JSON');
 
 is($service->get_children_of_tree_as_json('1.0'),
-'{"__uid__":"1.0","children":[{"__uid__":"1.1","__meta__":{"inv":"1.1"},"__is_leaf__":1,"__node__":"1.1"},{"__uid__":"1.2","__meta__":{"inv":"2.1"},"__is_leaf__":0,"__node__":"1.2"}]}',
+'{"__uid__":"1.0","__meta__":{"inv":"0.1"},"children":[{"__uid__":"1.1","__meta__":{"inv":"1.1"},"__is_leaf__":1,"__node__":"1.1"},{"__uid__":"1.2","__meta__":{"inv":"2.1"},"__is_leaf__":0,"__node__":"1.2"}],"__is_leaf__":0,"__node__":"1.0"}',
 '... got the children as JSON');
 
 is($service->get_children_of_tree_as_json('1.33'),
