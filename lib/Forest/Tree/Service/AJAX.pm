@@ -8,20 +8,6 @@ our $VERSION = '0.0.1';
 
 with 'Forest::Tree::Service';
 
-sub prepare_tree_for_JSON {
-    my ($self, $tree) = @_;
-    +{
-        uid        => $tree->uid,
-        node       => $tree->node,
-        is_leaf    => $tree->is_leaf ? 1 : 0,
-    }
-}
-
-sub return_JSON_error {
-    my ($self, $tree_id) = @_;
-    JSON::Syck::Dump({ error => 'Could not find tree at index (' . $tree_id . ')' });
-}
-
 sub get_tree_as_json {
     my ($self, $tree_id) = @_;
     
@@ -30,7 +16,7 @@ sub get_tree_as_json {
     return $self->return_JSON_error($tree_id)
         unless blessed($tree) && $tree->isa('Forest::Tree');
     
-    return JSON::Syck::Dump($self->prepare_tree_for_JSON($tree));   
+    return $self->prepare_tree_for_JSON($tree);   
 }
 
 sub get_children_of_tree_as_json {
@@ -41,12 +27,47 @@ sub get_children_of_tree_as_json {
     return $self->return_JSON_error($tree_id)
         unless blessed($tree) && $tree->isa('Forest::Tree');
     
+    return $self->prepare_children_of_tree_for_JSON($tree);
+}
+
+## util methods
+
+sub prepare_tree_for_JSON {
+    my ($self, $tree) = @_;
+
+    return $tree->as_json
+        if $tree->does('Forest::Tree::Roles::JSONable');
+
+    return JSON::Syck::Dump({
+        uid        => $tree->uid,
+        node       => $tree->node,
+        is_leaf    => $tree->is_leaf ? 1 : 0,
+    });
+}
+
+sub prepare_children_of_tree_for_JSON {
+    my ($self, $tree) = @_;
+
+    return $tree->children_as_json
+        if $tree->does('Forest::Tree::Roles::JSONable');
+
     return JSON::Syck::Dump(
         {
-            parent_uid => $tree_id,
-            children   => [ map { $self->prepare_tree_for_JSON($_) } @{$tree->children} ]
+            uid      => $tree->uid,
+            children => [ map { 
+                {
+                    uid        => $_->uid,
+                    node       => $_->node,
+                    is_leaf    => $_->is_leaf ? 1 : 0,
+                }            
+            } @{$tree->children} ]
         }
     );
+}
+
+sub return_JSON_error {
+    my ($self, $tree_id) = @_;
+    JSON::Syck::Dump({ error => 'Could not find tree at index (' . $tree_id . ')' });
 }
 
 no Moose; 1;
