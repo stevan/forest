@@ -14,6 +14,17 @@ has 'tab_width' => (
 
 ## methods
 
+sub create_new_subtree { 
+    my ($self, %options) = @_;
+    my $node = $options{node};
+    if (blessed($node) && $node->isa('Forest::Tree')) {
+        return $node;
+    }
+    else {
+        return Forest::Tree->new(%options);
+    }    
+}
+
 sub parse_line {
     my ($self, $line) = @_;
     my ($indent, $node) = ($line =~ /^(\s*)(.*)$/);
@@ -37,13 +48,7 @@ sub load {
         
         #warn "Depth: $depth - Node: $node - for $line";
         
-        my $new_tree; 
-        if (blessed($node) && $node->isa('Forest::Tree')) {
-            $new_tree = $node;
-        }
-        else {
-            $new_tree = $self->create_new_subtree(node => $node);
-        }
+        my $new_tree = $self->create_new_subtree(node => $node);
         
 		if ($current_tree->is_root) {
 			$current_tree->add_child($new_tree);

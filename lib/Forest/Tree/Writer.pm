@@ -10,7 +10,7 @@ has 'tree' => (
     is_weak_ref => 1,
 );
 
-#requires 'output';
+requires 'output';
 
 
 1;

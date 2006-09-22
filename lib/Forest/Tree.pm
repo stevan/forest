@@ -2,6 +2,8 @@
 package Forest::Tree;
 use Moose;
 
+use Scalar::Util 'reftype';
+
 our $VERSION = '0.0.1';
 
 has 'node' => (is => 'rw'); # isa => Any ,... which amounts to a NOOP
@@ -10,7 +12,7 @@ has 'uid'  => (
     is      => 'rw', 
     isa     => 'Value',
     lazy    => 1,
-    default => sub { ($_[0] =~ /\((.*?)\)$/)[0] }
+    default => sub { ($_[0] =~ /\((.*?)\)$/)[0] },
 );
 
 has 'parent' => (
@@ -72,9 +74,9 @@ sub child_count { scalar @{(shift)->children} };
 sub traverse {
     my ($self, $func) = @_;
     (defined($func)) 
-        || confess "Insufficient Arguments : Cannot traverse without traversal function";
-    (ref($func) eq "CODE") 
-        || die "Incorrect Object Type : traversal function is not a function";
+        || confess "Cannot traverse without traversal function";
+    (reftype($func) eq "CODE") 
+        || die "Traversal function must be a CODE reference, not : $func";
     foreach my $child (@{$self->children}) { 
         $func->($child);
         $child->traverse($func);

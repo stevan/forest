@@ -4,7 +4,7 @@ use Moose::Role;
 
 our $VERSION = '0.0.1';
 
-has 'tree' => (
+has 'root' => (
     is  => 'rw',
     isa => 'Forest::Tree',
 );
@@ -15,11 +15,11 @@ has 'index' => (
     default => sub { {} },    
 );
 
-# requires 'build_index';
+requires 'build_index';
 
+sub clear_index    { (shift)->index({})         }
 sub get_index_keys { [ keys %{(shift)->index} ] }
-
-sub get_root { (shift)->tree }
+sub get_root       { (shift)->root              }
 
 sub get_tree_at {
     my ($self, $tree_id) = @_;

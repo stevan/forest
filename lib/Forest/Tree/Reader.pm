@@ -17,9 +17,7 @@ has 'tree' => (
     default => sub { Forest::Tree->new },
 );
 
-#requires 'load';
-
-sub create_new_subtree { shift; Forest::Tree->new(@_) }
+requires 'load';
 
 1;
 

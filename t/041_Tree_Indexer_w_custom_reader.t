@@ -32,7 +32,7 @@ BEGIN {
     
     $reader->load;
 
-    my $index = Forest::Tree::Indexer::SimpleUIDIndexer->new(tree => $reader->tree);
+    my $index = Forest::Tree::Indexer::SimpleUIDIndexer->new(root => $reader->tree);
     isa_ok($index, 'Forest::Tree::Indexer::SimpleUIDIndexer');
 
     $index->build_index;
