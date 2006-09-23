@@ -2,14 +2,12 @@
 namespace('Forest.Tree.Service.AJAX');
 
 Forest.Tree.Service.AJAX.Client = function (base_url) {
-    this.base_url = base_url || 'http://localhost:8080/';
+    this.base_url = base_url || 'http://localhost:8080/?';
 
     this.request  = false;
-    this.locked   = false;    
+    this.locked   = false; 
     
-    // set up the self referant
-    this.oid = this.create_oid();
-    eval(this.oid + '=this');    
+    this.insert_tree_callback = false;
 };
 
 Forest.Tree.Service.AJAX.Client.prototype = new Forest.Object ();
@@ -55,7 +53,7 @@ Forest.Tree.Service.AJAX.Client.prototype.parse_JSON = function (string) {
 
 Forest.Tree.Service.AJAX.Client.prototype.load_tree = function (tree_id) {
 
-    var node = document.getElementById(tree_id);
+    var node = this.get_tree_node_by_id(tree_id);
     
     if (node.hasChildNodes()) {
         if (node.style.display == 'none') {
@@ -72,7 +70,7 @@ Forest.Tree.Service.AJAX.Client.prototype.load_tree = function (tree_id) {
             var self = this;
             this.request.onreadystatechange = function () { self.check_state() };
             
-            this.request.open("GET", (this.base_url + '?tree_id=' + tree_id), true);
+            this.request.open("GET", (this.base_url + 'tree_id=' + tree_id), true);
             this.request.send(""); 
             this.locked = true;              
         }   
@@ -80,6 +78,10 @@ Forest.Tree.Service.AJAX.Client.prototype.load_tree = function (tree_id) {
 }
 
 // Overrideable Methods
+
+Forest.Tree.Service.AJAX.Client.prototype.get_tree_node_by_id = function (tree_id) {
+    return document.getElementById(tree_id);    
+}
 
 Forest.Tree.Service.AJAX.Client.prototype.show_tree = function (node) {
     node.style.display = 'block';    
@@ -93,8 +95,8 @@ Forest.Tree.Service.AJAX.Client.prototype.create_html_for_leaf = function (tree)
     return "<li>" + tree.node + "</li>";
 }
 
-Forest.Tree.Service.AJAX.Client.prototype.create_html_for_branch = function (tree) {
-    return "<li><a href=\"javascript:void(0);\" onclick=\"" + this.oid + ".load_tree('" + 
+Forest.Tree.Service.AJAX.Client.prototype.create_html_for_branch = function (tree) {    
+    return "<li><a href=\"javascript:void(0);\" onclick=\"" + this.get_oid() + ".load_tree('" + 
             tree.uid + 
             "')\">" + 
             tree.node + 
@@ -126,7 +128,11 @@ Forest.Tree.Service.AJAX.Client.prototype.check_state = function () {
 
 Forest.Tree.Service.AJAX.Client.prototype.insert_trees = function (tree) {
     
-    var node = document.getElementById(tree.uid);
+    if (this.insert_tree_callback) {
+        this.insert_tree_callback(tree);
+    }
+    
+    var node = this.get_tree_node_by_id(tree.uid);
     var HTML = node.innerHTML;    
     
     for (var i = 0; i < tree.children.length; i++) {

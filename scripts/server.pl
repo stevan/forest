@@ -32,7 +32,7 @@ warn "+ tree loaded";
 
 close TREE || die "Could not close the tree file : $tree";
 
-my $index = Forest::Tree::Indexer::SimpleUIDIndexer->new(tree => $reader->tree);
+my $index = Forest::Tree::Indexer::SimpleUIDIndexer->new(root => $reader->tree);
 
 warn "... building tree index";
 $index->build_index;

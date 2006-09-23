@@ -31,9 +31,13 @@ Forest.AUTHORITY = 'jsan:STEVAN';
 
 Forest.Object = function () {};
 
-Forest.Object.prototype._oid = 0;
+Forest.Object.prototype.__OID = 0;
 
-Forest.Object.prototype.create_oid = function(){
-    Forest.Object.prototype._oid++;
-    return 'oid_' + Forest.Object.prototype._oid;
+Forest.Object.prototype.get_oid = function () {
+    if (!this.oid) {
+        this.oid = 'oid_' + ++Forest.Object.prototype.__OID;
+        eval(this.oid + '=this');    
+    }
+    return this.oid;
 };
+

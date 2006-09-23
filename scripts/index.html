@@ -8,11 +8,16 @@
 <script language="javascript">
 
 var client = new Forest.Tree.Service.AJAX.Client();
+client.insert_tree_callback = function (tree) {
+    document.getElementById('message').innerHTML = "Loading tree node (" + tree.node + ") ...";
+};
 
 </script>
 </head>
 <body>
 <h1>Forest::Tree::Service::AJAX example</h1>
+<hr/>
+<div id='message'>...</div>
 <hr/>
 <ul>
 <li><a href="javascript:void(0);" onclick="client.load_tree('root')">root</a></li>

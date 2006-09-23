@@ -10,6 +10,30 @@ has 'meta_data' => (
     default => sub { {} },
 );
 
+sub fetch_meta_data_for {
+    my ($self, $key) = @_;
+    
+    my $current = $self;
+    
+    do {    
+        if ($current->does(__PACKAGE__)) {
+            my $meta = $current->meta_data;
+            return $meta->{$key} 
+                if exists $meta->{$key};            
+        }
+        $current = $self->parent;
+        
+    } until $current->is_root;
+    
+    if ($current->does(__PACKAGE__)) {
+        my $meta = $current->meta_data;
+        return $meta->{$key} 
+            if exists $meta->{$key};            
+    }   
+    
+    return;
+}
+
 no Moose; 1;
 
 __END__
