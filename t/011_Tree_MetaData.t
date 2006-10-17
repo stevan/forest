@@ -10,6 +10,7 @@ BEGIN {
     use_ok('Forest::Tree::Reader::SimpleTextFile');
     use_ok('Forest::Tree::Indexer');
     use_ok('Forest::Tree::Indexer::SimpleUIDIndexer');
+    use_ok('Forest::Tree::Roles::MetaData');
 };
 
 
@@ -51,6 +52,9 @@ BEGIN {
             return ($depth, $tree);
         }
     }
+
+    ok(My::Tree->isa('Forest::Tree'), '... My::Tree isa Forest::Tree');
+    ok(My::Tree->does('Forest::Tree::Roles::MetaData'), '... My::Tree does Forest::Tree::Roles::MetaData');
     
     my $reader = My::Tree::Reader->new(source => \*DATA);
     isa_ok($reader, 'My::Tree::Reader');    
@@ -59,6 +63,9 @@ BEGIN {
     $reader->load;
 
     my $tree = $reader->tree;
+    isa_ok($tree, 'My::Tree');
+    isa_ok($tree, 'Forest::Tree');  
+    ok($tree->does('Forest::Tree::Roles::MetaData'), '... our tree does Forest::Tree::Roles::MetaData');  
     
     is($tree->node, '0.0|DEFAULT', '... got the right root node');
     is_deeply($tree->meta_data, { number => '0.0', name => 'DEFAULT' }, '... got the right metadata hash');

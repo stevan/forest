@@ -2,7 +2,8 @@
 package Forest::Tree::Writer;
 use Moose::Role;
 
-our $VERSION = '0.0.1';
+our $VERSION   = '0.01';
+our $AUTHORITY = 'cpan:STEVAN';
 
 has 'tree' => (
     is          => 'rw',

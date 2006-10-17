@@ -2,9 +2,11 @@
 package Forest::Tree;
 use Moose;
 
+use Forest;
 use Scalar::Util 'reftype';
 
-our $VERSION = '0.0.1';
+our $VERSION   = '0.01';
+our $AUTHORITY = 'cpan:STEVAN';
 
 has 'node' => (is => 'rw'); # isa => Any ,... which amounts to a NOOP
 

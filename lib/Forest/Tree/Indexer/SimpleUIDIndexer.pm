@@ -2,7 +2,8 @@
 package Forest::Tree::Indexer::SimpleUIDIndexer;
 use Moose;
 
-our $VERSION = '0.0.1';
+our $VERSION   = '0.01';
+our $AUTHORITY = 'cpan:STEVAN';
 
 with 'Forest::Tree::Indexer';
 

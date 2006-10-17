@@ -4,7 +4,8 @@ use Moose;
 
 use JSON::Syck ();
 
-our $VERSION = '0.0.1';
+our $VERSION   = '0.01';
+our $AUTHORITY = 'cpan:STEVAN';
 
 with 'Forest::Tree::Service';
 

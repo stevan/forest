@@ -2,7 +2,8 @@
 package Forest::Tree::Roles::MetaData;
 use Moose::Role;
 
-our $VERSION = '0.0.1';
+our $VERSION   = '0.01';
+our $AUTHORITY = 'cpan:STEVAN';
 
 has 'meta_data' => (
     is      => 'ro',
