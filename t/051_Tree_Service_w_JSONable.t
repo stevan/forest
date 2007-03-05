@@ -43,6 +43,8 @@ BEGIN {
         });
     } 
     
+    __PACKAGE__->meta->make_immutable();
+    
     package My::Tree::Reader;
     use Moose;
     extends 'Forest::Tree::Reader::SimpleTextFile';
@@ -54,6 +56,8 @@ BEGIN {
         $t->meta_data->{inv} = reverse $t->node;
         $t;
     }
+    
+    __PACKAGE__->meta->make_immutable();
     
 }
 

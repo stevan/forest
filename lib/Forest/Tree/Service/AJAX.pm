@@ -49,6 +49,7 @@ sub return_JSON_error {
     JSON::Syck::Dump({ error => 'Could not find tree at index (' . $tree_id . ')' });
 }
 
+__PACKAGE__->meta->make_immutable();
 no Moose; 1;
 
 __END__

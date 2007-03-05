@@ -20,6 +20,8 @@ BEGIN {
         use Moose;
         extends 'Forest::Tree';
            with 'Forest::Tree::Roles::MetaData';
+           
+        __PACKAGE__->meta->make_immutable();
         
         package My::Tree::Reader;
         use Moose;
@@ -51,6 +53,8 @@ BEGIN {
             
             return ($depth, $tree);
         }
+        
+        __PACKAGE__->meta->make_immutable();
     }
 
     ok(My::Tree->isa('Forest::Tree'), '... My::Tree isa Forest::Tree');

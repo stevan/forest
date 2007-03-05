@@ -24,6 +24,8 @@ BEGIN {
             $t->uid($t->node);
             $t;
         }
+        
+        __PACKAGE__->meta->make_immutable();
     }
     
     my $reader = My::Tree::Reader->new(source => \*DATA);

@@ -7,7 +7,7 @@ our $AUTHORITY = 'cpan:STEVAN';
 
 has 'source' => (
     is       => 'ro', 
-    isa      => 'Any',
+    isa      => 'FileHandle',
     required => 1,
 );
 

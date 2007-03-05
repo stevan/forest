@@ -8,7 +8,7 @@ use Scalar::Util 'reftype';
 our $VERSION   = '0.01';
 our $AUTHORITY = 'cpan:STEVAN';
 
-has 'node' => (is => 'rw'); # isa => Any ,... which amounts to a NOOP
+has 'node' => (is => 'rw', isa => 'Any');
 
 has 'uid'  => (
     is      => 'rw', 
@@ -92,7 +92,7 @@ sub traverse {
 # all our important bits, this 
 # speeds up building large trees 
 # considerably.
-##__PACKAGE__->meta->make_immutable(inline_accessors => 0);
+__PACKAGE__->meta->make_immutable(inline_accessors => 0);
 
 no Moose; 1;
 
