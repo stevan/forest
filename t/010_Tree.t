@@ -20,6 +20,8 @@ ok(!defined $t->parent, '... no parent');
 ok(!defined $t->node, '... no node value');
 is_deeply($t->children, [], '... no children');
 is($t->depth, -1, '... the root has a depth of -1');
+is($t->height, 0, '... the root has a height of 0');
+is($t->size,   1, '... the root has a size of 1');
 
 my $child_1 = Forest::Tree->new(node => '1.0');
 isa_ok($child_1, 'Forest::Tree');
@@ -35,12 +37,15 @@ $t->add_child($child_1);
 ok(!$t->is_leaf, '... this is no longer leaf');
 is_deeply($t->children, [ $child_1 ], '... 1 child');
 is($t->depth, -1, '... the root still has a depth of -1');
+is($t->height, 1, '... the root now has a height of 1');
+is($t->size,   2, '... the root now has a size of 2');
 is($t->get_child_at(0), $child_1, '... got the right child');
 
 ok(!$child_1->is_root, '... this is no longer a root');
 ok($child_1->is_leaf, '... but this is still a leaf');
 is($child_1->parent, $t, '... its parent is tree');
 is($child_1->depth, 0, '... the child now has a depth of 0');
+is_deeply($child_1->siblings, [], '... There is no siblings');
 
 my $child_1_1 = Forest::Tree->new(node => '1.1');
 isa_ok($child_1_1, 'Forest::Tree');
@@ -62,6 +67,8 @@ ok(!$child_1_1->is_root, '... this is no longer a root');
 ok($child_1_1->is_leaf, '... but this is still a leaf');
 is($child_1_1->parent, $child_1, '... its parent is tree');
 is($child_1_1->depth, 1, '... the child now has a depth of 1');
+is($t->height, 2, '... the root now has a height of 2');
+is($t->size,   3, '... the root now has a size of 3');
 
 my $child_2 = Forest::Tree->new(node => '2.0');
 isa_ok($child_2, 'Forest::Tree');
@@ -70,7 +77,7 @@ my $child_3 = Forest::Tree->new(node => '3.0');
 isa_ok($child_3, 'Forest::Tree');
 
 my $child_4 = Forest::Tree->new(node => '4.0');
-isa_ok($child_4, 'Forest::Tree'); 
+isa_ok($child_4, 'Forest::Tree');
 
 $child_1->add_sibling($child_4);
 
@@ -98,13 +105,19 @@ ok(!$child_3->is_root, '... this is no longer a root');
 ok($child_3->is_leaf, '... but this is still a leaf');
 is($child_3->parent, $t, '... its parent is tree');
 is($child_3->depth, 0, '... the child now has a depth of 1');
+is($t->height, 2, '... the root now has a height of 2');
+is($t->size,   6, '... the root now has a size of 6');
+
+ok($t->remove_child_at(0), '... removing child 1');
+is($t->height, 1, '... the root now has a height of 1');
+is($t->size,   4, '... the root now has a size of 4');
 
 throws_ok {
-    $t->add_child([]);    
+    $t->add_child([]);
 } qr/Child parameter must be a Forest\:\:Tree not/, '... throws exception';
 
 throws_ok {
-    $t->add_child({});    
+    $t->add_child({});
 } qr/Child parameter must be a Forest\:\:Tree not/, '... throws exception';
 
 
