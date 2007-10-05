@@ -2,6 +2,9 @@
 package Forest::Tree::Roles::JSONable;
 use Moose::Role;
 
+# TODO:
+# convert this to use JSON::Any
+# - SL
 use JSON::Syck ();
 
 our $VERSION   = '0.01';

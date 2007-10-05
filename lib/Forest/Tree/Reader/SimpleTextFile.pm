@@ -15,6 +15,10 @@ has 'tab_width' => (
 
 ## methods
 
+# NOTE:
+# this could become a required method
+# or perhaps some kind of attribute set
+# - SL
 sub create_new_subtree { 
     my ($self, %options) = @_;
     my $node = $options{node};
@@ -26,6 +30,10 @@ sub create_new_subtree {
     }    
 }
 
+# FIXME:
+# this shoul become an attribute 
+# so that it can be overridden easily
+# - SL
 sub parse_line {
     my ($self, $line) = @_;
     my ($indent, $node) = ($line =~ /^(\s*)(.*)$/);
@@ -33,6 +41,13 @@ sub parse_line {
     return ($depth, $node);
 }
 
+# FIXME:
+# this can be moved into the 
+# role actually, and we just need
+# to make sure we have enough hooks 
+# to be able to override all the 
+# bits we need.
+# - SL
 sub load {
     my $self = shift;
     

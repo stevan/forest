@@ -7,7 +7,7 @@ our $AUTHORITY = 'cpan:STEVAN';
 
 with 'Forest::Tree::Writer';
 
-sub output {
+sub as_string {
     my ($self) = @_;
     my $out;    
     

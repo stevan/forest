@@ -27,7 +27,7 @@ $reader->load;
 
     isa_ok($w->tree, 'Forest::Tree');
 
-    is($w->output, 
+    is($w->as_string, 
 q{1.0
     1.1
     1.2
@@ -48,7 +48,7 @@ q{1.0
 
     isa_ok($w->tree, 'Forest::Tree');
 
-    is($w->output, 
+    is($w->as_string, 
     q{<ul>
 <li>1.0</li>
 <ul>

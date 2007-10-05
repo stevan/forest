@@ -11,8 +11,16 @@ has 'tree' => (
     is_weak_ref => 1,
 );
 
-requires 'output';
+requires 'as_string';
 
+sub write {
+    my ($self, $fh) = @_;
+    # NOTE:
+    # this is way over simplified
+    # but it will do for now.
+    # - SL
+    print $fh $self->as_string;
+}
 
 1;
 

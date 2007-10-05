@@ -1,7 +1,15 @@
 
+# NOTE:
+# this is not AJAX, it is AJAJ(son)
+# so it should probably get renamed
+# - SL
+
 package Forest::Tree::Service::AJAX;
 use Moose;
 
+# TODO:
+# Fix this to use JSON::Any
+# - SL
 use JSON::Syck ();
 
 our $VERSION   = '0.01';
