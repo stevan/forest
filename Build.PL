@@ -7,8 +7,9 @@ my $build = Module::Build->new(
     module_name => 'Forest',
     license => 'perl',
     requires => {
-        'Moose'      => '0.11',
-        'JSON::Syck' => '0.03',
+        'Moose'        => '0.35',
+        'JSON::Any'    => '1.15',
+        'Sub::Current' => '0.02',
     },
     optional => {
     },

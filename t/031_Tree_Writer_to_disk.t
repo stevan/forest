@@ -5,18 +5,18 @@ use warnings;
 
 use Test::More no_plan => 1;
 
+use Path::Class;
+
 BEGIN {
     use_ok('Forest::Tree');
     use_ok('Forest::Tree::Reader::SimpleTextFile');
     use_ok('Forest::Tree::Writer');
     use_ok('Forest::Tree::Writer::SimpleASCII');
-};
+    use_ok('Forest::Tree::Writer::SimpleHTML');
+}
 
-# FIXME:
-# This causes a warning with global destruction
-# if this is loaded at BEGIN time,.. have to look 
-# into this one.
-use_ok('Forest::Tree::Writer::SimpleHTML');
+my $file = Path::Class::File->new('031_Tree_Writer_to_disk.tree');
+$file->touch;
 
 my $reader = Forest::Tree::Reader::SimpleTextFile->new;
 $reader->read(\*DATA);
@@ -26,8 +26,12 @@ $reader->read(\*DATA);
     isa_ok($w, 'Forest::Tree::Writer::SimpleASCII');
 
     isa_ok($w->tree, 'Forest::Tree');
+    
+    my $fh = $file->openw;
+    $w->write($fh);
+    $fh->close;
 
-    is($w->as_string, 
+    is($file->slurp, 
 q{1.0
     1.1
     1.2
@@ -42,13 +46,20 @@ q{1.0
 
 }
 
+$file->remove;
+$file->touch;
+
 {    
     my $w = Forest::Tree::Writer::SimpleHTML->new(tree => $reader->tree);
     isa_ok($w, 'Forest::Tree::Writer::SimpleHTML');
 
     isa_ok($w->tree, 'Forest::Tree');
 
-    is($w->as_string, 
+    my $fh = $file->openw;
+    $w->write($fh);
+    $fh->close;
+
+    is($file->slurp,
     q{<ul>
 <li>1.0</li>
 <ul>
@@ -73,6 +84,8 @@ q{1.0
 </ul>
 }, '.... got the right output');
 }
+
+$file->remove;
 
 __DATA__
 1.0

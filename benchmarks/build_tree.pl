@@ -15,13 +15,14 @@ my $tree = $FindBin::Bin . "/../scripts/test.tree.big";
 open(TREE, "<", $tree) || die "Could not open the tree file :  $tree : because : $!";
 
 my $reader = Forest::Tree::Reader::SimpleTextFile->new(
-    tree   => Forest::Tree->new(node => 'root', uid => 'root'),
-    source => \*TREE
+    tree   => Forest::Tree->new(node => 'root', uid => 'root')
 );
 
 warn "... loading tree";
-$reader->load;
+$reader->read(\*TREE);
 warn "+ tree loaded";
+
+warn " -> tree has " . $reader->tree->size . " nodes";
 
 close TREE || die "Could not close the tree file : $tree";
 

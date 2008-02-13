@@ -1,16 +1,7 @@
-
-# NOTE:
-# this is not AJAX, it is AJAJ(son)
-# so it should probably get renamed
-# - SL
-
 package Forest::Tree::Service::AJAX;
 use Moose;
 
-# TODO:
-# Fix this to use JSON::Any
-# - SL
-use JSON::Syck ();
+use JSON::Any;
 
 our $VERSION   = '0.01';
 our $AUTHORITY = 'cpan:STEVAN';
@@ -36,7 +27,7 @@ sub prepare_tree_for_JSON {
     return $tree->as_json(%options)
         if $tree->does('Forest::Tree::Roles::JSONable');
 
-    return JSON::Syck::Dump({
+    return JSON::Any->new->encode({
         uid        => $tree->uid,
         node       => $tree->node,
         is_leaf    => $tree->is_leaf ? 1 : 0,
@@ -47,14 +38,14 @@ sub prepare_tree_for_JSON {
                     node       => $_->node,
                     is_leaf    => $_->is_leaf ? 1 : 0,
                 }            
-            } @{$tree->children} ]
+            } @{ $tree->children } ]
         ) : ())
     });
 }
 
 sub return_JSON_error {
     my ($self, $tree_id) = @_;
-    JSON::Syck::Dump({ error => 'Could not find tree at index (' . $tree_id . ')' });
+    return JSON::Any->new->encode({ error => 'Could not find tree at index (' . $tree_id . ')' });
 }
 
 __PACKAGE__->meta->make_immutable();
@@ -63,5 +54,38 @@ no Moose; 1;
 __END__
 
 =pod
+
+=head1 NAME
+
+=head1 SYNOPSIS
+
+=head1 DESCRIPTION
+
+=head1 METHODS 
+
+=over 4
+
+=item B<>
+
+=back
+
+=head1 BUGS
+
+All complex software has bugs lurking in it, and this module is no 
+exception. If you find a bug please either email me, or add the bug
+to cpan-RT.
+
+=head1 AUTHOR
+
+Stevan Little E<lt>stevan.little@iinteractive.comE<gt>
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright 2008 Infinity Interactive, Inc.
+
+L<http://www.iinteractive.com>
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
 
 =cut

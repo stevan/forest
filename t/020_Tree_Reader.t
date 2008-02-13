@@ -13,13 +13,9 @@ BEGIN {
 };
 
 {
-    my $reader = Forest::Tree::Reader::SimpleTextFile->new(
-        source => \*DATA,
-    );
+    my $reader = Forest::Tree::Reader::SimpleTextFile->new();
     isa_ok($reader, 'Forest::Tree::Reader::SimpleTextFile');
     ok($reader->does('Forest::Tree::Reader'), '... loader does Forest::Tree::Reader');
-
-    is($reader->source, \*DATA, '... the DATA filehandle');
 
     my $tree = $reader->tree;
     isa_ok($tree, 'Forest::Tree'); 
@@ -29,7 +25,7 @@ BEGIN {
     is($tree->child_count, 0, '... tree has no children');
     
     lives_ok {
-        $reader->load;
+        $reader->read(\*DATA);
     } '... loaded the tree';   
 
     ok($tree->is_root, '... tree is a root');

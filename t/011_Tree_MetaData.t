@@ -36,22 +36,24 @@ BEGIN {
             }
         );        
         
-        sub parse_line {
-            my ($self, $line) = @_;
-            my ($indent, $node) = ($line =~ /^(\s*)(.*)$/);
-            my $depth = ((length $indent) / $self->tab_width); 
+        sub build_parser { 
+            return sub {
+                my ($self, $line) = @_;
+                my ($indent, $node) = ($line =~ /^(\s*)(.*)$/);
+                my $depth = ((length $indent) / $self->tab_width); 
             
-            my ($number, $name) = (split /\|/ => $node);
+                my ($number, $name) = (split /\|/ => $node);
             
-            my $tree = My::Tree->new(
-                node      => $node,
-                meta_data => { 
-                    (($number) ? (number => $number) : ()), 
-                    (($name)   ? (name   => $name  ) : ()),
-                }
-            );
+                my $tree = My::Tree->new(
+                    node      => $node,
+                    meta_data => { 
+                        (($number) ? (number => $number) : ()), 
+                        (($name)   ? (name   => $name  ) : ()),
+                    }
+                );
             
-            return ($depth, $tree);
+                return ($depth, $tree);
+            }
         }
         
         __PACKAGE__->meta->make_immutable();
@@ -60,11 +62,11 @@ BEGIN {
     ok(My::Tree->isa('Forest::Tree'), '... My::Tree isa Forest::Tree');
     ok(My::Tree->does('Forest::Tree::Roles::MetaData'), '... My::Tree does Forest::Tree::Roles::MetaData');
     
-    my $reader = My::Tree::Reader->new(source => \*DATA);
+    my $reader = My::Tree::Reader->new;
     isa_ok($reader, 'My::Tree::Reader');    
     isa_ok($reader, 'Forest::Tree::Reader::SimpleTextFile');    
     
-    $reader->load;
+    $reader->read(\*DATA);
 
     my $tree = $reader->tree;
     isa_ok($tree, 'My::Tree');

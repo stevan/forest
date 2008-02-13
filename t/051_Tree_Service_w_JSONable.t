@@ -25,7 +25,7 @@ BEGIN {
     sub as_json {
         my ($tree, %options) = @_;
 
-        return JSON::Syck::Dump({
+        return JSON::Any->new->encode({
             __meta__    => $tree->meta_data,
             __uid__     => $tree->uid,
             __node__    => $tree->node,
@@ -61,13 +61,13 @@ BEGIN {
     
 }
 
-my $reader = My::Tree::Reader->new(source => \*DATA);
+my $reader = My::Tree::Reader->new;
 isa_ok($reader, 'My::Tree::Reader');    
 isa_ok($reader, 'Forest::Tree::Reader::SimpleTextFile');
 
-$reader->load;
+$reader->read(\*DATA);
 
-my $index = Forest::Tree::Indexer::SimpleUIDIndexer->new(root => $reader->tree);
+my $index = Forest::Tree::Indexer::SimpleUIDIndexer->new(tree => $reader->tree);
 isa_ok($index, 'Forest::Tree::Indexer::SimpleUIDIndexer');
 
 $index->build_index;

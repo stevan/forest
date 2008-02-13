@@ -27,13 +27,13 @@ BEGIN {
     __PACKAGE__->meta->make_immutable();
 }
 
-my $reader = My::Tree::Reader->new(source => \*DATA);
+my $reader = My::Tree::Reader->new;
 isa_ok($reader, 'My::Tree::Reader');    
 isa_ok($reader, 'Forest::Tree::Reader::SimpleTextFile');
 
-$reader->load;
+$reader->read(\*DATA);
 
-my $index = Forest::Tree::Indexer::SimpleUIDIndexer->new(root => $reader->tree);
+my $index = Forest::Tree::Indexer::SimpleUIDIndexer->new(tree => $reader->tree);
 isa_ok($index, 'Forest::Tree::Indexer::SimpleUIDIndexer');
 
 $index->build_index;

@@ -23,16 +23,15 @@ open(TREE, "<", $tree) || die "Could not open the tree file :  $tree : because :
 
 my $reader = Forest::Tree::Reader::SimpleTextFile->new(
     tree   => Forest::Tree->new(node => 'root', uid => 'root'),
-    source => \*TREE
 );
 
 warn "... loading tree";
-$reader->load;
+$reader->read(\*TREE);
 warn "+ tree loaded";
 
 close TREE || die "Could not close the tree file : $tree";
 
-my $index = Forest::Tree::Indexer::SimpleUIDIndexer->new(root => $reader->tree);
+my $index = Forest::Tree::Indexer::SimpleUIDIndexer->new(tree => $reader->tree);
 
 warn "... building tree index";
 $index->build_index;

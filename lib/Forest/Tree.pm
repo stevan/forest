@@ -1,9 +1,9 @@
-
 package Forest::Tree;
 use Moose;
+use MooseX::AttributeHelpers;
 
-use Forest;
 use Scalar::Util 'reftype';
+use List::Util   'sum', 'max';
 
 our $VERSION   = '0.01';
 our $AUTHORITY = 'cpan:STEVAN';
@@ -22,7 +22,7 @@ has 'parent' => (
     writer      => '_set_parent',
     predicate   => 'has_parent',
     clearer     => 'clear_parent',
-    isa         => 'Forest::Tree',
+    isa         => 'Maybe[Forest::Tree]',
     is_weak_ref => 1,
     handles     => {
         'add_sibling'       => 'add_child',
@@ -32,9 +32,15 @@ has 'parent' => (
 );
 
 has 'children' => (
-    is      => 'rw',
-    isa     => 'ArrayRef',
-    default => sub { [] },
+    metaclass => 'Collection::Array',
+    is        => 'rw',
+    isa       => 'ArrayRef[Forest::Tree]',
+    lazy      => 1,
+    default   => sub { [] },
+    provides  => {
+        'get'   => 'get_child_at',
+        'count' => 'child_count',
+    }
 );
 
 has 'size' => (
@@ -46,9 +52,8 @@ has 'size' => (
     predicate => 'has_size',
     default   => sub {
         my $self = shift;
-        my $size = 1;
-        map { $size += $_->size } @{ $self->children };
-        return $size;
+        return 1 unless $self->child_count;        
+        1 + sum map { $_->size } @{ $self->children };
     }
 );
 
@@ -62,19 +67,17 @@ has 'height' => (
      default   => sub {
          my $self = shift;
          return 0 unless $self->child_count;
-         my $max = 0;
-         map{ $max = $_->height if($_->height > $max) } @{$self->children};
-         return $max + 1;
+         1 + max map { $_->height } @{ $self->children };
      }
 );
 
-after 'clear_size' => sub{
+after 'clear_size' => sub {
     my $self = shift;
     $self->parent->clear_size
         if $self->has_parent && $self->parent->has_size;
 };
 
-after 'clear_height' => sub{
+after 'clear_height' => sub {
     my $self = shift;
     $self->parent->clear_height
         if $self->has_parent && $self->parent->has_height;
@@ -91,38 +94,31 @@ sub depth { ((shift)->parent || return -1)->depth + 1 }
 sub add_child {
     my ($self, $child) = @_;
     (blessed($child) && $child->isa('Forest::Tree'))
-        || confess "Child parameter must be a Forest::Tree not ($child)";
+        || confess "Child parameter must be a Forest::Tree not (" . (defined $child ? $child : 'undef') . ")";
     $child->_set_parent($self);
-    push @{$self->children} => $child;
     $self->clear_height if $self->has_height;
-    $self->clear_size   if $self->has_size;
+    $self->clear_size   if $self->has_size;    
+    push @{ $self->children } => $child;
     $self;
 }
 
 sub insert_child_at {
     my ($self, $index, $child) = @_;
     (blessed($child) && $child->isa('Forest::Tree'))
-        || confess "Child parameter must be a Forest::Tree not ($child)";
+        || confess "Child parameter must be a Forest::Tree not (" . (defined $child ? $child : 'undef') . ")";
     $child->_set_parent($self);
     $self->clear_height if $self->has_height;
     $self->clear_size   if $self->has_size;
-    splice @{$self->children}, $index, 0, $child;
-}
-
-sub get_child_at {
-    my ($self, $index) = @_;
-    $self->children->[$index];
+    splice @{ $self->children }, $index, 0, $child;
 }
 
 sub remove_child_at {
     my ($self, $index) = @_;
     $self->clear_height if $self->has_height;
     $self->clear_size   if $self->has_size;
-    my $child = splice @{$self->children}, $index, 1;
+    my $child = splice @{ $self->children }, $index, 1;
     $child->clear_parent;
 }
-
-sub child_count { scalar @{(shift)->children} };
 
 ## traversal
 sub traverse {
@@ -131,7 +127,7 @@ sub traverse {
         || confess "Cannot traverse without traversal function";
     (reftype($func) eq "CODE")
         || die "Traversal function must be a CODE reference, not : $func";
-    foreach my $child (@{$self->children}) {
+    foreach my $child (@{ $self->children }) {
         $func->($child);
         $child->traverse($func);
     }
@@ -139,19 +135,11 @@ sub traverse {
 
 ##siblings
 
-#return arrayref of siblings other than us
 sub siblings {
     my $self = shift;
-    my @siblings = grep { $self->uid ne $_->uid } @{ $self->children };
-    return \@siblings;
+    [ grep { $self->uid ne $_->uid } @{ $self->children } ];
 }
 
-# NOTE:
-# we are basically inlining the
-# constructor here, and caching
-# all our important bits, this
-# speeds up building large trees
-# considerably.
 __PACKAGE__->meta->make_immutable(inline_accessors => 0);
 
 no Moose; 1;
@@ -159,6 +147,12 @@ no Moose; 1;
 __END__
 
 =pod
+
+=head1 NAME
+
+=head1 SYNOPSIS
+
+=head1 DESCRIPTION
 
 =head1 ATTRIBUTES
 
@@ -248,5 +242,24 @@ every descendant.
 =head2 siblings
 
 Returns an array reference of all siblings (not including us)
+
+=head1 BUGS
+
+All complex software has bugs lurking in it, and this module is no 
+exception. If you find a bug please either email me, or add the bug
+to cpan-RT.
+
+=head1 AUTHOR
+
+Stevan Little E<lt>stevan.little@iinteractive.comE<gt>
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright 2008 Infinity Interactive, Inc.
+
+L<http://www.iinteractive.com>
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
 
 =cut

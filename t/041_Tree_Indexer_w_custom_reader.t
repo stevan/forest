@@ -28,21 +28,21 @@ BEGIN {
         __PACKAGE__->meta->make_immutable();
     }
     
-    my $reader = My::Tree::Reader->new(source => \*DATA);
+    my $reader = My::Tree::Reader->new;
     isa_ok($reader, 'My::Tree::Reader');    
     isa_ok($reader, 'Forest::Tree::Reader::SimpleTextFile');    
     
-    $reader->load;
+    $reader->read(\*DATA);
 
-    my $index = Forest::Tree::Indexer::SimpleUIDIndexer->new(root => $reader->tree);
+    my $index = Forest::Tree::Indexer::SimpleUIDIndexer->new(tree => $reader->tree);
     isa_ok($index, 'Forest::Tree::Indexer::SimpleUIDIndexer');
 
     $index->build_index;
 
-    my $keys = $index->get_index_keys;
-    is(scalar @$keys, 11, '... got the right amount of keys');
+    my @keys = $index->get_index_keys;
+    is(scalar @keys, 11, '... got the right amount of keys');
 
-    foreach my $key (@$keys) {
+    foreach my $key (@keys) {
         my $tree = $index->get_tree_at($key);
         isa_ok($tree, 'Forest::Tree');
         next if $tree->is_root;

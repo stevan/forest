@@ -112,13 +112,17 @@ ok($t->remove_child_at(0), '... removing child 1');
 is($t->height, 1, '... the root now has a height of 1');
 is($t->size,   4, '... the root now has a size of 4');
 
-throws_ok {
-    $t->add_child([]);
-} qr/Child parameter must be a Forest\:\:Tree not/, '... throws exception';
+# clear them ...
+$t->clear_size;
+$t->clear_height;
 
-throws_ok {
-    $t->add_child({});
-} qr/Child parameter must be a Forest\:\:Tree not/, '... throws exception';
+# regenerate ...
+
+ok($t->remove_child_at(0), '... removing child 1');
+
+is($t->height, 1, '... the root now has a height of 1');
+is($t->size,   3, '... the root now has a size of 3');
+
 
 
 

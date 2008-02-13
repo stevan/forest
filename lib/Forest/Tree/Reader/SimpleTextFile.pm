@@ -1,4 +1,3 @@
-
 package Forest::Tree::Reader::SimpleTextFile;
 use Moose;
 
@@ -15,10 +14,15 @@ has 'tab_width' => (
 
 ## methods
 
-# NOTE:
-# this could become a required method
-# or perhaps some kind of attribute set
-# - SL
+sub build_parser {
+    return sub {
+        my ($self, $line) = @_;
+        my ($indent, $node) = ($line =~ /^(\s*)(.*)$/);
+        my $depth = ((length $indent) / $self->tab_width); 
+        return ($depth, $node);
+    }
+}
+
 sub create_new_subtree { 
     my ($self, %options) = @_;
     my $node = $options{node};
@@ -30,28 +34,9 @@ sub create_new_subtree {
     }    
 }
 
-# FIXME:
-# this shoul become an attribute 
-# so that it can be overridden easily
-# - SL
-sub parse_line {
-    my ($self, $line) = @_;
-    my ($indent, $node) = ($line =~ /^(\s*)(.*)$/);
-    my $depth = ((length $indent) / $self->tab_width); 
-    return ($depth, $node);
-}
-
-# FIXME:
-# this can be moved into the 
-# role actually, and we just need
-# to make sure we have enough hooks 
-# to be able to override all the 
-# bits we need.
-# - SL
-sub load {
-    my $self = shift;
+sub read {
+    my ($self, $fh) = @_;
     
-    my $fh           = *{$self->source};
     my $current_tree = $self->tree;
     
     while (my $line = <$fh>) {
@@ -66,31 +51,31 @@ sub load {
         
         my $new_tree = $self->create_new_subtree(node => $node);
         
-		if ($current_tree->is_root) {
-			$current_tree->add_child($new_tree);
-			$current_tree = $new_tree;
-			next;
-		}
-		
-		my $tree_depth = $current_tree->depth;		
-		if ($depth == $tree_depth) {	
-			$current_tree->add_sibling($new_tree);
-			$current_tree = $new_tree;
-		} 
-		elsif ($depth > $tree_depth) {
-			(($depth - $tree_depth) <= 1) 
+        if ($current_tree->is_root) {
+            $current_tree->add_child($new_tree);
+            $current_tree = $new_tree;
+            next;
+        }
+        
+        my $tree_depth = $current_tree->depth;        
+        if ($depth == $tree_depth) {    
+            $current_tree->add_sibling($new_tree);
+            $current_tree = $new_tree;
+        } 
+        elsif ($depth > $tree_depth) {
+            (($depth - $tree_depth) <= 1) 
                 || die "Parse Error : the difference between the depth ($depth) and " . 
                        "the tree depth ($tree_depth) is too much (" . 
                        ($depth - $tree_depth) . ") at line:\n'$line'";
-			$current_tree->add_child($new_tree);
-			$current_tree = $new_tree;
-		} 
-		elsif ($depth < $tree_depth) {
-			$current_tree = $current_tree->parent while ($depth < $current_tree->depth);
-			$current_tree->add_sibling($new_tree);
-			$current_tree = $new_tree;	
-		} 
-		       
+            $current_tree->add_child($new_tree);
+            $current_tree = $new_tree;
+        } 
+        elsif ($depth < $tree_depth) {
+            $current_tree = $current_tree->parent while ($depth < $current_tree->depth);
+            $current_tree->add_sibling($new_tree);
+            $current_tree = $new_tree;    
+        } 
+               
     }
 };
 
@@ -100,5 +85,38 @@ no Moose; 1;
 __END__
 
 =pod
+
+=head1 NAME
+
+=head1 SYNOPSIS
+
+=head1 DESCRIPTION
+
+=head1 METHODS 
+
+=over 4
+
+=item B<>
+
+=back
+
+=head1 BUGS
+
+All complex software has bugs lurking in it, and this module is no 
+exception. If you find a bug please either email me, or add the bug
+to cpan-RT.
+
+=head1 AUTHOR
+
+Stevan Little E<lt>stevan.little@iinteractive.comE<gt>
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright 2008 Infinity Interactive, Inc.
+
+L<http://www.iinteractive.com>
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
 
 =cut
