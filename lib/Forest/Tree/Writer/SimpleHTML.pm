@@ -38,15 +38,17 @@ __END__
 
 =head1 NAME
 
-=head1 SYNOPSIS
+Forest::Tree::Writer::SimpleHTML - A simple HTML writer for Forest::Tree heirarchies
 
 =head1 DESCRIPTION
+
+This is a simple writer which draws a tree as an HTML unordered list.
 
 =head1 METHODS 
 
 =over 4
 
-=item B<>
+=item B<as_string>
 
 =back
 

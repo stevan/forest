@@ -35,15 +35,45 @@ __END__
 
 =head1 NAME
 
-=head1 SYNOPSIS
+Forest::Tree::Indexer - An abstract role for tree indexers
 
 =head1 DESCRIPTION
+
+This is an abstract role for tree writers.
+
+=head1 ATTRIBUTES
+
+=over 4
+
+=item I<tree>
+
+=item I<index>
+
+=over 4
+
+=item B<get_tree_at ($key)>
+
+=item B<clear_index>
+
+=item B<get_index_keys>
+
+=back
+
+=back
+
+=head1 REQUIRED METHODS 
+
+=over 4
+
+=item B<build_index>
+
+=back
 
 =head1 METHODS 
 
 =over 4
 
-=item B<>
+=item B<get_root>
 
 =back
 

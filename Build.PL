@@ -7,9 +7,12 @@ my $build = Module::Build->new(
     module_name => 'Forest',
     license => 'perl',
     requires => {
-        'Moose'        => '0.35',
-        'JSON::Any'    => '1.15',
-        'Sub::Current' => '0.02',
+        'Moose'                    => '0.35',
+        'MooseX::AttributeHelpers' => '0.07',
+        'JSON::Any'                => '1.15',
+        'Sub::Current'             => '0.02',
+        'Scalar::Util'             => '1.17',
+        'List::Util'               => '1.17',        
     },
     optional => {
     },

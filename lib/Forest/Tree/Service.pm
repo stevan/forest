@@ -17,15 +17,17 @@ __END__
 
 =head1 NAME
 
-=head1 SYNOPSIS
+Forest::Tree::Service - An abstract role for tree services
 
 =head1 DESCRIPTION
 
-=head1 METHODS 
+This is an abstract role for tree indexers.
+
+=head1 ATTRIBUTES
 
 =over 4
 
-=item B<>
+=item I<tree_index>
 
 =back
 

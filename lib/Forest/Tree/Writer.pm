@@ -25,15 +25,33 @@ __END__
 
 =head1 NAME
 
-=head1 SYNOPSIS
+Forest::Tree::Writer - An abstract role for tree writers
 
 =head1 DESCRIPTION
+
+This is an abstract role for tree writers.
+
+=head1 ATTRIBUTES
+
+=over 4
+
+=item I<tree>
+
+=back
+
+=head1 REQUIRED METHODS 
+
+=over 4
+
+=item B<as_string>
+
+=back
 
 =head1 METHODS 
 
 =over 4
 
-=item B<>
+=item B<write ($fh)>
 
 =back
 

@@ -150,17 +150,53 @@ __END__
 
 =head1 NAME
 
+Forest::Tree - An n-ary tree
+
 =head1 SYNOPSIS
+
+  use Forest::Tree;
+
+  my $t = Forest::Tree->new(
+      node     => 1,
+      children => [
+          Forest::Tree->new(
+              node     => 1.1,
+              children => [
+                  Forest::Tree->new(node => 1.1.1),
+                  Forest::Tree->new(node => 1.1.2),                
+                  Forest::Tree->new(node => 1.1.3),                
+              ]
+          ),
+          Forest::Tree->new(node => 1.2),
+          Forest::Tree->new(
+              node     => 1.3,
+              children => [
+                  Forest::Tree->new(node => 1.3.1),
+                  Forest::Tree->new(node => 1.3.2),                
+              ]
+          ),                                                
+      ]
+  );
+  
+  $t->traverse(sub {
+      my $t = shift;
+      print(('    ' x $t->depth) . ($t->node || '\undef') . "\n");
+  });
 
 =head1 DESCRIPTION
 
+This module is a basic n-ary tree, it provides most of the functionality 
+of Tree::Simple, whatever is missing will be added eventually.
+
 =head1 ATTRIBUTES
 
-=head2 node
+=over 4
 
-=head2 uid
+=item I<node>
 
-=head2 parent
+=item I<uid>
+
+=item I<parent>
 
 =over 4
 
@@ -174,9 +210,21 @@ __END__
 
 =back
 
-=head2 children
+=item I<children>
 
-=head2 size
+=over 4 
+
+=item B<get_child_at ($index)>
+
+Return the child at this position. (zero-base index)
+
+=item B<child_count>
+
+Returns the number of children this tree has
+
+=back
+
+=item I<size>
 
 =over 4
 
@@ -188,7 +236,7 @@ __END__
 
 =back
 
-=head2 height
+=item I<height>
 
 =over 4
 
@@ -200,48 +248,46 @@ __END__
 
 =back
 
+=back
+
 =head1 METHODS
 
-=head2 is_root
+=over 4
+
+=item B<is_root>
 
 True if the current tree has no parent
 
-=head2 is_leaf
+=item B<is_leaf>
 
 True if the current tree has no children
 
-=head2 depth
+=item B<depth>
 
 Return the depth of this tree. Root has a depth of -1
 
-=head2 add_child $child
+=item B<add_child ($child)>
 
 Add a new child. The $child must be a C<Forest::Tree>
 
-=head2 insert_child_at $index $child
+=item B<insert_child_at ($index, $child)>
 
 Insert a child at this position. (zero-base index)
 
-=head2 get_child_at $index
-
-Return the child at this position. (zero-base index)
-
-=head2 remove_child_at $index
+=item B<remove_child_at ($index)>
 
 Remove the child at this position. (zero-base index)
 
-=head2 child_count
-
-Returns the number of children this tree has
-
-=head2 traverse \&func
+=item B<traverse (\&func)>
 
 Takes a reference to a subroutine and traverses the tree applying this subroutine to
 every descendant.
 
-=head2 siblings
+=item B<siblings>
 
 Returns an array reference of all siblings (not including us)
+
+=back
 
 =head1 BUGS
 

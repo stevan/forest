@@ -18,6 +18,7 @@ has 'parser' => (
     builder => 'build_parser',
 );
 
+requires 'build_parser';
 requires 'read';
 
 sub parse_line { $_[0]->parser->(@_) }
@@ -30,15 +31,37 @@ __END__
 
 =head1 NAME
 
-=head1 SYNOPSIS
+Forest::Tree::Reader - An abstract role for tree reader
 
 =head1 DESCRIPTION
+
+This is an abstract role for tree readers.
+
+=head1 ATTRIBUTES
+
+=over 4
+
+=item I<tree>
+
+=item I<parser>
+
+=back
+
+=head1 REQUIRED METHODS 
+
+=over 4
+
+=item B<read>
+
+=item B<build_parser>
+
+=back
 
 =head1 METHODS 
 
 =over 4
 
-=item B<>
+=item B<parse_line>
 
 =back
 

@@ -14,11 +14,13 @@ __END__
 
 =head1 NAME
 
-=head1 SYNOPSIS
+Forest::Tree::Roles::JSONable - An abstract role for providing JSON serialization
 
 =head1 DESCRIPTION
 
-=head1 METHODS
+This is just an abstract role for trees capable of JSON serialization.
+
+=head1 REQUIRED METHODS
 
 =over 4
 

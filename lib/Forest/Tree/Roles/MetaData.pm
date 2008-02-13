@@ -42,15 +42,32 @@ __END__
 
 =head1 NAME
 
-=head1 SYNOPSIS
+Forest::Tree::Roles::MetaData - A role mixin to support tree node metadata
 
 =head1 DESCRIPTION
+
+This role mixin adds support for each tree node to have arbitrary metadata 
+stored in a HASHref. The metadata is inherited in the tree as well, so a child
+will inherit the parents metadata. 
+
+This is really useful, at least for me it is :)
+
+=head1 ATTRIBUTES
+
+=over 4
+
+=item I<meta_data>
+
+=back
 
 =head1 METHODS 
 
 =over 4
 
-=item B<>
+=item B<fetch_meta_data_for ($key)>
+
+This will first check locally, if it doesn't fund anything then will climb 
+back to the root looking.
 
 =back
 

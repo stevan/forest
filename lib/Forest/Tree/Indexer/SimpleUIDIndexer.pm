@@ -35,15 +35,17 @@ __END__
 
 =head1 NAME
 
-=head1 SYNOPSIS
+Forest::Tree::Indexer::SimpleUIDIndexer - Indexes a Forest::Tree heiarchy by it's UID
 
 =head1 DESCRIPTION
+
+This creates an index of a Forest::Tree heiarchy using the UID as the key.
 
 =head1 METHODS 
 
 =over 4
 
-=item B<>
+=item B<build_index>
 
 =back
 

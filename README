@@ -17,11 +17,13 @@ DEPENDENCIES
 This module requires these other modules and libraries:
 
     Moose
-    JSON::Syck
+    MooseX::AttributeHelpers
+    JSON::Any
+    Sub::Current
 
 COPYRIGHT AND LICENCE
 
-Copyright (C) 2006 Infinity Interactive, Inc.
+Copyright (C) 2008 Infinity Interactive, Inc.
 
 http://www.iinteractive.com
 

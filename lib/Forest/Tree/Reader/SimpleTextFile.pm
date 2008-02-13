@@ -88,15 +88,30 @@ __END__
 
 =head1 NAME
 
-=head1 SYNOPSIS
+Forest::Tree::Reader::SimpleTextFile - A reader for Forest::Tree heirarchies
 
 =head1 DESCRIPTION
+
+This reads simple F<.tree> files, which are basically the tree represented
+as a tabbed heirarchy. 
+
+=head1 ATTRIBUTES 
+
+=over 4
+
+=item I<tab_width>
+
+=back
 
 =head1 METHODS 
 
 =over 4
 
-=item B<>
+=item B<read ($fh)>
+
+=item B<build_parser>
+
+=item B<create_new_subtree (%options)>
 
 =back
 

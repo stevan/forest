@@ -40,7 +40,8 @@ warn "+ tree indexed";
 my $service = Forest::Tree::Service::AJAX->new(tree_index => $index);
 
 {
-    package Forest::Tree::Service::AJAX::Server;
+    package # shh dont tell PAUSE
+        Forest::Tree::Service::AJAX::Server;
     use base 'HTTP::Server::Simple::CGI', 'HTTP::Server::Simple::Static';
     
     sub handle_request {

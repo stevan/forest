@@ -1,10 +1,9 @@
 Build.PL
 Changes
-Makefile.PL
-META.yml
 MANIFEST
 MANIFEST.SKIP
 README
+benchmarks/build_tree.pl
 lib/Forest.pm
 lib/Forest/Tree.pm
 lib/Forest/Tree/Indexer.pm
@@ -13,6 +12,8 @@ lib/Forest/Tree/Service.pm
 lib/Forest/Tree/Writer.pm
 lib/Forest/Tree/Indexer/SimpleUIDIndexer.pm
 lib/Forest/Tree/Reader/SimpleTextFile.pm
+lib/Forest/Tree/Roles/JSONable.pm
+lib/Forest/Tree/Roles/MetaData.pm
 lib/Forest/Tree/Service/AJAX.pm
 lib/Forest/Tree/Writer/SimpleASCII.pm
 lib/Forest/Tree/Writer/SimpleHTML.pm
@@ -24,8 +25,13 @@ scripts/js/Forest.js
 scripts/js/Forest/Tree/Service/AJAX/Client.js
 t/000_load.t
 t/010_Tree.t
+t/011_Tree_MetaData.t
+t/012_Tree_errors.t
 t/020_Tree_Reader.t
 t/030_Tree_Writer.t
+t/031_Tree_Writer_to_disk.t
 t/040_Tree_Indexer.t
 t/041_Tree_Indexer_w_custom_reader.t
 t/050_Tree_Service.t
+t/051_Tree_Service_w_JSONable.t
+t/pod.t

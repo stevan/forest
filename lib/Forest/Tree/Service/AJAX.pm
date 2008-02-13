@@ -13,15 +13,15 @@ sub get_tree_as_json {
     
     my $tree = $self->tree_index->get_tree_at($tree_id);
     
-    return $self->return_JSON_error($tree_id)
+    return $self->return_json_error($tree_id)
         unless blessed($tree) && $tree->isa('Forest::Tree');
     
-    return $self->prepare_tree_for_JSON($tree, %options);   
+    return $self->prepare_tree_for_json($tree, %options);   
 }
 
 ## util methods
 
-sub prepare_tree_for_JSON {
+sub prepare_tree_for_json {
     my ($self, $tree, %options) = @_;
 
     return $tree->as_json(%options)
@@ -43,7 +43,7 @@ sub prepare_tree_for_JSON {
     });
 }
 
-sub return_JSON_error {
+sub return_json_error {
     my ($self, $tree_id) = @_;
     return JSON::Any->new->encode({ error => 'Could not find tree at index (' . $tree_id . ')' });
 }
@@ -57,15 +57,22 @@ __END__
 
 =head1 NAME
 
-=head1 SYNOPSIS
+Forest::Tree::Service::AJAX - A service for using a Forest::Tree over an AJAX UI 
 
 =head1 DESCRIPTION
+
+This is not really AJAX so much since it returns JSON, so this name will likely change.
+But I am leaving it for right now.
 
 =head1 METHODS 
 
 =over 4
 
-=item B<>
+=item B<get_tree_as_json ($tree, %options)>
+
+=item B<prepare_tree_for_json ($tree, %options)>
+
+=item B<return_json_error ($tree_id)>
 
 =back
 
