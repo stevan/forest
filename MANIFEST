@@ -35,3 +35,5 @@ t/041_Tree_Indexer_w_custom_reader.t
 t/050_Tree_Service.t
 t/051_Tree_Service_w_JSONable.t
 t/pod.t
+Makefile.PL
+META.yml
