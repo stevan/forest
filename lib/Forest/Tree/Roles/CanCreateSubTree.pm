@@ -1,21 +1,23 @@
-package Forest::Tree::Reader;
+package Forest::Tree::Roles::CanCreateSubTree;
 use Moose::Role;
 
 our $VERSION   = '0.01';
 our $AUTHORITY = 'cpan:STEVAN';
 
-with 'Forest::Tree::Roles::CanCreateSubTree';
+#requires 'tree'; # this is usually an attr accessor 
 
-has 'tree' => (
-    is      => 'ro',
-    isa     => 'Forest::Tree',
-    lazy    => 1,
-    default => sub { Forest::Tree->new },
-);
+sub create_new_subtree { 
+    my ($self, %options) = @_;
+    my $node = $options{node};
+    if (blessed($node) && $node->isa('Forest::Tree')) {
+        return $node;
+    }
+    else {
+        return blessed($self->tree)->new(%options);
+    }    
+}
 
-requires 'read';
-
-1;
+no Moose::Role; 1;
 
 __END__
 
@@ -23,37 +25,15 @@ __END__
 
 =head1 NAME
 
-Forest::Tree::Reader - An abstract role for tree reader
+=head1 SYNOPSIS
 
 =head1 DESCRIPTION
-
-This is an abstract role for tree readers.
-
-=head1 ATTRIBUTES
-
-=over 4
-
-=item I<tree>
-
-=item I<parser>
-
-=back
-
-=head1 REQUIRED METHODS 
-
-=over 4
-
-=item B<read>
-
-=item B<build_parser>
-
-=back
 
 =head1 METHODS 
 
 =over 4
 
-=item B<parse_line>
+=item B<>
 
 =back
 

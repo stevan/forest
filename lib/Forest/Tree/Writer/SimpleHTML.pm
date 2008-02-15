@@ -16,12 +16,12 @@ sub as_string {
         my $t      = shift;
         my $indent = ('    ' x $t->depth);
         
-        $out .= ($indent . '<li>' . ($t->node || '\undef') . '</li>' . "\n")
+        $out .= ($indent . '<li>' . $self->node_formatter->($t) . '</li>' . "\n")
             unless $t->depth == -1;
             
         unless ($t->is_leaf) {
             $out .= ($indent . '<ul>' . "\n");
-            map { ROUTINE->($_) } @{$t->children};
+            map { ROUTINE->($_) } @{ $t->children };
             $out .= ($indent . '</ul>' . "\n");      
         }      
     }->($self->tree);
@@ -29,7 +29,8 @@ sub as_string {
     return $out;
 }
 
-__PACKAGE__->meta->make_immutable();
+make_immutable;
+
 no Moose; 1;
 
 __END__

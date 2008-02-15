@@ -12,13 +12,14 @@ sub as_string {
     
     $self->tree->traverse(sub {
         my $t = shift;
-        $out .= (('    ' x $t->depth) . ($t->node || '\undef') . "\n");
+        $out .= (('    ' x $t->depth) . $self->node_formatter->($t) . "\n");
     });
     
     return $out;
 }
 
-__PACKAGE__->meta->make_immutable();
+make_immutable;
+
 no Moose; 1;
 
 __END__

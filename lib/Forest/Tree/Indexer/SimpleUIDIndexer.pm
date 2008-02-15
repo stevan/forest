@@ -25,7 +25,7 @@ sub build_index {
     
 };
 
-__PACKAGE__->meta->make_immutable;
+make_immutable;
 
 no Moose; 1;
 

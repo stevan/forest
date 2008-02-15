@@ -91,33 +91,41 @@ sub is_leaf { (shift)->child_count == 0 }
 sub depth { ((shift)->parent || return -1)->depth + 1 }
 
 ## child management
+
 sub add_child {
-    my ($self, $child) = @_;
+    my ($self, $child) = @_; 
     (blessed($child) && $child->isa('Forest::Tree'))
         || confess "Child parameter must be a Forest::Tree not (" . (defined $child ? $child : 'undef') . ")";
-    $child->_set_parent($self);
+    $child->_set_parent($self);    
     $self->clear_height if $self->has_height;
     $self->clear_size   if $self->has_size;    
     push @{ $self->children } => $child;
     $self;
 }
 
+sub add_children {
+    my ($self, @children) = @_;
+    $self->add_child($_) for @children;
+}
+
 sub insert_child_at {
     my ($self, $index, $child) = @_;
     (blessed($child) && $child->isa('Forest::Tree'))
         || confess "Child parameter must be a Forest::Tree not (" . (defined $child ? $child : 'undef') . ")";
-    $child->_set_parent($self);
+    $child->_set_parent($self);    
     $self->clear_height if $self->has_height;
-    $self->clear_size   if $self->has_size;
+    $self->clear_size   if $self->has_size;    
     splice @{ $self->children }, $index, 0, $child;
+    $self;
 }
 
 sub remove_child_at {
     my ($self, $index) = @_;
     $self->clear_height if $self->has_height;
-    $self->clear_size   if $self->has_size;
+    $self->clear_size   if $self->has_size;    
     my $child = splice @{ $self->children }, $index, 1;
     $child->clear_parent;
+    $child;
 }
 
 ## traversal
@@ -140,7 +148,19 @@ sub siblings {
     [ grep { $self->uid ne $_->uid } @{ $self->children } ];
 }
 
-__PACKAGE__->meta->make_immutable(inline_accessors => 0);
+## cloning 
+
+sub clone_and_detach {
+    my ($self, %options) = @_;
+    require Storable;
+    my $parent = $self->parent;
+    $self->clear_parent;
+    my $clone = Storable::dclone($self);
+    $self->_set_parent($parent);
+    return $clone;
+}
+
+make_immutable;
 
 no Moose; 1;
 

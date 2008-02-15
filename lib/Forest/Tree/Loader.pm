@@ -1,4 +1,4 @@
-package Forest::Tree::Reader;
+package Forest::Tree::Loader;
 use Moose::Role;
 
 our $VERSION   = '0.01';
@@ -13,9 +13,9 @@ has 'tree' => (
     default => sub { Forest::Tree->new },
 );
 
-requires 'read';
+requires 'load';
 
-1;
+no Moose::Role; 1;
 
 __END__
 
@@ -23,37 +23,15 @@ __END__
 
 =head1 NAME
 
-Forest::Tree::Reader - An abstract role for tree reader
+=head1 SYNOPSIS
 
 =head1 DESCRIPTION
-
-This is an abstract role for tree readers.
-
-=head1 ATTRIBUTES
-
-=over 4
-
-=item I<tree>
-
-=item I<parser>
-
-=back
-
-=head1 REQUIRED METHODS 
-
-=over 4
-
-=item B<read>
-
-=item B<build_parser>
-
-=back
 
 =head1 METHODS 
 
 =over 4
 
-=item B<parse_line>
+=item B<>
 
 =back
 

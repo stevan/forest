@@ -12,6 +12,13 @@ has 'tab_width' => (
     default => 4
 );
 
+has 'parser' => (
+    is      => 'rw',
+    isa     => 'CodeRef',   
+    lazy    => 1,
+    builder => 'build_parser',
+);
+
 ## methods
 
 sub build_parser {
@@ -23,16 +30,7 @@ sub build_parser {
     }
 }
 
-sub create_new_subtree { 
-    my ($self, %options) = @_;
-    my $node = $options{node};
-    if (blessed($node) && $node->isa('Forest::Tree')) {
-        return $node;
-    }
-    else {
-        return Forest::Tree->new(%options);
-    }    
-}
+sub parse_line { $_[0]->parser->(@_) }
 
 sub read {
     my ($self, $fh) = @_;
@@ -45,11 +43,11 @@ sub read {
         
         next if !$line || $line =~ /^#/;
         
-        my ($depth, $node) = $self->parse_line($line);
+        my ($depth, $node, @rest) = $self->parse_line($line);
         
         #warn "Depth: $depth - Node: $node - for $line";
         
-        my $new_tree = $self->create_new_subtree(node => $node);
+        my $new_tree = $self->create_new_subtree(node => $node, @rest);
         
         if ($current_tree->is_root) {
             $current_tree->add_child($new_tree);
@@ -79,7 +77,8 @@ sub read {
     }
 };
 
-__PACKAGE__->meta->make_immutable();
+make_immutable;
+
 no Moose; 1;
 
 __END__

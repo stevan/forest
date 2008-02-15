@@ -48,7 +48,8 @@ sub return_json_error {
     return JSON::Any->new->encode({ error => 'Could not find tree at index (' . $tree_id . ')' });
 }
 
-__PACKAGE__->meta->make_immutable();
+make_immutable;
+
 no Moose; 1;
 
 __END__

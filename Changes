@@ -1,4 +1,11 @@
 Revision history for Perl extension Forest
 
-0.01
+0.02
+    * Forest::Tree::Writer
+      Forest::Tree::Writer::SimpleASCII
+      Forest::Tree::Writer::SimpleHTML
+      - added node_formatter support 
+        - added tests for this
+
+0.01 Wed. Feb. 13, 2008
     - filling a need

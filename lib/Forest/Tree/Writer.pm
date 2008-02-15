@@ -1,13 +1,22 @@
 package Forest::Tree::Writer;
 use Moose::Role;
 
-our $VERSION   = '0.01';
+our $VERSION   = '0.02';
 our $AUTHORITY = 'cpan:STEVAN';
 
 has 'tree' => (
     is          => 'rw',
     isa         => 'Forest::Tree',
     is_weak_ref => 1,
+);
+
+has 'node_formatter' => (
+    is      => 'rw', 
+    isa     => 'CodeRef',
+    lazy    => 1,
+    default => sub { 
+        sub { (shift)->node  || '\undef' } 
+    }
 );
 
 requires 'as_string';
