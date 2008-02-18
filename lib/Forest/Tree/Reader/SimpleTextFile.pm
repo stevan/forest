@@ -1,10 +1,11 @@
 package Forest::Tree::Reader::SimpleTextFile;
 use Moose;
 
-our $VERSION   = '0.01';
+our $VERSION   = '0.02';
 our $AUTHORITY = 'cpan:STEVAN';
 
-with 'Forest::Tree::Reader';
+with 'Forest::Tree::Reader',
+     'Forest::Tree::Roles::CanCreateSubTree';
 
 has 'tab_width' => (
     is      => 'rw',

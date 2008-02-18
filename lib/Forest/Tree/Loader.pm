@@ -4,8 +4,6 @@ use Moose::Role;
 our $VERSION   = '0.01';
 our $AUTHORITY = 'cpan:STEVAN';
 
-with 'Forest::Tree::Roles::CanCreateSubTree';
-
 has 'tree' => (
     is      => 'ro',
     isa     => 'Forest::Tree',
@@ -23,9 +21,11 @@ __END__
 
 =head1 NAME
 
-=head1 SYNOPSIS
+Forest::Tree::Loader - An abstract role for loading trees 
 
 =head1 DESCRIPTION
+
+This is an abstract role to be used for loading trees from 
 
 =head1 METHODS 
 

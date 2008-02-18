@@ -10,15 +10,6 @@ has 'tree' => (
     is_weak_ref => 1,
 );
 
-has 'node_formatter' => (
-    is      => 'rw', 
-    isa     => 'CodeRef',
-    lazy    => 1,
-    default => sub { 
-        sub { (shift)->node  || '\undef' } 
-    }
-);
-
 requires 'as_string';
 
 sub write {
@@ -26,7 +17,7 @@ sub write {
     print $fh $self->as_string;
 }
 
-1;
+no Moose::Role; 1;
 
 __END__
 

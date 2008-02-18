@@ -8,7 +8,7 @@ use List::Util   'sum', 'max';
 our $VERSION   = '0.01';
 our $AUTHORITY = 'cpan:STEVAN';
 
-has 'node' => (is => 'rw', isa => 'Any');
+has 'node' => (is => 'rw', isa => 'Item');
 
 has 'uid'  => (
     is      => 'rw',

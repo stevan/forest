@@ -6,7 +6,8 @@ use JSON::Any;
 our $VERSION   = '0.01';
 our $AUTHORITY = 'cpan:STEVAN';
 
-with 'Forest::Tree::Service';
+with 'Forest::Tree::Service',
+     'Forest::Tree::Roles::HasNodeFormatter';
 
 sub get_tree_as_json {
     my ($self, $tree_id, %options) = @_;
@@ -29,13 +30,13 @@ sub prepare_tree_for_json {
 
     return JSON::Any->new->encode({
         uid        => $tree->uid,
-        node       => $tree->node,
+        node       => $self->node_formatter->($tree->node),
         is_leaf    => $tree->is_leaf ? 1 : 0,
         (($options{include_children}) ? (
             children => [ map { 
                 {
                     uid        => $_->uid,
-                    node       => $_->node,
+                    node       => $self->node_formatter->($_->node),
                     is_leaf    => $_->is_leaf ? 1 : 0,
                 }            
             } @{ $tree->children } ]

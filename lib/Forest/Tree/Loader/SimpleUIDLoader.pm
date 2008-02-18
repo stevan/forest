@@ -4,7 +4,8 @@ use Moose;
 our $VERSION   = '0.01';
 our $AUTHORITY = 'cpan:STEVAN';
 
-with 'Forest::Tree::Loader';
+with 'Forest::Tree::Loader',
+     'Forest::Tree::Roles::CanCreateSubTree';
 
 has 'row_parser' => (
     is      => 'ro',
@@ -27,26 +28,37 @@ sub load {
     
     foreach my $row (@$table) {
         my ($node, $uid, undef) = $row_parser->($row);
-        my $t = $self->create_new_subtree(
-            node => $node,
-            uid  => $uid,
-        );            
-        $index{ $uid } = $t;
+        # NOTE: uids MUST be true values ...
+        if ($uid) { 
+            my $t = $self->create_new_subtree(
+                node => $node,
+                uid  => $uid,
+            );            
+            $index{ $uid } = $t;
+        }
     }
     
     my @orphans;
     foreach my $row (@$table) {
         my (undef, $uid, $parent_uid) = $row_parser->($row);
-        my $tree = $index{ $uid };
-        if (my $parent = $index{ $parent_uid }) {
-            $parent->add_child($tree);        
-        }
-        else {
-            push @orphans => $tree;
+        # NOTE: uids MUST be true values ...        
+        if ($uid) {
+            my $tree = $index{ $uid };
+            if (my $parent = $index{ $parent_uid }) {
+                $parent->add_child($tree);        
+            }
+            else {
+                push @orphans => $tree;
+            }
         }
     }
-        
-    $root->add_children(@orphans);
+    
+    if (@orphans) {
+        $root->add_children(@orphans);
+    }
+    else {
+        $root->add_child( $index{ (sort keys %index)[0] } );
+    }
     
     $root;
 }

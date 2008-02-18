@@ -1,10 +1,11 @@
 package Forest::Tree::Writer::SimpleASCII;
 use Moose;
 
-our $VERSION   = '0.01';
+our $VERSION   = '0.02';
 our $AUTHORITY = 'cpan:STEVAN';
 
-with 'Forest::Tree::Writer';
+with 'Forest::Tree::Writer',
+     'Forest::Tree::Roles::HasNodeFormatter';
 
 sub as_string {
     my ($self) = @_;
