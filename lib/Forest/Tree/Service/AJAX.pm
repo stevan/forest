@@ -30,13 +30,13 @@ sub prepare_tree_for_json {
 
     return JSON::Any->new->encode({
         uid        => $tree->uid,
-        node       => $self->node_formatter->($tree->node),
+        node       => $self->node_formatter->($tree),
         is_leaf    => $tree->is_leaf ? 1 : 0,
         (($options{include_children}) ? (
             children => [ map { 
                 {
                     uid        => $_->uid,
-                    node       => $self->node_formatter->($_->node),
+                    node       => $self->node_formatter->($_),
                     is_leaf    => $_->is_leaf ? 1 : 0,
                 }            
             } @{ $tree->children } ]
