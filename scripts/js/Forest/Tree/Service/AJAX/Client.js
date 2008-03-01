@@ -8,6 +8,8 @@ Forest.Tree.Service.AJAX.Client = function (base_url) {
     this.locked   = false; 
     
     this.insert_tree_callback = false;
+    
+    this.leaf_node_class = 'forest-leaf-node-class';
 };
 
 Forest.Tree.Service.AJAX.Client.prototype = new Forest.Object ();
@@ -92,17 +94,29 @@ Forest.Tree.Service.AJAX.Client.prototype.hide_tree = function (node) {
 }
 
 Forest.Tree.Service.AJAX.Client.prototype.create_html_for_leaf = function (tree) {
-    return "<li>" + tree.node + "</li>";
+    return "<li id='leaf_" 
+         + tree.uid 
+         + "' class='"
+         + this.this.leaf_node_class
+         + "'>" 
+         + tree.node 
+         + "</li>";
 }
 
 Forest.Tree.Service.AJAX.Client.prototype.create_html_for_branch = function (tree) {    
-    return "<li><a href=\"javascript:void(0);\" onclick=\"" + this.get_oid() + ".load_tree('" + 
-            tree.uid + 
-            "')\">" + 
-            tree.node + 
-            "</a></li><ul id='" +
-            tree.uid + 
-            "'></ul>";
+    return "<li id='leaf_" 
+         + tree.uid 
+         + "' class='"
+         + this.this.leaf_node_class
+         + "' onclick=\"" 
+         + this.get_oid() 
+         + ".load_tree('" 
+         + tree.uid 
+         + "')\">" 
+         + tree.node 
+         + "</li><ul id='" 
+         + tree.uid 
+         + "'></ul>";
 }
 
 // Internal Methods
@@ -126,11 +140,7 @@ Forest.Tree.Service.AJAX.Client.prototype.check_state = function () {
     }
 }
 
-Forest.Tree.Service.AJAX.Client.prototype.insert_trees = function (tree) {
-    
-    if (this.insert_tree_callback) {
-        this.insert_tree_callback(tree);
-    }
+Forest.Tree.Service.AJAX.Client.prototype.insert_trees = function (tree) { 
     
     var node = this.get_tree_node_by_id(tree.uid);
     var HTML = node.innerHTML;    
@@ -145,5 +155,9 @@ Forest.Tree.Service.AJAX.Client.prototype.insert_trees = function (tree) {
         }
     }
     
-    node.innerHTML = HTML;
+    node.innerHTML = HTML; 
+    
+    if (this.insert_tree_callback) {
+        this.insert_tree_callback(tree);
+    }      
 }

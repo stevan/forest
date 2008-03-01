@@ -1,0 +1,37 @@
+<html>
+<head>
+<title>Forest::Tree::Service::AJAX example</title>
+<style type='text/css'>
+</style>
+
+<script src="js/jQuery/jquery-1.2.2.js" type="text/javascript" charset="utf-8"></script>
+<script src="js/jQuery/interface.js" type="text/javascript" charset="utf-8"></script>
+<script src="js/jQuery/inestedsortable-1.0.pack.js" type="text/javascript" charset="utf-8"></script>
+
+<script language="javascript" src="/js/Forest.js"></script>
+<script language="javascript" src="/js/Forest/Tree/Service/AJAX/Client.js"></script>
+<script language="javascript">
+
+var client = new Forest.Tree.Service.AJAX.Client();
+client.insert_tree_callback = function (tree) {
+    document.getElementById('message').innerHTML = "Loading tree node (" + tree.node + ") ...";
+    $('#list-container').NestedSortable({ accept: 'sortable-element-class' });
+};
+
+$( function() {
+    $('#list-container').NestedSortable({ accept: 'sortable-element-class' });
+} );
+
+</script>
+</head>
+<body>
+<h1>Forest::Tree::Service::AJAX example</h1>
+<hr/>
+<div id='message'>...</div>
+<hr/>
+<ul id="list-container">
+<li><a href="javascript:void(0);" onclick="client.load_tree('root')">root</a></li>
+    <ul id="root"></ul>
+</ul>
+</body>
+</html>
