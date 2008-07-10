@@ -17,9 +17,10 @@ has 'index' => (
     lazy      => 1,
     default   => sub { {} },    
     provides  => {
-        'get'   => 'get_tree_at',
-        'clear' => 'clear_index',
-        'keys'  => 'get_index_keys',
+        'get'    => 'get_tree_at',
+        'exists' => 'has_tree_at',
+        'clear'  => 'clear_index',
+        'keys'   => 'get_index_keys',
     }
 );
 

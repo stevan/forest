@@ -1,7 +1,7 @@
 package Forest::Tree::Roles::MetaData;
 use Moose::Role;
 
-our $VERSION   = '0.01';
+our $VERSION   = '0.02';
 our $AUTHORITY = 'cpan:STEVAN';
 
 has 'meta_data' => (
@@ -21,8 +21,7 @@ sub fetch_meta_data_for {
             return $meta->{$key} 
                 if exists $meta->{$key};            
         }
-        $current = $self->parent;
-        
+        $current = $current->parent;
     } until $current->is_root;
     
     if ($current->does(__PACKAGE__)) {

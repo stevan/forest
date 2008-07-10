@@ -46,7 +46,8 @@ sub read {
         
         my ($depth, $node, @rest) = $self->parse_line($line);
         
-        #warn "Depth: $depth - Node: $node - for $line";
+        #use Data::Dumper;
+        #warn "Depth: $depth - Node: $node - for $line and " . Dumper \@rest;
         
         my $new_tree = $self->create_new_subtree(node => $node, @rest);
         
@@ -78,7 +79,7 @@ sub read {
     }
 };
 
-make_immutable;
+__PACKAGE__->meta->make_immutable;
 
 no Moose; 1;
 
