@@ -27,6 +27,11 @@ Revision history for Perl extension Forest
       - added this module as a way to load a tree
         from a simple ArrayOfHash tables 
         - added tests for this
+
+    * Forest::Tree::Writer::ASCIIWithBranches
+      - added this module for drawing ASCII trees 
+        with nice little branches and such.
+        - added tests for this
     
     * Forest::Tree::Reader
       - this now also ->does(Forest::Tree::Loader)

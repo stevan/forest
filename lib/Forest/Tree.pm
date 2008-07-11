@@ -148,6 +148,16 @@ sub siblings {
     [ grep { $self->uid ne $_->uid } @{ $self->children } ];
 }
 
+sub get_index_in_siblings {
+    my ($self) = @_;
+    return -1 if $self->is_root;
+    my $index = 0;
+    foreach my $sibling (@{ $self->parent->children }) {
+        ("$sibling" eq "$self") && return $index;
+        $index++;
+    }
+}
+
 ## cloning 
 
 sub clone_and_detach {
