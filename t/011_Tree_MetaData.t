@@ -31,7 +31,7 @@ BEGIN {
             default => sub { 
                 My::Tree->new(
                     node      => '0.0|DEFAULT', 
-                    meta_data => { number => '0.0', name => 'DEFAULT' }
+                    metadata => { number => '0.0', name => 'DEFAULT' }
                 ) 
             }
         );        
@@ -46,7 +46,7 @@ BEGIN {
             
                 my $tree = My::Tree->new(
                     node      => $node,
-                    meta_data => { 
+                    metadata => { 
                         (($number) ? (number => $number) : ()), 
                         (($name)   ? (name   => $name  ) : ()),
                     }
@@ -74,30 +74,30 @@ BEGIN {
     ok($tree->does('Forest::Tree::Roles::MetaData'), '... our tree does Forest::Tree::Roles::MetaData');  
     
     is($tree->node, '0.0|DEFAULT', '... got the right root node');
-    is_deeply($tree->meta_data, { number => '0.0', name => 'DEFAULT' }, '... got the right metadata hash');
-    is($tree->fetch_meta_data_for('number'), '0.0',     '... got the right root node metadata');    
-    is($tree->fetch_meta_data_for('name'),   'DEFAULT', '... got the right root node metadata');     
+    is_deeply($tree->metadata, { number => '0.0', name => 'DEFAULT' }, '... got the right metadata hash');
+    is($tree->fetch_metadata_for('number'), '0.0',     '... got the right root node metadata');    
+    is($tree->fetch_metadata_for('name'),   'DEFAULT', '... got the right root node metadata');     
     
     is($tree->get_child_at(0)->node, '1.0', '... got the right root node');
-    is_deeply($tree->get_child_at(0)->meta_data, { number => '1.0' }, '... got the right metadata hash');
-    is($tree->get_child_at(0)->fetch_meta_data_for('number'), '1.0',     '... got the right root node metadata');    
-    is($tree->get_child_at(0)->fetch_meta_data_for('name'),   'DEFAULT', '... got the right root node metadata');       
+    is_deeply($tree->get_child_at(0)->metadata, { number => '1.0' }, '... got the right metadata hash');
+    is($tree->get_child_at(0)->fetch_metadata_for('number'), '1.0',     '... got the right root node metadata');    
+    is($tree->get_child_at(0)->fetch_metadata_for('name'),   'DEFAULT', '... got the right root node metadata');       
 
     is($tree->get_child_at(0)->get_child_at(0)->node, '1.1|One-Point-One', '... got the right root node');
-    is($tree->get_child_at(0)->get_child_at(0)->fetch_meta_data_for('number'), '1.1',     '... got the right root node metadata');    
-    is($tree->get_child_at(0)->get_child_at(0)->fetch_meta_data_for('name'),   'One-Point-One', '... got the right root node metadata');    
+    is($tree->get_child_at(0)->get_child_at(0)->fetch_metadata_for('number'), '1.1',     '... got the right root node metadata');    
+    is($tree->get_child_at(0)->get_child_at(0)->fetch_metadata_for('name'),   'One-Point-One', '... got the right root node metadata');    
     
     is($tree->get_child_at(0)->get_child_at(1)->node, '1.2|One-Point-Two', '... got the right root node');
-    is($tree->get_child_at(0)->get_child_at(1)->fetch_meta_data_for('number'), '1.2',     '... got the right root node metadata');    
-    is($tree->get_child_at(0)->get_child_at(1)->fetch_meta_data_for('name'),   'One-Point-Two', '... got the right root node metadata');    
+    is($tree->get_child_at(0)->get_child_at(1)->fetch_metadata_for('number'), '1.2',     '... got the right root node metadata');    
+    is($tree->get_child_at(0)->get_child_at(1)->fetch_metadata_for('name'),   'One-Point-Two', '... got the right root node metadata');    
     
     is($tree->get_child_at(0)->get_child_at(1)->get_child_at(0)->node, '1.2.1', '... got the right root node');
-    is($tree->get_child_at(0)->get_child_at(1)->get_child_at(0)->fetch_meta_data_for('number'), '1.2.1',     '... got the right root node metadata');    
-    is($tree->get_child_at(0)->get_child_at(1)->get_child_at(0)->fetch_meta_data_for('name'),   'One-Point-Two', '... got the right root node metadata');    
+    is($tree->get_child_at(0)->get_child_at(1)->get_child_at(0)->fetch_metadata_for('number'), '1.2.1',     '... got the right root node metadata');    
+    is($tree->get_child_at(0)->get_child_at(1)->get_child_at(0)->fetch_metadata_for('name'),   'One-Point-Two', '... got the right root node metadata');    
     
     is($tree->get_child_at(0)->get_child_at(1)->get_child_at(1)->node, '|One-Point-Two-Point-Two', '... got the right root node');
-    is($tree->get_child_at(0)->get_child_at(1)->get_child_at(1)->fetch_meta_data_for('number'), '1.2',     '... got the right root node metadata');    
-    is($tree->get_child_at(0)->get_child_at(1)->get_child_at(1)->fetch_meta_data_for('name'),   'One-Point-Two-Point-Two', '... got the right root node metadata');    
+    is($tree->get_child_at(0)->get_child_at(1)->get_child_at(1)->fetch_metadata_for('number'), '1.2',     '... got the right root node metadata');    
+    is($tree->get_child_at(0)->get_child_at(1)->get_child_at(1)->fetch_metadata_for('name'),   'One-Point-Two-Point-Two', '... got the right root node metadata');    
 }
 
 __DATA__

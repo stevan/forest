@@ -4,13 +4,13 @@ use Moose::Role;
 our $VERSION   = '0.01';
 our $AUTHORITY = 'cpan:STEVAN';
 
-has 'meta_data' => (
+has 'metadata' => (
     is      => 'rw',
     isa     => 'HashRef',   
     default => sub { {} },
 );
 
-has 'meta_data_key' => (
+has 'metadata_key' => (
     is      => 'rw',
     isa     => 'Str',   
     default => sub { 'uid' },
@@ -24,9 +24,9 @@ around 'create_new_subtree' => sub {
     ($tree->does('Forest::Tree::Roles::MetaData'))
         || confess "Your subtrees must do the MetaData role";
         
-    my $key = $self->meta_data_key;
-    if (my $meta_data = $self->meta_data->{ $tree->$key() }) {
-        $tree->meta_data($meta_data);
+    my $key = $self->metadata_key;
+    if (my $metadata = $self->metadata->{ $tree->$key() }) {
+        $tree->metadata($metadata);
     }
     
     return $tree;

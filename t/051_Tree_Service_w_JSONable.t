@@ -26,14 +26,14 @@ BEGIN {
         my ($tree, %options) = @_;
 
         return JSON::Any->new->encode({
-            __meta__    => $tree->meta_data,
+            __meta__    => $tree->metadata,
             __uid__     => $tree->uid,
             __node__    => $tree->node,
             __is_leaf__ => $tree->is_leaf ? 1 : 0,
             (($options{include_children}) ? (
                 children => [ map { 
                     {
-                        __meta__    => $_->meta_data,
+                        __meta__    => $_->metadata,
                         __uid__     => $_->uid,
                         __node__    => $_->node,
                         __is_leaf__ => $_->is_leaf ? 1 : 0,
@@ -53,7 +53,7 @@ BEGIN {
         shift;
         my $t = My::Tree->new(@_);
         $t->uid($t->node);
-        $t->meta_data->{inv} = reverse $t->node;
+        $t->metadata->{inv} = reverse $t->node;
         $t;
     }
     

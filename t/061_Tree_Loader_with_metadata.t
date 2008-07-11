@@ -45,7 +45,7 @@ my $data = [
 
 {
     my $loader = My::Tree::Loader::WithMetaData->new(
-        meta_data => {
+        metadata => {
             1 => { name => 'one'   },
             5 => { name => 'two'   },
             7 => { name => 'three' },
@@ -74,20 +74,20 @@ my $data = [
     is($tree->child_count, 4, '... tree has 4 children');
 
     is($tree->get_child_at(0)->node, '1.0', '... got the right node');
-    is_deeply($tree->get_child_at(0)->meta_data, { name => 'one' }, '... got the right metadata');
+    is_deeply($tree->get_child_at(0)->metadata, { name => 'one' }, '... got the right metadata');
     is($tree->get_child_at(0)->get_child_at(0)->node, '1.1', '... got the right node');
     is($tree->get_child_at(0)->get_child_at(1)->node, '1.2', '... got the right node');
     is($tree->get_child_at(0)->get_child_at(1)->get_child_at(0)->node, '1.2.1', '... got the right node');
 
     is($tree->get_child_at(1)->node, '2.0', '... got the right node');
-    is_deeply($tree->get_child_at(1)->meta_data, { name => 'two' }, '... got the right metadata');
+    is_deeply($tree->get_child_at(1)->metadata, { name => 'two' }, '... got the right metadata');
     is($tree->get_child_at(1)->get_child_at(0)->node, '2.1', '... got the right node');
 
     is($tree->get_child_at(2)->node, '3.0', '... got the right node');
-    is_deeply($tree->get_child_at(2)->meta_data, { name => 'three' }, '... got the right metadata');    
+    is_deeply($tree->get_child_at(2)->metadata, { name => 'three' }, '... got the right metadata');    
 
     is($tree->get_child_at(3)->node, '4.0', '... got the right node');
-    is_deeply($tree->get_child_at(3)->meta_data, { name => 'four' }, '... got the right metadata');    
+    is_deeply($tree->get_child_at(3)->metadata, { name => 'four' }, '... got the right metadata');    
     is($tree->get_child_at(3)->get_child_at(0)->node, '4.1', '... got the right node');
     is($tree->get_child_at(3)->get_child_at(0)->get_child_at(0)->node, '4.1.1', '... got the right node');
 
