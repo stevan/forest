@@ -38,8 +38,6 @@ t/031_Tree_Writer_to_disk.t
 t/032_Tree_Writer_complex_ASCII.t
 t/040_Tree_Indexer.t
 t/041_Tree_Indexer_w_custom_reader.t
-t/050_Tree_Service.t
-t/051_Tree_Service_w_JSONable.t
 t/060_Tree_Loader.t
 t/061_Tree_Loader_with_metadata.t
 t/pod.t

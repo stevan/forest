@@ -13,13 +13,11 @@ use_ok('Forest::Tree::Reader');
 
 use_ok('Forest::Tree::Writer');
     use_ok('Forest::Tree::Writer::SimpleASCII');
+    use_ok('Forest::Tree::Writer::ASCIIWithBranches');    
     use_ok('Forest::Tree::Writer::SimpleHTML');
 
 use_ok('Forest::Tree::Indexer');
     use_ok('Forest::Tree::Indexer::SimpleUIDIndexer');
-
-use_ok('Forest::Tree::Service');
-    use_ok('Forest::Tree::Service::AJAX');
 
 use_ok('Forest::Tree::Loader');
     use_ok('Forest::Tree::Loader::SimpleUIDLoader');
