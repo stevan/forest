@@ -4,8 +4,7 @@ use Moose;
 our $VERSION   = '0.02';
 our $AUTHORITY = 'cpan:STEVAN';
 
-with 'Forest::Tree::Reader',
-     'Forest::Tree::Roles::CanCreateSubTree';
+with 'Forest::Tree::Reader';
 
 has 'tab_width' => (
     is      => 'rw',

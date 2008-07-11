@@ -13,6 +13,17 @@ has 'tree' => (
 
 requires 'load';
 
+sub create_new_subtree { 
+    my ($self, %options) = @_;
+    my $node = $options{node};
+    if (blessed($node) && $node->isa('Forest::Tree')) {
+        return $node;
+    }
+    else {
+        return blessed($self->tree)->new(%options);
+    }    
+}
+
 no Moose::Role; 1;
 
 __END__

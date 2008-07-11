@@ -4,8 +4,7 @@ use Moose;
 our $VERSION   = '0.01';
 our $AUTHORITY = 'cpan:STEVAN';
 
-with 'Forest::Tree::Loader',
-     'Forest::Tree::Roles::CanCreateSubTree';
+with 'Forest::Tree::Loader';
 
 has 'row_parser' => (
     is      => 'ro',

@@ -24,7 +24,6 @@ use_ok('Forest::Tree::Service');
 use_ok('Forest::Tree::Loader');
     use_ok('Forest::Tree::Loader::SimpleUIDLoader');
 
-use_ok('Forest::Tree::Roles::CanCreateSubTree');
 use_ok('Forest::Tree::Roles::JSONable');
 use_ok('Forest::Tree::Roles::HasNodeFormatter');
 use_ok('Forest::Tree::Roles::MetaData');

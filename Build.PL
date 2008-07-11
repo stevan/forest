@@ -19,6 +19,7 @@ my $build = Module::Build->new(
     build_requires => {
         'Test::More'      => '0.47',
         'Test::Exception' => '0.21',
+        'Path::Class'     => 0,
     },
     create_makefile_pl => 'traditional',
     recursive_test_files => 1,

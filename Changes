@@ -1,10 +1,37 @@
 Revision history for Perl extension Forest
 
 0.02
+    * Forest::Tree
+      - added size and height attributes (groditi)
+
     * Forest::Tree::Writer
       Forest::Tree::Writer::SimpleASCII
       Forest::Tree::Writer::SimpleHTML
       - added node_formatter support 
+        - added tests for this
+        
+    * Forest::Tree::Roles::CanCreateSubTree
+      - refactored out some common functionality 
+        into roles
+    
+    * Forest::Tree::Loader
+      - added this generic role for loading of 
+        trees.
+    
+    * Forest::Tree::Roles::LoadWithMetaData
+      - simple role to work with loaders and add
+        the metadata in as the tree is being created
+        - added tests for this
+
+    * Forest::Tree::Loader::SimpleUIDLoader
+      - added this module as a way to load a tree
+        from a simple ArrayOfHash tables 
+        - added tests for this
+    
+    * Forest::Tree::Reader
+      - this now also ->does(Forest::Tree::Loader)
+        so that you can be more general about how 
+        your stuff gets loaded.
         - added tests for this
 
 0.01 Wed. Feb. 13, 2008

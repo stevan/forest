@@ -25,7 +25,7 @@ BEGIN {
     is($tree->child_count, 0, '... tree has no children');
     
     lives_ok {
-        $reader->read(\*DATA);
+        $reader->load(\*DATA);
     } '... loaded the tree';   
 
     ok($tree->is_root, '... tree is a root');

@@ -4,14 +4,15 @@ use Moose::Role;
 our $VERSION   = '0.02';
 our $AUTHORITY = 'cpan:STEVAN';
 
-has 'tree' => (
-    is      => 'ro',
-    isa     => 'Forest::Tree',
-    lazy    => 1,
-    default => sub { Forest::Tree->new },
-);
+with 'Forest::Tree::Loader';
 
 requires 'read';
+
+# satisfy the Loader interface here ...
+sub load { 
+    my $self = shift;
+    $self->read(@_);
+}
 
 1;
 
@@ -27,13 +28,14 @@ Forest::Tree::Reader - An abstract role for tree reader
 
 This is an abstract role for tree readers.
 
+Tree readers are also Tree loaders, that is why this module 
+also does the L<Forest::Tree::Loader> role. 
+
 =head1 ATTRIBUTES
 
 =over 4
 
 =item I<tree>
-
-=item I<parser>
 
 =back
 
@@ -43,15 +45,15 @@ This is an abstract role for tree readers.
 
 =item B<read>
 
-=item B<build_parser>
-
 =back
 
 =head1 METHODS 
 
 =over 4
 
-=item B<parse_line>
+=item B<load>
+
+This satisfies the L<Forest::Tree::Loader> interface.
 
 =back
 

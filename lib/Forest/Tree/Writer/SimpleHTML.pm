@@ -17,7 +17,7 @@ sub as_string {
         my $t      = shift;
         my $indent = ('    ' x $t->depth);
         
-        $out .= ($indent . '<li>' . $self->node_formatter->($t) . '</li>' . "\n")
+        $out .= ($indent . '<li>' . $self->format_node($t) . '</li>' . "\n")
             unless $t->depth == -1;
             
         unless ($t->is_leaf) {

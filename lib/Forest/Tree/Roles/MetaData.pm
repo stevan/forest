@@ -5,7 +5,7 @@ our $VERSION   = '0.02';
 our $AUTHORITY = 'cpan:STEVAN';
 
 has 'meta_data' => (
-    is      => 'ro',
+    is      => 'rw',
     isa     => 'HashRef',
     default => sub { {} },
 );

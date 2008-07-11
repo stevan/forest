@@ -13,6 +13,11 @@ has 'node_formatter' => (
     }
 );
 
+sub format_node {
+    my $self = shift;
+    $self->node_formatter->(@_)
+}
+
 no Moose::Role; 1;
 
 __END__

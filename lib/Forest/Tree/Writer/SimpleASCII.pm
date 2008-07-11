@@ -13,7 +13,7 @@ sub as_string {
     
     $self->tree->traverse(sub {
         my $t = shift;
-        $out .= (('    ' x $t->depth) . $self->node_formatter->($t) . "\n");
+        $out .= (('    ' x $t->depth) . $self->format_node($t) . "\n");
     });
     
     return $out;
