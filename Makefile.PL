@@ -1,0 +1,24 @@
+use strict;
+use warnings;
+use inc::Module::Install;
+
+name 'Forest';
+all_from 'lib/Forest.pm';
+license 'perl';
+
+# prereqs
+requires 'Moose'                    => '0.35',
+requires 'MooseX::AttributeHelpers' => '0.07',
+requires 'JSON::Any'                => '1.15',
+requires 'Sub::Current'             => '0.02',
+requires 'Scalar::Util'             => '1.17',
+requires 'List::Util'               => '1.17',
+
+# things the tests need
+build_requires 'Test::More';
+build_requires 'Test::Exception';
+build_requires 'Path::Class';
+
+tests('t/*.t');
+
+WriteAll();
