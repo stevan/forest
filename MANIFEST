@@ -19,7 +19,6 @@ lib/Forest/Tree/Roles/HasNodeFormatter.pm
 lib/Forest/Tree/Roles/JSONable.pm
 lib/Forest/Tree/Roles/LoadWithMetaData.pm
 lib/Forest/Tree/Roles/MetaData.pm
-lib/Forest/Tree/Service.pm
 lib/Forest/Tree/Writer.pm
 lib/Forest/Tree/Writer/ASCIIWithBranches.pm
 lib/Forest/Tree/Writer/SimpleASCII.pm

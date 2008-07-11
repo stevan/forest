@@ -4,11 +4,6 @@ use Moose::Role;
 our $VERSION   = '0.01';
 our $AUTHORITY = 'cpan:STEVAN';
 
-has 'tree_index' => (
-    is   => 'rw',
-    does => 'Forest::Tree::Indexer',
-);
-
 1;
 
 __END__
@@ -21,7 +16,8 @@ Forest::Tree::Service - An abstract role for tree services
 
 =head1 DESCRIPTION
 
-This is an abstract role for tree indexers.
+This is an abstract role for tree services, most all of which 
+will at least include an index.
 
 =head1 ATTRIBUTES
 
