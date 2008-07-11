@@ -1,6 +1,8 @@
 Revision history for Perl extension Forest
 
 0.02
+    ~ converted from Module::Build to Module::Install
+
     * Forest::Tree
       - added size and height attributes (groditi)
 

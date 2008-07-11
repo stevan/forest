@@ -1,4 +1,4 @@
-Forest version 0.01
+Forest version 0.02
 =================================================
 
 See the individual module documentation for more information
@@ -18,8 +18,9 @@ This module requires these other modules and libraries:
 
     Moose
     MooseX::AttributeHelpers
-    JSON::Any
     Sub::Current
+    List::Util
+    Scalar::Util
 
 COPYRIGHT AND LICENCE
 
