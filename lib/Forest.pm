@@ -27,7 +27,7 @@ For more information please refer to the individual module documentation.
 This module has been sitting on my laptop for a long time waiting to be released. 
 I am pretty happy with it's current state, but it has not been used very much yet
 so I am not 100% sure it is as stable as Tree::Simple (which it is meant to replace). 
-So please, use with caution. Also being that this is a the 0.01 release I reserve the 
+So please, use with caution. Also being that this is a the 0.02 release I reserve the 
 right to re-write the entire thing if I want too.
 
 All that said, we use n-ary trees pretty heavily at C<$work> and this module will 
@@ -40,7 +40,7 @@ performance and functionality.
 
 =item More documentation
 
-This is 0.01 so it is lacking quite a bit of docs. Although I invite people to read the 
+This is 0.02 so it is lacking quite a bit of docs. Although I invite people to read the 
 source, it is quite simple really.
 
 =item More tests
