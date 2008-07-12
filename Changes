@@ -1,6 +1,6 @@
 Revision history for Perl extension Forest
 
-0.02
+0.02 Sat. July 12, 2008
     ~ converted from Module::Build to Module::Install
 
     -- removed Forest::Tree::Service::* this will be 
