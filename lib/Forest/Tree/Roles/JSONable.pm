@@ -1,7 +1,7 @@
 package Forest::Tree::Roles::JSONable;
 use Moose::Role;
 
-our $VERSION   = '0.01';
+our $VERSION   = '0.03';
 our $AUTHORITY = 'cpan:STEVAN';
 
 requires 'as_json';

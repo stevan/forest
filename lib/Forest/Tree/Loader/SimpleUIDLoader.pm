@@ -1,7 +1,7 @@
 package Forest::Tree::Loader::SimpleUIDLoader;
 use Moose;
 
-our $VERSION   = '0.01';
+our $VERSION   = '0.03';
 our $AUTHORITY = 'cpan:STEVAN';
 
 with 'Forest::Tree::Loader';

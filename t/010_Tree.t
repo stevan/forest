@@ -17,6 +17,7 @@ ok($t->is_root, '... this is the tree root');
 ok($t->is_leaf, '... this is the leaf');
 
 ok(!defined $t->parent, '... no parent');
+ok(!$t->has_parent, '... no parent');
 ok(!defined $t->node, '... no node value');
 is_deeply($t->children, [], '... no children');
 is($t->depth, -1, '... the root has a depth of -1');
@@ -26,6 +27,8 @@ is($t->size,   1, '... the root has a size of 1');
 my $child_1 = Forest::Tree->new(node => '1.0');
 isa_ok($child_1, 'Forest::Tree');
 
+ok(!defined $child_1->parent, '... no parent');
+ok(!$child_1->has_parent, '... no parent');
 ok($child_1->is_leaf, '... this is a leaf');
 ok($child_1->is_root, '... this is a root');
 is($child_1->node, '1.0', '... got the right node value');
@@ -43,6 +46,9 @@ is($t->get_child_at(0), $child_1, '... got the right child');
 
 ok(!$child_1->is_root, '... this is no longer a root');
 ok($child_1->is_leaf, '... but this is still a leaf');
+ok(defined $child_1->parent, '... has parent now');
+ok($child_1->has_parent, '... has parent now');
+isa_ok($child_1->parent, 'Forest::Tree');
 is($child_1->parent, $t, '... its parent is tree');
 is($child_1->depth, 0, '... the child now has a depth of 0');
 is_deeply($child_1->siblings, [], '... There is no siblings');
@@ -50,6 +56,8 @@ is_deeply($child_1->siblings, [], '... There is no siblings');
 my $child_1_1 = Forest::Tree->new(node => '1.1');
 isa_ok($child_1_1, 'Forest::Tree');
 
+ok(!defined $child_1_1->parent, '... no parent');
+ok(!$child_1_1->has_parent, '... no parent');
 ok($child_1_1->is_leaf, '... this is a leaf');
 ok($child_1_1->is_root, '... this is a root');
 is($child_1_1->node, '1.1', '... got the right node value');
@@ -65,6 +73,9 @@ is($child_1->depth, 0, '... the child still has a depth of 0');
 
 ok(!$child_1_1->is_root, '... this is no longer a root');
 ok($child_1_1->is_leaf, '... but this is still a leaf');
+ok(defined $child_1_1->parent, '... has parent now');
+ok($child_1_1->has_parent, '... has parent now');
+isa_ok($child_1_1->parent, 'Forest::Tree');
 is($child_1_1->parent, $child_1, '... its parent is tree');
 is($child_1_1->depth, 1, '... the child now has a depth of 1');
 is($t->height, 2, '... the root now has a height of 2');

@@ -5,7 +5,7 @@ use MooseX::AttributeHelpers;
 use Scalar::Util 'reftype';
 use List::Util   'sum', 'max';
 
-our $VERSION   = '0.01';
+our $VERSION   = '0.03';
 our $AUTHORITY = 'cpan:STEVAN';
 
 has 'node' => (is => 'rw', isa => 'Item');
@@ -40,6 +40,14 @@ has 'children' => (
     provides  => {
         'get'   => 'get_child_at',
         'count' => 'child_count',
+    },
+    trigger   => sub {
+        my ($self, $children) = @_;
+        foreach my $child (@$children) {
+            $child->_set_parent($self);    
+            $self->clear_height if $self->has_height;
+            $self->clear_size   if $self->has_size;            
+        }
     }
 );
 
