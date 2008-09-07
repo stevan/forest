@@ -1,5 +1,11 @@
 Revision history for Perl extension Forest
 
+0.04 Sun. Sept. 7, 2008
+    * Forest::Tree::Writer::SimpleHTML
+      - removed Sub::Current dependency because it
+        cannot be compiled on Win32 with 5.8.*
+        (thanks to Nilson Santos Figueiredo Junior)
+
 0.03 Sun. Aug. 10, 2008
     * Forest::Tree
       - fixing bug where children were not getting  

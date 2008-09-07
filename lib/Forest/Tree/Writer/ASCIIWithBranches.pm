@@ -1,7 +1,7 @@
 package Forest::Tree::Writer::ASCIIWithBranches;
 use Moose;
 
-our $VERSION   = '0.03';
+our $VERSION   = '0.04';
 our $AUTHORITY = 'cpan:STEVAN';
 
 with 'Forest::Tree::Writer',

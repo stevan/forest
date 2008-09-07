@@ -1,9 +1,7 @@
 package Forest::Tree::Writer::SimpleHTML;
 use Moose;
 
-use Sub::Current;
-
-our $VERSION   = '0.03';
+our $VERSION   = '0.04';
 our $AUTHORITY = 'cpan:STEVAN';
 
 with 'Forest::Tree::Writer',
@@ -13,7 +11,8 @@ sub as_string {
     my ($self) = @_;
     my $out;    
     
-    sub {
+    my $routine = sub {
+        my $loop   = shift;
         my $t      = shift;
         my $indent = ('    ' x $t->depth);
         
@@ -22,10 +21,12 @@ sub as_string {
             
         unless ($t->is_leaf) {
             $out .= ($indent . '<ul>' . "\n");
-            map { ROUTINE->($_) } @{ $t->children };
+            map { $loop->($loop, $_) } @{ $t->children };
             $out .= ($indent . '</ul>' . "\n");      
         }      
-    }->($self->tree);
+    };
+    
+    $routine->($routine, $self->tree);
     
     return $out;
 }

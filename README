@@ -1,4 +1,4 @@
-Forest version 0.03
+Forest version 0.04
 =================================================
 
 See the individual module documentation for more information
@@ -18,7 +18,6 @@ This module requires these other modules and libraries:
 
     Moose
     MooseX::AttributeHelpers
-    Sub::Current
     List::Util
     Scalar::Util
 
