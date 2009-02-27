@@ -1,5 +1,11 @@
 Revision history for Perl extension Forest
 
+0.06 Fri. Feb. 27, 2009
+    - whoops, tons of .git stuff in that last 
+      release
+    - updated MANIFEST.SKIP so don't get all 
+      that git stuff
+
 0.05 Fri. Feb. 27, 2009
     - fixed all the test plans and updated copyright
 

@@ -2,7 +2,7 @@ package Forest::Tree::Indexer;
 use Moose::Role;
 use MooseX::AttributeHelpers;
 
-our $VERSION   = '0.05';
+our $VERSION   = '0.06';
 our $AUTHORITY = 'cpan:STEVAN';
 
 has 'tree' => (

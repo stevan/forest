@@ -1,7 +1,7 @@
 package Forest::Tree::Roles::HasNodeFormatter;
 use Moose::Role;
 
-our $VERSION   = '0.05';
+our $VERSION   = '0.06';
 our $AUTHORITY = 'cpan:STEVAN';
 
 has 'node_formatter' => (

@@ -5,7 +5,7 @@ use MooseX::AttributeHelpers;
 use Scalar::Util 'reftype';
 use List::Util   'sum', 'max';
 
-our $VERSION   = '0.05';
+our $VERSION   = '0.06';
 our $AUTHORITY = 'cpan:STEVAN';
 
 has 'node' => (is => 'rw', isa => 'Item');
