@@ -1,7 +1,7 @@
 package Forest::Tree::Writer::ASCIIWithBranches;
 use Moose;
 
-our $VERSION   = '0.04';
+our $VERSION   = '0.05';
 our $AUTHORITY = 'cpan:STEVAN';
 
 with 'Forest::Tree::Writer',
@@ -47,6 +47,8 @@ sub _process_node {
             . $self->format_node($t) 
             . "\n");    
 }
+
+__PACKAGE__->meta->make_immutable;
 
 no Moose; 1;
 
@@ -99,7 +101,7 @@ Stevan Little E<lt>stevan.little@iinteractive.comE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2008 Infinity Interactive, Inc.
+Copyright 2008-2009 Infinity Interactive, Inc.
 
 L<http://www.iinteractive.com>
 

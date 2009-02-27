@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More qw/no_plan/;
+use Test::More tests => 15;
 
 use_ok('Forest');
 use_ok('Forest::Tree');

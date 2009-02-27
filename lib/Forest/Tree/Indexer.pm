@@ -2,7 +2,7 @@ package Forest::Tree::Indexer;
 use Moose::Role;
 use MooseX::AttributeHelpers;
 
-our $VERSION   = '0.04';
+our $VERSION   = '0.05';
 our $AUTHORITY = 'cpan:STEVAN';
 
 has 'tree' => (
@@ -28,7 +28,7 @@ requires 'build_index';
 
 sub get_root { (shift)->tree }
 
-1;
+no Moose::Role; 1;
 
 __END__
 
@@ -90,7 +90,7 @@ Stevan Little E<lt>stevan.little@iinteractive.comE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2008 Infinity Interactive, Inc.
+Copyright 2008-2009 Infinity Interactive, Inc.
 
 L<http://www.iinteractive.com>
 

@@ -1,7 +1,7 @@
 package Forest;
 use Moose ();
 
-our $VERSION   = '0.04';
+our $VERSION   = '0.05';
 our $AUTHORITY = 'cpan:STEVAN';
 
 1;
@@ -22,26 +22,14 @@ no means a complete replacement yet, but should eventually grow to become that.
 
 For more information please refer to the individual module documentation.
 
-=head1 DISCLAIMER
-
-This module has been sitting on my laptop for a long time waiting to be released. 
-I am pretty happy with it's current state, but it has not been used very much yet
-so I am not 100% sure it is as stable as Tree::Simple (which it is meant to replace). 
-So please, use with caution. Also being that this is a the 0.02 release I reserve the 
-right to re-write the entire thing if I want too.
-
-All that said, we use n-ary trees pretty heavily at C<$work> and this module will 
-be replacing all our Tree::Simple usage so it will eventually improve in stability, 
-performance and functionality.
-
 =head1 TODO
 
 =over 4
 
 =item More documentation
 
-This is 0.02 so it is lacking quite a bit of docs. Although I invite people to read the 
-source, it is quite simple really.
+This is 0.05 so it is lacking quite a bit of docs (I am being really lazy sorry). 
+Although I invite people to read the source, it is quite simple really.
 
 =item More tests
 
@@ -88,9 +76,11 @@ With contributions from:
 
 Guillermo (groditi) Roditi
 
+Florian (rafl) Ragwitz
+
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2008 Infinity Interactive, Inc.
+Copyright 2008-2009 Infinity Interactive, Inc.
 
 L<http://www.iinteractive.com>
 
