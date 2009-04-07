@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 79;
+use Test::More tests => 80;
 use Test::Exception;
 
 BEGIN {
@@ -51,7 +51,7 @@ ok($child_1->has_parent, '... has parent now');
 isa_ok($child_1->parent, 'Forest::Tree');
 is($child_1->parent, $t, '... its parent is tree');
 is($child_1->depth, 0, '... the child now has a depth of 0');
-is_deeply($child_1->siblings, [], '... There is no siblings');
+is_deeply($child_1->siblings, [], '... There are no siblings');
 
 my $child_1_1 = Forest::Tree->new(node => '1.1');
 isa_ok($child_1_1, 'Forest::Tree');
@@ -91,6 +91,8 @@ my $child_4 = Forest::Tree->new(node => '4.0');
 isa_ok($child_4, 'Forest::Tree');
 
 $child_1->add_sibling($child_4);
+
+is_deeply($child_1->siblings, [ $child_4 ], '... There are no siblings');
 
 is_deeply($t->children, [ $child_1, $child_4 ], '... 2 children');
 

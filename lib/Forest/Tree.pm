@@ -153,7 +153,8 @@ sub traverse {
 
 sub siblings {
     my $self = shift;
-    [ grep { $self->uid ne $_->uid } @{ $self->children } ];
+    return [] unless $self->has_parent;
+    [ grep { $self->uid ne $_->uid } @{ $self->parent->children } ];
 }
 
 sub get_index_in_siblings {
