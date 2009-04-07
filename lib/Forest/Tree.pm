@@ -8,13 +8,16 @@ use List::Util   'sum', 'max';
 our $VERSION   = '0.06';
 our $AUTHORITY = 'cpan:STEVAN';
 
+extends qw(Forest::Tree::Pure);
+
+#has '+node' => ( is => 'rw' );
 has 'node' => (is => 'rw', isa => 'Item');
 
 has 'uid'  => (
     is      => 'rw',
     isa     => 'Value',
     lazy    => 1,
-    default => sub { ($_[0] =~ /\((.*?)\)$/)[0] },
+    default => sub { (overload::StrVal($_[0]) =~ /\((.*?)\)$/)[0] },
 );
 
 has 'parent' => (
@@ -31,6 +34,8 @@ has 'parent' => (
     },
 );
 
+#has '+children' => (
+#    is        => 'rw',
 has 'children' => (
     metaclass => 'Collection::Array',
     is        => 'rw',
@@ -51,34 +56,6 @@ has 'children' => (
     }
 );
 
-has 'size' => (
-    is        => 'ro',
-    isa       => 'Int',
-    lazy      => 1,
-    required  => 1,
-    clearer   => 'clear_size',
-    predicate => 'has_size',
-    default   => sub {
-        my $self = shift;
-        return 1 unless $self->child_count;        
-        1 + sum map { $_->size } @{ $self->children };
-    }
-);
-
-has 'height' => (
-     is        => 'ro',
-     isa       => 'Int',
-     lazy      => 1,
-     required  => 1,
-     clearer   => 'clear_height',
-     predicate => 'has_height',
-     default   => sub {
-         my $self = shift;
-         return 0 unless $self->child_count;
-         1 + max map { $_->height } @{ $self->children };
-     }
-);
-
 after 'clear_size' => sub {
     my $self = shift;
     $self->parent->clear_size
@@ -92,8 +69,7 @@ after 'clear_height' => sub {
 };
 
 ## informational
-sub is_root { !(shift)->has_parent      }
-sub is_leaf { (shift)->child_count == 0 }
+sub is_root { !(shift)->has_parent }
 
 ## depth
 sub depth { ((shift)->parent || return -1)->depth + 1 }
@@ -134,19 +110,6 @@ sub remove_child_at {
     my $child = splice @{ $self->children }, $index, 1;
     $child->clear_parent;
     $child;
-}
-
-## traversal
-sub traverse {
-    my ($self, $func) = @_;
-    (defined($func))
-        || confess "Cannot traverse without traversal function";
-    (reftype($func) eq "CODE")
-        || die "Traversal function must be a CODE reference, not : $func";
-    foreach my $child (@{ $self->children }) {
-        $func->($child);
-        $child->traverse($func);
-    }
 }
 
 ##siblings
@@ -226,6 +189,9 @@ Forest::Tree - An n-ary tree
 
 This module is a basic n-ary tree, it provides most of the functionality 
 of Tree::Simple, whatever is missing will be added eventually.
+
+This class inherits from L<Forest::Tree::Pure>>, but all shared methods and
+attributes are documented in both classes.
 
 =head1 ATTRIBUTES
 
