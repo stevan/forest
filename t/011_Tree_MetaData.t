@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 32;
+use Test::More tests => 33;
 
 BEGIN {
     use_ok('Forest::Tree');
@@ -80,6 +80,7 @@ BEGIN {
     
     is($tree->get_child_at(0)->node, '1.0', '... got the right root node');
     is_deeply($tree->get_child_at(0)->metadata, { number => '1.0' }, '... got the right metadata hash');
+    is($tree->get_child_at(0)->get_metadata_for('number'), '1.0', '... got the right metadata hash');
     is($tree->get_child_at(0)->fetch_metadata_for('number'), '1.0',     '... got the right root node metadata');    
     is($tree->get_child_at(0)->fetch_metadata_for('name'),   'DEFAULT', '... got the right root node metadata');       
 

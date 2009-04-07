@@ -10,6 +10,12 @@ has 'metadata' => (
     default => sub { {} },
 );
 
+sub get_metadata_for {
+    my ($self, $key) = @_;
+
+    return $self->metadata->{$key};
+}
+
 sub fetch_metadata_for {
     my ($self, $key) = @_;
     
