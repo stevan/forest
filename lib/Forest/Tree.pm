@@ -84,8 +84,8 @@ sub depth { ((shift)->parent || return -1)->depth + 1 }
 
 sub add_child {
     my ($self, $child) = @_; 
-    (blessed($child) && $child->isa('Forest::Tree'))
-        || confess "Child parameter must be a Forest::Tree not (" . (defined $child ? $child : 'undef') . ")";
+    (blessed($child) && $child->isa(ref $self))
+        || confess "Child parameter must be a " . ref($self) . " not (" . (defined $child ? $child : 'undef') . ")";
     $child->_set_parent($self);    
     $self->clear_height if $self->has_height;
     $self->clear_size   if $self->has_size;    
@@ -101,8 +101,8 @@ sub add_children {
 sub set_child_at {
     my ( $self, $index, $child ) = @_;
 
-    (blessed($child) && $child->isa('Forest::Tree'))
-        || confess "Child parameter must be a Forest::Tree not (" . (defined $child ? $child : 'undef') . ")";
+    (blessed($child) && $child->isa(ref $self))
+        || confess "Child parameter must be a " . ref($self) . " not (" . (defined $child ? $child : 'undef') . ")";
     $child->_set_parent($self);
 
     $self->clear_height if $self->has_height;
@@ -115,8 +115,8 @@ sub set_child_at {
 
 sub insert_child_at {
     my ($self, $index, $child) = @_;
-    (blessed($child) && $child->isa('Forest::Tree'))
-        || confess "Child parameter must be a Forest::Tree not (" . (defined $child ? $child : 'undef') . ")";
+    (blessed($child) && $child->isa(ref $self))
+        || confess "Child parameter must be a " . ref($self) . " not (" . (defined $child ? $child : 'undef') . ")";
     $child->_set_parent($self);    
     $self->clear_height if $self->has_height;
     $self->clear_size   if $self->has_size;    

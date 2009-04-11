@@ -109,8 +109,8 @@ sub add_children {
     my ( $self, @additional_children ) = @_;
 
     foreach my $child ( @additional_children ) {
-        (blessed($child) && $child->isa('Forest::Tree::Pure'))
-            || confess "Child parameter must be a Forest::Tree not (" . (defined $child ? $child : 'undef') . ")";
+        (blessed($child) && $child->isa(ref $self))
+            || confess "Child parameter must be a " . ref($self) . " not (" . (defined $child ? $child : 'undef') . ")";
     }
 
     my @children = @{ $self->children };
@@ -129,8 +129,8 @@ sub add_child {
 sub set_child_at {
     my ( $self, $index, $child ) = @_;
 
-    (blessed($child) && $child->isa('Forest::Tree::Pure'))
-        || confess "Child parameter must be a Forest::Tree::Pure not (" . (defined $child ? $child : 'undef') . ")";
+    (blessed($child) && $child->isa(ref $self))
+        || confess "Child parameter must be a " . ref($self) . " not (" . (defined $child ? $child : 'undef') . ")";
 
     my @children = @{ $self->children };
 
