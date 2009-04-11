@@ -98,6 +98,21 @@ sub add_children {
     $self->add_child($_) for @children;
 }
 
+sub set_child_at {
+    my ( $self, $index, $child ) = @_;
+
+    (blessed($child) && $child->isa('Forest::Tree'))
+        || confess "Child parameter must be a Forest::Tree not (" . (defined $child ? $child : 'undef') . ")";
+    $child->_set_parent($self);
+
+    $self->clear_height if $self->has_height;
+    $self->clear_size   if $self->has_size;
+
+    splice @{ $self->children }, $index, 1, $child;
+
+    $self;
+}
+
 sub insert_child_at {
     my ($self, $index, $child) = @_;
     (blessed($child) && $child->isa('Forest::Tree'))

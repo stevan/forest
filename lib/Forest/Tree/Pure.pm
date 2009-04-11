@@ -73,6 +73,65 @@ sub traverse {
     }
 }
 
+
+sub add_children {
+    my ( $self, @additional_children ) = @_;
+
+    foreach my $child ( @additional_children ) {
+        (blessed($child) && $child->isa('Forest::Tree::Pure'))
+            || confess "Child parameter must be a Forest::Tree not (" . (defined $child ? $child : 'undef') . ")";
+    }
+
+    my @children = @{ $self->children };
+
+    push @children, @additional_children;
+
+    return $self->clone( children => \@children );
+}
+
+sub add_child {
+    my ( $self, $child ) = @_;
+
+    $self->add_children($child);
+}
+
+sub set_child_at {
+    my ( $self, $index, $child ) = @_;
+
+    (blessed($child) && $child->isa('Forest::Tree::Pure'))
+        || confess "Child parameter must be a Forest::Tree::Pure not (" . (defined $child ? $child : 'undef') . ")";
+
+    my @children = @{ $self->children };
+
+    splice @children, $index, 1, $child;
+
+    $self->clone( children => \@children );
+}
+
+sub remove_child_at {
+    my ( $self, $index ) = @_;
+
+    my @children = @{ $self->children };
+
+    splice @children, $index, 1;
+
+    $self->clone( children => \@children );
+
+}
+
+sub insert_child_at {
+    my ( $self, $index, $child ) = @_;
+
+    (blessed($child) && $child->isa('Forest::Tree::Pure'))
+        || confess "Child parameter must be a Forest::Tree::Pure not (" . (defined $child ? $child : 'undef') . ")";
+
+    my @children = @{ $self->children };
+
+    splice @children, $index, 0, $child;
+
+    $self->clone( children => \@children );
+}
+
 __PACKAGE__->meta->make_immutable;
 
 no Moose; 1;
@@ -183,6 +242,29 @@ True if the current tree has no children
 
 Takes a reference to a subroutine and traverses the tree applying this subroutine to
 every descendant.
+
+=item B<add_children (@children)>
+
+=item B<add_child ($child)>
+
+Create a new tree node with the children appended.
+
+The children must inherit C<Forest::Tree::Pure>
+
+Note that this method does B<not> mutate the tree, instead it clones and
+returns a tree with overridden children.
+
+=item B<insert_child_at ($index, $child)>
+
+Insert a child at this position. (zero-base index)
+
+Returns a derived tree with overridden children.
+
+=item B<remove_child_at ($index)>
+
+Remove the child at this position. (zero-base index)
+
+Returns a derived tree with overridden children.
 
 =back
 
