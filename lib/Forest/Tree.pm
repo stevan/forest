@@ -93,9 +93,20 @@ sub add_child {
     $self;
 }
 
+sub replace {
+    my ( $self, $replacement ) = @_;
+
+    confess "Can't replace root" if $self->is_root;
+
+    $self->parent->set_child_at( $self->get_index_in_siblings, $replacement );
+
+    return $replacement;
+}
+
 sub add_children {
     my ($self, @children) = @_;
     $self->add_child($_) for @children;
+    return $self;
 }
 
 sub set_child_at {
@@ -103,12 +114,16 @@ sub set_child_at {
 
     (blessed($child) && $child->isa(ref $self))
         || confess "Child parameter must be a " . ref($self) . " not (" . (defined $child ? $child : 'undef') . ")";
-    $child->_set_parent($self);
 
     $self->clear_height if $self->has_height;
     $self->clear_size   if $self->has_size;
 
-    splice @{ $self->children }, $index, 1, $child;
+    my $children = $self->children;
+
+    $children->[$index]->clear_parent;
+
+    $children->[$index] = $child;
+    $child->_set_parent($self);
 
     $self;
 }

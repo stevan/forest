@@ -105,6 +105,12 @@ sub transform {
     }
 }
 
+sub replace {
+    my ( $self, $replacement ) = @_;
+
+    return $replacement;
+}
+
 sub add_children {
     my ( $self, @additional_children ) = @_;
 
@@ -134,7 +140,7 @@ sub set_child_at {
 
     my @children = @{ $self->children };
 
-    splice @children, $index, 1, $child;
+    $children[$index] = $child;
 
     $self->clone( children => \@children );
 }
