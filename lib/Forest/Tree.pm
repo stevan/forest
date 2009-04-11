@@ -11,7 +11,11 @@ our $AUTHORITY = 'cpan:STEVAN';
 extends qw(Forest::Tree::Pure);
 
 #has '+node' => ( is => 'rw' );
-has 'node' => (is => 'rw', isa => 'Item');
+has 'node' => (
+    traits => [qw(StorableClone)],
+    is  => 'rw',
+    isa => 'Item',
+);
 
 has 'uid'  => (
     is      => 'rw',
@@ -21,6 +25,7 @@ has 'uid'  => (
 );
 
 has 'parent' => (
+    traits    => [qw(NoClone)],
     reader      => 'parent',
     writer      => '_set_parent',
     predicate   => 'has_parent',
@@ -37,6 +42,7 @@ has 'parent' => (
 #has '+children' => (
 #    is        => 'rw',
 has 'children' => (
+    traits    => [qw(Clone)],
     metaclass => 'Collection::Array',
     is        => 'rw',
     isa       => 'ArrayRef[Forest::Tree]',
@@ -132,15 +138,7 @@ sub get_index_in_siblings {
 
 ## cloning 
 
-sub clone_and_detach {
-    my ($self, %options) = @_;
-    require Storable;
-    my $parent = $self->parent;
-    $self->clear_parent;
-    my $clone = Storable::dclone($self);
-    $self->_set_parent($parent);
-    return $clone;
-}
+sub clone_and_detach { shift->clone(@_) }
 
 __PACKAGE__->meta->make_immutable;
 
