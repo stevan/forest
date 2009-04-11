@@ -5,6 +5,8 @@ use MooseX::AttributeHelpers;
 use Scalar::Util 'reftype';
 use List::Util   'sum', 'max';
 
+with qw(MooseX::Clone);
+
 our $AUTHORITY = 'cpan:STEVAN';
 
 has 'node' => (is => 'ro', isa => 'Item');
@@ -22,6 +24,7 @@ has 'children' => (
 );
 
 has 'size' => (
+    traits => [qw(NoClone)],
     is         => 'ro',
     isa        => 'Int',
     lazy_build => 1,
@@ -30,26 +33,27 @@ has 'size' => (
 sub _build_size {
     my $self = shift;
 
-    if ( $self->child_count ) {
-        return 1 + sum map { $_->size } @{ $self->children };
-    } else {
+    if ( $self->is_leaf ) {
         return 1;
+    } else {
+        return 1 + sum map { $_->size } @{ $self->children };
     }
 }
 
 has 'height' => (
-     is         => 'ro',
-     isa        => 'Int',
-     lazy_build => 1,
+    traits => [qw(NoClone)],
+    is         => 'ro',
+    isa        => 'Int',
+    lazy_build => 1,
 );
 
 sub _build_height {
     my $self = shift;
 
-    if ( $self->child_count ) {
-        return 1 + max map { $_->height } @{ $self->children };
-    } else {
+    if ( $self->is_leaf ) {
         return 0;
+    } else {
+        return 1 + max map { $_->height } @{ $self->children };
     }
 }
 
