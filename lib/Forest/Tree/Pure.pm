@@ -2,7 +2,7 @@ package Forest::Tree::Pure;
 use Moose;
 use MooseX::AttributeHelpers;
 
-use Scalar::Util 'reftype';
+use Scalar::Util 'reftype', 'refaddr';
 use List::Util   'sum', 'max';
 
 with qw(MooseX::Clone);
@@ -73,6 +73,37 @@ sub traverse {
     }
 }
 
+sub locate {
+    my ( $self, @path ) = @_;
+
+    if ( @path ) {
+        my ( $head, @tail ) = @path;
+
+        return $self->get_child_at($head)->locate(@tail);
+    } else {
+        return $self;
+    }
+}
+
+sub transform {
+    my ( $self, $path, $method, @args ) = @_;
+
+    if ( @$path ) {
+        my ( $i, @path ) = @$path;
+
+        my $targ = $self->get_child_at($i);
+
+        my $transformed = $targ->transform(\@path, $method, @args);
+
+        if ( refaddr($transformed) == refaddr($targ) ) {
+            return $self;
+        } else {
+            return $self->set_child_at( $i => $transformed );
+        }
+    } else {
+        return $self->$method(@args);
+    }
+}
 
 sub add_children {
     my ( $self, @additional_children ) = @_;

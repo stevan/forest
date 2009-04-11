@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 43;
+use Test::More tests => 49;
 use Test::Exception;
 
 BEGIN {
@@ -104,7 +104,19 @@ $t = $t->remove_child_at(0);
 is($t->height, 1, '... the root now has a height of 1');
 is($t->size,   3, '... the root now has a size of 3');
 
+my $child_5 = Forest::Tree::Pure->new(node => '5.0');
+my $child_6 = Forest::Tree::Pure->new(node => '6.0');
 
+$t = $t->transform( [ 1 ], insert_child_at => 0, $child_5 );
 
+is($t->height, 2, '... the root now has a height of 1');
+is($t->size,   4, '... the root now has a size of 3');
 
+is_deeply( $t->locate(1, 0), $child_5, "locate new child" );
 
+$t = $t->transform( [ 1, 0 ], add_child => $child_6 );
+
+is($t->height, 3, '... the root now has a height of 1');
+is($t->size,   5, '... the root now has a size of 3');
+
+is_deeply( $t->locate(1, 0, 0), $child_6, "locate new child" );
