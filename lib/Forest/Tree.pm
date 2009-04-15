@@ -17,6 +17,12 @@ has 'node' => (
     isa => 'Item',
 );
 
+sub set_node {
+    my ( $self, $new ) = @_;
+    $self->node($new);
+    $self;
+}
+
 has 'uid'  => (
     is      => 'rw',
     isa     => 'Value',

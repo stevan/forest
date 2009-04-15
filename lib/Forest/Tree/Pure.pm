@@ -105,6 +105,12 @@ sub transform {
     }
 }
 
+sub set_node {
+    my ( $self, $node ) = @_;
+
+    $self->clone( node => $node );
+}
+
 sub replace {
     my ( $self, $replacement ) = @_;
 
