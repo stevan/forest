@@ -7,8 +7,9 @@ all_from 'lib/Forest.pm';
 license 'perl';
 
 # prereqs
-requires 'Moose'                    => '0.35';
-requires 'MooseX::AttributeHelpers' => '0.07';
+requires 'Moose'                    => '0.74';
+requires 'MooseX::Clone'            => '0.04';
+requires 'MooseX::AttributeHelpers' => '0.17';
 requires 'Scalar::Util'             => '1.17';
 requires 'List::Util'               => '1.17';
 
