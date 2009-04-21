@@ -23,13 +23,6 @@ sub set_node {
     $self;
 }
 
-has 'uid'  => (
-    is      => 'rw',
-    isa     => 'Value',
-    lazy    => 1,
-    default => sub { (overload::StrVal($_[0]) =~ /\((.*?)\)$/)[0] },
-);
-
 has 'parent' => (
     traits    => [qw(NoClone)],
     reader      => 'parent',

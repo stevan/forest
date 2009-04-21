@@ -11,6 +11,13 @@ our $AUTHORITY = 'cpan:STEVAN';
 
 has 'node' => (is => 'ro', isa => 'Item');
 
+has 'uid'  => (
+    is      => 'rw',
+    isa     => 'Value',
+    lazy    => 1,
+    default => sub { (overload::StrVal($_[0]) =~ /\((.*?)\)$/)[0] },
+);
+
 has 'children' => (
     metaclass => 'Collection::Array',
     is        => 'ro',
