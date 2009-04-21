@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 17;
+use Test::More tests => 29;
 
 BEGIN {
     use_ok('Forest::Tree');
@@ -16,11 +16,24 @@ BEGIN {
 my $reader = Forest::Tree::Reader::SimpleTextFile->new;
 $reader->read(\*DATA);
 
-{
-    my $w = Forest::Tree::Writer::SimpleASCII->new(tree => $reader->tree);
+sub to_pure {
+    my $tree = shift;
+
+    Forest::Tree::Pure->new(
+        node => $tree->node,
+        uid  => $tree->uid,
+        children => [ map { to_pure($_) } @{ $tree->children } ],
+    );
+}
+
+my $tree = $reader->tree;
+my $pure = to_pure($tree);
+
+foreach my $tree ( $tree, $pure ) {
+    my $w = Forest::Tree::Writer::SimpleASCII->new(tree => $tree);
     isa_ok($w, 'Forest::Tree::Writer::SimpleASCII');
 
-    isa_ok($w->tree, 'Forest::Tree');
+    isa_ok($w->tree, 'Forest::Tree::Pure');
 
     is($w->as_string, 
 q{1.0
@@ -37,14 +50,14 @@ q{1.0
 
 }
 
-{
+foreach my $tree ( $tree, $pure ) {
     my $w = Forest::Tree::Writer::SimpleASCII->new(
-        tree           => $reader->tree,
+        tree           => $tree,
         node_formatter => sub { '[' . (shift)->node . ']' }
     );
     isa_ok($w, 'Forest::Tree::Writer::SimpleASCII');
 
-    isa_ok($w->tree, 'Forest::Tree');
+    isa_ok($w->tree, 'Forest::Tree::Pure');
 
     is($w->as_string, 
 q{[1.0]
@@ -61,11 +74,11 @@ q{[1.0]
 
 }
 
-{    
-    my $w = Forest::Tree::Writer::SimpleHTML->new(tree => $reader->tree);
+foreach my $tree ( $tree, $pure ) {
+    my $w = Forest::Tree::Writer::SimpleHTML->new(tree => $tree);
     isa_ok($w, 'Forest::Tree::Writer::SimpleHTML');
 
-    isa_ok($w->tree, 'Forest::Tree');
+    isa_ok($w->tree, 'Forest::Tree::Pure');
 
     is($w->as_string, 
     q{<ul>
@@ -93,14 +106,14 @@ q{[1.0]
 }, '.... got the right output');
 }
 
-{    
+foreach my $tree ( $tree, $pure ) {
     my $w = Forest::Tree::Writer::SimpleHTML->new(
-        tree           => $reader->tree,
+        tree           => $tree,
         node_formatter => sub { '<b>' . (shift)->node . '</b>' }
     );
     isa_ok($w, 'Forest::Tree::Writer::SimpleHTML');
 
-    isa_ok($w->tree, 'Forest::Tree');
+    isa_ok($w->tree, 'Forest::Tree::Pure');
 
     is($w->as_string, 
     q{<ul>

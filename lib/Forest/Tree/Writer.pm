@@ -6,7 +6,7 @@ our $AUTHORITY = 'cpan:STEVAN';
 
 has 'tree' => (
     is          => 'rw',
-    isa         => 'Forest::Tree',
+    isa         => 'Forest::Tree::Pure',
     is_weak_ref => 1,
 );
 

@@ -10,18 +10,20 @@ with 'Forest::Tree::Writer',
 sub as_string {
     my ($self) = @_;
     my $out;    
-    
+
     my $routine = sub {
-        my $loop   = shift;
-        my $t      = shift;
-        my $indent = ('    ' x $t->depth);
+        my ( $loop, $t, $depth ) = @_;
+
+        $depth = -1 unless defined $depth;
+
+        my $indent = ('    ' x $depth);
         
         $out .= ($indent . '<li>' . $self->format_node($t) . '</li>' . "\n")
-            unless $t->depth == -1;
+            unless $depth == -1;
             
         unless ($t->is_leaf) {
             $out .= ($indent . '<ul>' . "\n");
-            map { $loop->($loop, $_) } @{ $t->children };
+            map { $loop->($loop, $_, $depth + 1) } @{ $t->children };
             $out .= ($indent . '</ul>' . "\n");      
         }      
     };

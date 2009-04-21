@@ -12,8 +12,8 @@ sub as_string {
     my $out;
     
     $self->tree->traverse(sub {
-        my $t = shift;
-        $out .= (('    ' x $t->depth) . $self->format_node($t) . "\n");
+        my ( $t, %args ) = @_;
+        $out .= (('    ' x $args{depth}) . $self->format_node($t) . "\n");
     });
     
     return $out;
