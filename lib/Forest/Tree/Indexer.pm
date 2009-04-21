@@ -7,13 +7,13 @@ our $AUTHORITY = 'cpan:STEVAN';
 
 has 'tree' => (
     is  => 'rw',
-    isa => 'Forest::Tree',
+    isa => 'Forest::Tree::Pure',
 );
 
 has 'index' => (
     metaclass => 'Collection::Hash',
     is        => 'rw',
-    isa       => 'HashRef[Forest::Tree]',
+    isa       => 'HashRef[Forest::Tree::Pure]',
     lazy      => 1,
     default   => sub { {} },    
     provides  => {
