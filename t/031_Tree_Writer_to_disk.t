@@ -61,26 +61,26 @@ $file->touch;
 
     is($file->slurp,
     q{<ul>
-<li>1.0</li>
-<ul>
-    <li>1.1</li>
-    <li>1.2</li>
+    <li>1.0</li>
     <ul>
-        <li>1.2.1</li>
+        <li>1.1</li>
+        <li>1.2</li>
+        <ul>
+            <li>1.2.1</li>
+        </ul>
     </ul>
-</ul>
-<li>2.0</li>
-<ul>
-    <li>2.1</li>
-</ul>
-<li>3.0</li>
-<li>4.0</li>
-<ul>
-    <li>4.1</li>
+    <li>2.0</li>
     <ul>
-        <li>4.1.1</li>
+        <li>2.1</li>
     </ul>
-</ul>
+    <li>3.0</li>
+    <li>4.0</li>
+    <ul>
+        <li>4.1</li>
+        <ul>
+            <li>4.1.1</li>
+        </ul>
+    </ul>
 </ul>
 }, '.... got the right output');
 }

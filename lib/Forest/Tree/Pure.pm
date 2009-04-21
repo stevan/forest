@@ -9,7 +9,11 @@ with qw(MooseX::Clone);
 
 our $AUTHORITY = 'cpan:STEVAN';
 
-has 'node' => (is => 'ro', isa => 'Item');
+has 'node' => (
+    is        => 'ro',
+    isa       => 'Item',
+    predicate => 'has_node',
+);
 
 has 'uid'  => (
     is      => 'rw',
@@ -97,7 +101,6 @@ sub fmap_cont {
         || confess "Cannot traverse without traversal function";
     (!ref($f) or reftype($f) eq "CODE")
         || die "Traversal function must be a CODE reference or method name, not : $f";
-
 
     $self->$f(
         sub {

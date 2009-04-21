@@ -11,12 +11,20 @@ sub as_string {
     my ($self) = @_;
     my $out;
     
-    $self->tree->traverse(sub {
-        my ( $t, %args ) = @_;
-        $out .= (('    ' x $args{depth}) . $self->format_node($t) . "\n");
-    });
-    
-    return $out;
+    return join( "", map { "$_\n" }
+        $self->tree->fmap_cont(sub {
+            my ( $t, $cont, %args ) = @_;
+
+            if ( $t->has_node ) {
+                return (
+                    $self->format_node($t),
+                    map { "    $_" } $cont->(),
+                );
+            } else {
+                return $cont->();
+            }
+        }),
+    );
 }
 
 __PACKAGE__->meta->make_immutable;

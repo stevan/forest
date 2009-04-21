@@ -9,28 +9,17 @@ with 'Forest::Tree::Writer',
 
 sub as_string {
     my ($self) = @_;
-    my $out;    
 
-    my $routine = sub {
-        my ( $loop, $t, $depth ) = @_;
+    return join( "", map { "$_\n" }
+        $self->tree->fmap_cont(sub {
+            my ( $t, $cont, %args ) = @_;
 
-        $depth = -1 unless defined $depth;
-
-        my $indent = ('    ' x $depth);
-        
-        $out .= ($indent . '<li>' . $self->format_node($t) . '</li>' . "\n")
-            unless $depth == -1;
-            
-        unless ($t->is_leaf) {
-            $out .= ($indent . '<ul>' . "\n");
-            map { $loop->($loop, $_, $depth + 1) } @{ $t->children };
-            $out .= ($indent . '</ul>' . "\n");      
-        }      
-    };
-    
-    $routine->($routine, $self->tree);
-    
-    return $out;
+            return (
+                ( $t->has_node    ? ( '<li>' . $self->format_node($t) . '</li>'       ) : () ),
+                ( $t->child_count ? ( '<ul>', ( map { "    $_" } $cont->() ), '</ul>' ) : () ),
+            );
+        }),
+    );
 }
 
 __PACKAGE__->meta->make_immutable;

@@ -20,8 +20,7 @@ sub to_pure {
     my $tree = shift;
 
     Forest::Tree::Pure->new(
-        node => $tree->node,
-        uid  => $tree->uid,
+        ( $tree->has_node ? ( node => $tree->node ) : () ),
         children => [ map { to_pure($_) } @{ $tree->children } ],
     );
 }
@@ -82,26 +81,26 @@ foreach my $tree ( $tree, $pure ) {
 
     is($w->as_string, 
     q{<ul>
-<li>1.0</li>
-<ul>
-    <li>1.1</li>
-    <li>1.2</li>
+    <li>1.0</li>
     <ul>
-        <li>1.2.1</li>
+        <li>1.1</li>
+        <li>1.2</li>
+        <ul>
+            <li>1.2.1</li>
+        </ul>
     </ul>
-</ul>
-<li>2.0</li>
-<ul>
-    <li>2.1</li>
-</ul>
-<li>3.0</li>
-<li>4.0</li>
-<ul>
-    <li>4.1</li>
+    <li>2.0</li>
     <ul>
-        <li>4.1.1</li>
+        <li>2.1</li>
     </ul>
-</ul>
+    <li>3.0</li>
+    <li>4.0</li>
+    <ul>
+        <li>4.1</li>
+        <ul>
+            <li>4.1.1</li>
+        </ul>
+    </ul>
 </ul>
 }, '.... got the right output');
 }
@@ -117,26 +116,26 @@ foreach my $tree ( $tree, $pure ) {
 
     is($w->as_string, 
     q{<ul>
-<li><b>1.0</b></li>
-<ul>
-    <li><b>1.1</b></li>
-    <li><b>1.2</b></li>
+    <li><b>1.0</b></li>
     <ul>
-        <li><b>1.2.1</b></li>
+        <li><b>1.1</b></li>
+        <li><b>1.2</b></li>
+        <ul>
+            <li><b>1.2.1</b></li>
+        </ul>
     </ul>
-</ul>
-<li><b>2.0</b></li>
-<ul>
-    <li><b>2.1</b></li>
-</ul>
-<li><b>3.0</b></li>
-<li><b>4.0</b></li>
-<ul>
-    <li><b>4.1</b></li>
+    <li><b>2.0</b></li>
     <ul>
-        <li><b>4.1.1</b></li>
+        <li><b>2.1</b></li>
     </ul>
-</ul>
+    <li><b>3.0</b></li>
+    <li><b>4.0</b></li>
+    <ul>
+        <li><b>4.1</b></li>
+        <ul>
+            <li><b>4.1.1</b></li>
+        </ul>
+    </ul>
 </ul>
 }, '.... got the right output');
 }
