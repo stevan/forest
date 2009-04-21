@@ -69,14 +69,22 @@ sub is_leaf { (shift)->child_count == 0 }
 
 ## traversal
 sub traverse {
-    my ($self, $func) = @_;
+    my ($self, $func, %args) = @_;
+
+    my $depth = $args{depth} ||= 0;
+
+    my @path = @{ $args{path} ||= [] };
+
     (defined($func))
         || confess "Cannot traverse without traversal function";
     (reftype($func) eq "CODE")
         || die "Traversal function must be a CODE reference, not : $func";
+
+    my %child_args = ( %args, depth => $depth + 1, path => [ @path, $self ], parent => $self );
+
     foreach my $child (@{ $self->children }) {
-        $func->($child);
-        $child->traverse($func);
+        $func->($child, %args);
+        $child->traverse($func, %child_args);
     }
 }
 
