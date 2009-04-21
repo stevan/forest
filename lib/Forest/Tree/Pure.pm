@@ -69,23 +69,48 @@ sub is_leaf { (shift)->child_count == 0 }
 
 ## traversal
 sub traverse {
-    my ($self, $func, %args) = @_;
+    my ($self, @args) = @_;
 
-    my $depth = $args{depth} ||= 0;
+    $_->visit(@args) for @{ $self->children };
+}
 
-    my @path = @{ $args{path} ||= [] };
+sub visit {
+    my ( $self, $f, @args ) = @_;
 
-    (defined($func))
+    $self->fmap_cont(sub {
+        my ( $tree, $cont, @args ) = @_;
+        $tree->$f(@args);
+        $cont->();
+    });
+}
+
+sub fmap_cont {
+    my ( $self, @args ) = @_;
+
+    unshift @args, "callback" if @args % 2 == 1;
+
+    my %args = ( depth => 0, path => [], @args );
+
+    my $f = $args{callback};
+
+    (defined($f))
         || confess "Cannot traverse without traversal function";
-    (!ref($func) or reftype($func) eq "CODE")
-        || die "Traversal function must be a CODE reference or method name, not : $func";
+    (!ref($f) or reftype($f) eq "CODE")
+        || die "Traversal function must be a CODE reference or method name, not : $f";
 
-    my %child_args = ( %args, depth => $depth + 1, path => [ @path, $self ], parent => $self );
 
-    foreach my $child (@{ $self->children }) {
-        $child->$func(%args);
-        $child->traverse($func, %child_args);
-    }
+    $self->$f(
+        sub {
+            my ( @inner_args ) = @_;
+            unshift @inner_args, "callback" if @inner_args % 2 == 1;
+            my $children = $args{children} || $self->children;
+
+            my %child_args = ( %args, depth => $args{depth} + 1, path => [ @{ $args{path} }, $self ], parent => $self, @inner_args );
+
+            map { $_->fmap_cont(%child_args) } @$children;
+        },
+        %args,
+    );
 }
 
 sub locate {
