@@ -77,13 +77,13 @@ sub traverse {
 
     (defined($func))
         || confess "Cannot traverse without traversal function";
-    (reftype($func) eq "CODE")
-        || die "Traversal function must be a CODE reference, not : $func";
+    (!ref($func) or reftype($func) eq "CODE")
+        || die "Traversal function must be a CODE reference or method name, not : $func";
 
     my %child_args = ( %args, depth => $depth + 1, path => [ @path, $self ], parent => $self );
 
     foreach my $child (@{ $self->children }) {
-        $func->($child, %args);
+        $child->$func(%args);
         $child->traverse($func, %child_args);
     }
 }
