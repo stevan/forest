@@ -200,7 +200,7 @@ __END__
 
 =head1 NAME
 
-Forest::Tree - An n-ary tree
+Forest::Tree::Pure - An n-ary tree
 
 =head1 SYNOPSIS
 
@@ -209,25 +209,25 @@ Forest::Tree - An n-ary tree
   my $t = Forest::Tree::Pure->new(
       node     => 1,
       children => [
-          Forest::Tree->new(
+          Forest::Tree::Pure->new(
               node     => 1.1,
               children => [
-                  Forest::Tree->new(node => 1.1.1),
-                  Forest::Tree->new(node => 1.1.2),                
-                  Forest::Tree->new(node => 1.1.3),                
+                  Forest::Tree::Pure->new(node => 1.1.1),
+                  Forest::Tree::Pure->new(node => 1.1.2),
+                  Forest::Tree::Pure->new(node => 1.1.3),
               ]
           ),
-          Forest::Tree->new(node => 1.2),
-          Forest::Tree->new(
+          Forest::Tree::Pure->new(node => 1.2),
+          Forest::Tree::Pure->new(
               node     => 1.3,
               children => [
-                  Forest::Tree->new(node => 1.3.1),
-                  Forest::Tree->new(node => 1.3.2),                
+                  Forest::Tree::Pure->new(node => 1.3.1),
+                  Forest::Tree::Pure->new(node => 1.3.2),
               ]
-          ),                                                
+          ),
       ]
   );
-  
+
   $t->traverse(sub {
       my $t = shift;
       print(('    ' x $t->depth) . ($t->node || '\undef') . "\n");
@@ -235,12 +235,19 @@ Forest::Tree - An n-ary tree
 
 =head1 DESCRIPTION
 
-This module is a base class for L<Forest::Tree> providing functionality for immutable trees.
+This module is a base class for L<Forest::Tree> providing functionality for
+immutable trees.
 
-There is no parent, and changing of data is not supported.
+It can be used independently for trees that require sharing of children between
+parents.
+
+There is no single authoritative parent (no upward links at all), and changing
+of data is not supported.
 
 This class is appropriate when many tree roots share the same children (e.g. in
 a versioned tree).
+
+This class is strictly a DAG, wheras L<Forest::Tree> produces a graph with back references
 
 =head1 ATTRIBUTES
 
@@ -323,6 +330,34 @@ Returns a derived tree with overridden children.
 Remove the child at this position. (zero-base index)
 
 Returns a derived tree with overridden children.
+
+=item lookup @path
+
+Find a child using a path of child indexes.
+
+=item set_node $new
+
+Returns a clone of the tree node with the node value changed.
+
+=item replace $arg
+
+Returns the argument. This is useful when used with C<transform>.
+
+=item transform \@path, $method, @args
+
+Performs a lookup on C<@path>, applies the method C<$method> with C<@args> to
+the located node, and clones the path to the parent returning a derived tree.
+
+This method is also implemented in L<Forest::Tree> by mutating.
+
+This code:
+
+    my $new = $root->transform([ 1, 3 ], insert_child_at => 3, $new_child);
+
+will locate the child at the path C<[ 1, 3 ]>, call C<insert_child_at> on it,
+creating a new version of C<[ 1, 3 ]>, and then return a cloned version of
+C<[ 1 ]> and the root node recursively, such that C<$new> appears to be a
+mutated C<$root>.
 
 =back
 
