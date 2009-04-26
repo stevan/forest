@@ -6,7 +6,7 @@ our $AUTHORITY = 'cpan:STEVAN';
 
 has 'node_formatter' => (
     is      => 'rw', 
-    isa     => 'CodeRef',
+    isa     => 'CodeRef|Str',
     lazy    => 1,
     default => sub { 
         sub { (shift)->node  || 'undef' } 
@@ -14,8 +14,11 @@ has 'node_formatter' => (
 );
 
 sub format_node {
-    my $self = shift;
-    $self->node_formatter->(@_)
+    my ( $self, $node, @args ) = @_;
+
+    my $fmt = $self->node_formatter;
+
+    $node->$fmt(@args);
 }
 
 no Moose::Role; 1;
