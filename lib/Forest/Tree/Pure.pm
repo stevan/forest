@@ -199,6 +199,8 @@ sub remove_child_at {
 
     my @children = @{ $self->children };
 
+    confess "No child at index '$index'" if @children <= $index;
+
     splice @children, $index, 1;
 
     $self->clone( children => \@children );
@@ -212,6 +214,8 @@ sub insert_child_at {
         || confess "Child parameter must be a Forest::Tree::Pure not (" . (defined $child ? $child : 'undef') . ")";
 
     my @children = @{ $self->children };
+
+    confess "'$index' is out of bounds" if @children < $index;
 
     splice @children, $index, 0, $child;
 
