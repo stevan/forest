@@ -93,7 +93,7 @@ sub fmap_cont {
 
     unshift @args, "callback" if @args % 2 == 1;
 
-    my %args = ( depth => 0, path => [], @args );
+    my %args = ( depth => 0, path => [], index_path => [], @args );
 
     my $f = $args{callback};
 
@@ -110,7 +110,17 @@ sub fmap_cont {
 
             my %child_args = ( %args, depth => $args{depth} + 1, path => [ @{ $args{path} }, $self ], parent => $self, @inner_args );
 
-            map { $_->fmap_cont(%child_args) } @$children;
+            my @index_path  = @{ $args{index_path} };
+
+            my $i = 0;
+            map {
+                my $index = $i++;
+                $_->fmap_cont(
+                    %child_args,
+                    index => $index,
+                    index_path => [ @index_path, $index ],
+                )
+            } @$children;
         },
         %args,
     );
