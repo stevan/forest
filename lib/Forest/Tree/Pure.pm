@@ -129,10 +129,22 @@ sub fmap_cont {
 sub locate {
     my ( $self, @path ) = @_;
 
+    my @nodes = $self->descend(@path);
+
+    return $nodes[-1];
+}
+
+sub descend {
+    my ( $self, @path ) = @_;
+
     if ( @path ) {
         my ( $head, @tail ) = @path;
 
-        return $self->get_child_at($head)->locate(@tail);
+        if ( my $child = $self->get_child_at($head) ) {
+            return ( $self, $child->descend(@tail) );
+        } else {
+            confess "No such child $head";
+        }
     } else {
         return $self;
     }
