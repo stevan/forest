@@ -1,5 +1,8 @@
 Revision history for Perl extension Forest
 
+XXXX
+    - Fix spelling of weak_ref in some attrs
+
 0.06 Fri. Feb. 27, 2009
     - whoops, tons of .git stuff in that last 
       release
