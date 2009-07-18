@@ -1,13 +1,12 @@
 package Forest::Tree::Writer;
 use Moose::Role;
 
-our $VERSION   = '0.06';
+our $VERSION   = '0.07';
 our $AUTHORITY = 'cpan:STEVAN';
 
 has 'tree' => (
-    is          => 'rw',
-    isa         => 'Forest::Tree',
-    weak_ref => 1,
+    is  => 'rw',
+    isa => 'Forest::Tree',
 );
 
 requires 'as_string';
@@ -39,7 +38,7 @@ This is an abstract role for tree writers.
 
 =back
 
-=head1 REQUIRED METHODS 
+=head1 REQUIRED METHODS
 
 =over 4
 
@@ -47,7 +46,7 @@ This is an abstract role for tree writers.
 
 =back
 
-=head1 METHODS 
+=head1 METHODS
 
 =over 4
 
@@ -57,7 +56,7 @@ This is an abstract role for tree writers.
 
 =head1 BUGS
 
-All complex software has bugs lurking in it, and this module is no 
+All complex software has bugs lurking in it, and this module is no
 exception. If you find a bug please either email me, or add the bug
 to cpan-RT.
 
