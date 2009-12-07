@@ -100,7 +100,7 @@ sub fmap_cont {
     (defined($f))
         || confess "Cannot traverse without traversal function";
     (!ref($f) or reftype($f) eq "CODE")
-        || die "Traversal function must be a CODE reference or method name, not : $f";
+        || confess "Traversal function must be a CODE reference or method name, not: $f";
 
     $self->$f(
         sub {

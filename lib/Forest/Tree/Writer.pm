@@ -7,7 +7,7 @@ our $AUTHORITY = 'cpan:STEVAN';
 has 'tree' => (
     is          => 'rw',
     isa         => 'Forest::Tree::Pure',
-    is_weak_ref => 1,
+    weak_ref => 1,
 );
 
 requires 'as_string';
