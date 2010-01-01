@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 33;
+use Test::More tests => 34;
 
 BEGIN {
     use_ok('Forest::Tree');
@@ -60,6 +60,7 @@ BEGIN {
     }
 
     ok(My::Tree->isa('Forest::Tree'), '... My::Tree isa Forest::Tree');
+    ok(My::Tree->isa('Forest::Tree::Pure'), '... My::Tree isa Forest::Tree::Pure');
     ok(My::Tree->does('Forest::Tree::Roles::MetaData'), '... My::Tree does Forest::Tree::Roles::MetaData');
     
     my $reader = My::Tree::Reader->new;
@@ -69,6 +70,7 @@ BEGIN {
     $reader->read(\*DATA);
 
     my $tree = $reader->tree;
+
     isa_ok($tree, 'My::Tree');
     isa_ok($tree, 'Forest::Tree');  
     ok($tree->does('Forest::Tree::Roles::MetaData'), '... our tree does Forest::Tree::Roles::MetaData');  

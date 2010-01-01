@@ -169,6 +169,18 @@ sub get_index_in_siblings {
 
 sub clone_and_detach { shift->clone(@_) }
 
+sub to_pure_tree {
+    my $self = shift;
+
+    $self->reconstruct_with_class("Forest::Tree::Pure");
+}
+
+sub to_mutable_tree {
+    my $self = shift;
+
+    return $self;
+}
+
 __PACKAGE__->meta->make_immutable;
 
 no Moose; 1;

@@ -20,7 +20,8 @@ Forest is intended to be a replacement for the Tree::Simple family of modules,
 and fixes many of the issues that have always bothered me about them. It is by 
 no means a complete replacement yet, but should eventually grow to become that.
 
-For more information please refer to the individual module documentation.
+For more information please refer to the individual module documentation,
+starting with L<Forest::Tree>.
 
 =head1 TODO
 

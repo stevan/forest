@@ -4,25 +4,33 @@ use Moose::Role;
 our $VERSION   = '0.06';
 our $AUTHORITY = 'cpan:STEVAN';
 
+with 'Forest::Tree::Constructor';
+
 has 'tree' => (
     is      => 'ro',
+    writer  => "_tree",
     isa     => 'Forest::Tree',
     lazy    => 1,
+
+    # FIXME should really be shift->create_new_subtree() but that breaks
+    # compatibility when this method is overridden and shouldn't apply to the
+    # root node... anyway, Loader should be deprecated anyway
     default => sub { Forest::Tree->new },
 );
 
-requires 'load';
+# more compatibility, the tree class is determined by the class of the root
+# which might not be Forest::Tree in subclasses or with explicit
+# ->new( tree => ... )
+has tree_class => (
+    isa => "ClassName",
+    is  => "ro",
+    reader => "_tree_class",
+    default => sub { ref shift->tree },
+);
 
-sub create_new_subtree { 
-    my ($self, %options) = @_;
-    my $node = $options{node};
-    if (blessed($node) && $node->isa('Forest::Tree')) {
-        return $node;
-    }
-    else {
-        return blessed($self->tree)->new(%options);
-    }    
-}
+sub tree_class { shift->_tree_class(@_) }
+
+requires 'load';
 
 no Moose::Role; 1;
 

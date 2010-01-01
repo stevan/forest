@@ -4,7 +4,11 @@ use Moose;
 our $VERSION   = '0.06';
 our $AUTHORITY = 'cpan:STEVAN';
 
-with 'Forest::Tree::Reader';
+use Forest::Tree::Builder::SimpleTextFile;
+
+with qw(Forest::Tree::Reader Forest::Tree::Constructor); # see new_subtree_callback below
+
+# FIXME these are for compat... remove them?
 
 has 'tab_width' => (
     is      => 'rw',
@@ -19,8 +23,6 @@ has 'parser' => (
     builder => 'build_parser',
 );
 
-## methods
-
 sub build_parser {
     return sub {
         my ($self, $line) = @_;
@@ -32,51 +34,29 @@ sub build_parser {
 
 sub parse_line { $_[0]->parser->(@_) }
 
+# compat endscreate_new_subtree(@_);},
+
 sub read {
     my ($self, $fh) = @_;
-    
-    my $current_tree = $self->tree;
-    
-    while (my $line = <$fh>) {
-        
-        chomp($line);
-        
-        next if !$line || $line =~ /^#/;
-        
-        my ($depth, $node, @rest) = $self->parse_line($line);
-        
-        #use Data::Dumper;
-        #warn "Depth: $depth - Node: $node - for $line and " . Dumper \@rest;
-        
-        my $new_tree = $self->create_new_subtree(node => $node, @rest);
-        
-        if ($current_tree->is_root) {
-            $current_tree->add_child($new_tree);
-            $current_tree = $new_tree;
-            next;
-        }
-        
-        my $tree_depth = $current_tree->depth;        
-        if ($depth == $tree_depth) {    
-            $current_tree->add_sibling($new_tree);
-            $current_tree = $new_tree;
-        } 
-        elsif ($depth > $tree_depth) {
-            (($depth - $tree_depth) <= 1) 
-                || die "Parse Error : the difference between the depth ($depth) and " . 
-                       "the tree depth ($tree_depth) is too much (" . 
-                       ($depth - $tree_depth) . ") at line:\n'$line'";
-            $current_tree->add_child($new_tree);
-            $current_tree = $new_tree;
-        } 
-        elsif ($depth < $tree_depth) {
-            $current_tree = $current_tree->parent while ($depth < $current_tree->depth);
-            $current_tree->add_sibling($new_tree);
-            $current_tree = $new_tree;    
-        } 
-               
-    }
-};
+
+    my $builder = Forest::Tree::Builder::SimpleTextFile->new(
+        tree_class           => ref( $self->tree ),
+        tab_width            => $self->tab_width,
+        parser               => $self->parser,
+        fh                   => $fh,
+
+        # since it's possible to subclass reader and implement this method, we
+        # include Forest::Tree::Constructor into this class as well, and make
+        # the builder use that definition (which under normal circumstances
+        # will be the same, Forest::Tree::Constructor::create_new_subtree)
+        new_subtree_callback => sub {
+            my ( $builder, @args ) = @_;
+            $self->create_new_subtree(@args);
+        },
+    );
+
+    $self->tree->add_child($_) for @{ $builder->subtrees };
+}
 
 __PACKAGE__->meta->make_immutable;
 

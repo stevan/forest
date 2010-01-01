@@ -244,6 +244,32 @@ sub insert_child_at {
     $self->clone( children => \@children );
 }
 
+
+sub reconstruct_with_class {
+    my ( $self, $class ) = @_;
+
+    confess "No class provided" unless defined($class);
+
+    return $class->new(
+        node => $self->node,
+        children => [
+            map { $_->reconstruct_with_class($class) } @{ $self->children },
+        ],
+    );
+}
+
+sub to_pure_tree {
+    my $self = shift;
+
+    return $self;
+}
+
+sub to_mutable_tree {
+    my $self = shift;
+
+    $self->reconstruct_with_class("Forest::Tree");
+}
+
 __PACKAGE__->meta->make_immutable;
 
 no Moose; 1;
@@ -331,8 +357,6 @@ Returns the number of children this tree has
 
 =item B<has_size>
 
-=item B<clear_size>
-
 =back
 
 =item I<height>
@@ -342,8 +366,6 @@ Returns the number of children this tree has
 =item B<height>
 
 =item B<has_height>
-
-=item B<clear_height>
 
 =back
 
@@ -371,7 +393,7 @@ Create a new tree node with the children appended.
 The children must inherit C<Forest::Tree::Pure>
 
 Note that this method does B<not> mutate the tree, instead it clones and
-returns a tree with overridden children.
+returns a tree with the augmented list of children.
 
 =item B<insert_child_at ($index, $child)>
 
