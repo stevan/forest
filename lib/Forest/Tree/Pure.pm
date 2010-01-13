@@ -244,6 +244,17 @@ sub insert_child_at {
     $self->clone( children => \@children );
 }
 
+sub get_child_index {
+    my ( $self, $child ) = @_;
+
+    my $index = 0;
+    foreach my $sibling (@{ $self->children }) {
+        (refaddr($sibling) eq refaddr($child)) && return $index;
+        $index++;
+    }
+
+    return;
+}
 
 sub reconstruct_with_class {
     my ( $self, $class ) = @_;
@@ -337,7 +348,7 @@ This class is strictly a DAG, wheras L<Forest::Tree> produces a graph with back 
 
 =item I<children>
 
-=over 4 
+=over 4
 
 =item B<get_child_at ($index)>
 
@@ -382,7 +393,37 @@ True if the current tree has no children
 =item B<traverse (\&func)>
 
 Takes a reference to a subroutine and traverses the tree applying this subroutine to
-every descendant.
+every descendant. (But not the root)
+
+=item B<visit (&func)>
+
+Traverse the entire tree, including the root.
+
+=item B<fmap_cont (&func)>
+
+A CPS form of C<visit> that lets you control when and how data flows from the children.
+
+It takes a callback in the form:
+
+    sub {
+        my ( $tree, $cont, @args ) = @_;
+
+        ...
+    }
+
+and C<$cont> is a code ref that when invoked will apply that same function to the children of C<$tree>.
+
+This allows you to do things like computing the sum of all the node values in a tree, for instance:
+
+    use List::Util qw(sum);
+
+    my $sum = $tree->fmap_cont(sub {
+        my ( $tree, $cont ) = @_;
+
+        return sum( $tree->node, $cont->() );
+    });
+
+And also allows to stop traversal at a given point.
 
 =item B<add_children (@children)>
 
@@ -401,30 +442,36 @@ Insert a child at this position. (zero-base index)
 
 Returns a derived tree with overridden children.
 
+=item B<set_child_at ($index, $child)>
+
+Replaces the child at C<$index> with C<$child>.
+
 =item B<remove_child_at ($index)>
 
 Remove the child at this position. (zero-base index)
 
 Returns a derived tree with overridden children.
 
-=item lookup @path
+=item B<locate (@path)>
 
-Find a child using a path of child indexes.
+Find a child using a path of child indexes. These two examples return the same object:
 
-=item set_node $new
+    $tree->get_child_at(0)->get_child_at(1)->get_child_at(0);
 
-Returns a clone of the tree node with the node value changed.
+    $tree->locate(0, 1, 0);
 
-=item replace $arg
+=item B<descend (@path)>
 
-Returns the argument. This is useful when used with C<transform>.
+Like C<lookup> except that it returns every object in the path, not just the leaf.
 
-=item transform \@path, $method, @args
+=item C<transform (\@path, $method, @args)>
 
 Performs a lookup on C<@path>, applies the method C<$method> with C<@args> to
 the located node, and clones the path to the parent returning a derived tree.
 
-This method is also implemented in L<Forest::Tree> by mutating.
+This method is also implemented in L<Forest::Tree> by mutating the tree in
+place and returning the original tree, so the same transformations should work
+on both pure trees and mutable ones.
 
 This code:
 
@@ -435,11 +482,47 @@ creating a new version of C<[ 1, 3 ]>, and then return a cloned version of
 C<[ 1 ]> and the root node recursively, such that C<$new> appears to be a
 mutated C<$root>.
 
+=item set_node $new
+
+Returns a clone of the tree node with the node value changed.
+
+=item C<replace $arg>
+
+Returns the argument. This is useful when used with C<transform>.
+
+=item B<clone>
+
+Provided by L<MooseX::Clone>.
+
+Deeply clones the entire tree.
+
+Subclasses should use L<MooseX::Clone> traits to specify the correct cloning
+behavior for additional attributes if cloning is used.
+
+=item B<reconstruct_with_class $class>
+
+Recursively recreates the tree by passing constructor arguments to C<$class>.
+
+Does not use C<clone>.
+
+=item B<to_mutable_tree>
+
+Invokes C<reconstruct_with_class> with L<Forest::Tree> as the argument.
+
+=item B<to_pure_tree>
+
+Returns the invocant.
+
+=item B<get_child_index ($child)>
+
+Returns the index of C<$child> in C<children> or undef if it isn't a child of
+the current tree.
+
 =back
 
 =head1 BUGS
 
-All complex software has bugs lurking in it, and this module is no 
+All complex software has bugs lurking in it, and this module is no
 exception. If you find a bug please either email me, or add the bug
 to cpan-RT.
 

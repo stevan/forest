@@ -21,7 +21,7 @@ has 'tab_width' => (
 
 has 'parser' => (
     is      => 'rw',
-    isa     => 'CodeRef',   
+    isa     => 'CodeRef',
     lazy    => 1,
     builder => 'build_parser',
 );
@@ -30,7 +30,7 @@ sub build_parser {
     return sub {
         my ($self, $line) = @_;
         my ($indent, $node) = ($line =~ /^(\s*)(.*)$/);
-        my $depth = ((length $indent) / $self->tab_width); 
+        my $depth = ((length $indent) / $self->tab_width);
         return ($depth, $node);
     }
 }
@@ -48,9 +48,9 @@ sub _build_subtrees {
     while ( defined(my $line = <$fh>) ) {
 
         chomp($line);
-        
+
         next if !$line || $line =~ /^#/;
-        
+
         my ($depth, $node, @rest) = $self->parse_line($line);
 
         if ( $depth > @stack ) {
@@ -58,8 +58,8 @@ sub _build_subtrees {
                 push @stack, $cur_children;
                 $cur_children = $cur_children->[-1]{children} = [];
             } else {
-                die "Parse Error : the difference between the depth ($depth) and " . 
-                    "the tree depth (" . scalar(@stack)  . ") is too much (" . 
+                die "Parse Error : the difference between the depth ($depth) and " .
+                    "the tree depth (" . scalar(@stack)  . ") is too much (" .
                     ($depth - @stack) . ") at line:\n'$line'";
             }
         } elsif ( $depth < @stack ) {
@@ -91,3 +91,50 @@ __PACKAGE__->meta->make_immutable;
 __PACKAGE__
 
 __END__
+
+=head1 NAME
+
+Forest::Tree::Builder::SimpleTextFile - Parse trees from indented ASCII files
+
+=head1 SYNOPSIS
+
+    use Path::Class;
+
+    my $file = file($path);
+
+    my $builder = Forest::Tree::Builder::SimpleTextFile->new(
+        fh => $file->openr,
+    );
+
+    my $tree = $builder->tree;
+
+=head1 DESCRIPTION
+
+This module replaces L<Forest::Tree::Reader::SimpleTextFile> with a declarative
+api instead of an imperative one.
+
+=head1 ATTRIBUTES
+
+=over 4
+
+=item fh
+
+The filehandle to read from.
+
+Required.
+
+=item parser
+
+A coderef that parses a single line from C<fh> and returns the node depth and
+its value.
+
+Defaults to space indented text. See also L</tab_width>.
+
+=item tab_width
+
+The indentation level for the default parser. Defaults to 4, which means that
+four spaces equate to one level of nesting.
+
+=back
+
+

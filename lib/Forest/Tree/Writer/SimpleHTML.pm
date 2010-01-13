@@ -38,7 +38,7 @@ Forest::Tree::Writer::SimpleHTML - A simple HTML writer for Forest::Tree heirarc
 
 This is a simple writer which draws a tree as an HTML unordered list.
 
-=head1 METHODS 
+=head1 METHODS
 
 =over 4
 
@@ -48,7 +48,7 @@ This is a simple writer which draws a tree as an HTML unordered list.
 
 =head1 BUGS
 
-All complex software has bugs lurking in it, and this module is no 
+All complex software has bugs lurking in it, and this module is no
 exception. If you find a bug please either email me, or add the bug
 to cpan-RT.
 

@@ -6,13 +6,13 @@ our $AUTHORITY = 'cpan:STEVAN';
 
 has 'metadata' => (
     is      => 'rw',
-    isa     => 'HashRef',   
+    isa     => 'HashRef',
     default => sub { {} },
 );
 
 has 'metadata_key' => (
     is      => 'rw',
-    isa     => 'Str',   
+    isa     => 'Str',
     default => sub { 'uid' },
 );
 
@@ -20,15 +20,15 @@ around 'create_new_subtree' => sub {
     my $next = shift;
     my $self = shift;
     my $tree = $self->$next(@_);
-    
+
     ($tree->does('Forest::Tree::Roles::MetaData'))
         || confess "Your subtrees must do the MetaData role";
-        
+
     my $key = $self->metadata_key;
     if (my $metadata = $self->metadata->{ $tree->$key() }) {
         $tree->metadata($metadata);
     }
-    
+
     return $tree;
 };
 
@@ -48,7 +48,7 @@ Forest::Tree::Roles::LoadWithMetaData - A Moosey solution to this problem
 
 =head1 DESCRIPTION
 
-=head1 METHODS 
+=head1 METHODS
 
 =over 4
 
@@ -58,7 +58,7 @@ Forest::Tree::Roles::LoadWithMetaData - A Moosey solution to this problem
 
 =head1 BUGS
 
-All complex software has bugs lurking in it, and this module is no 
+All complex software has bugs lurking in it, and this module is no
 exception. If you find a bug please either email me, or add the bug
 to cpan-RT.
 

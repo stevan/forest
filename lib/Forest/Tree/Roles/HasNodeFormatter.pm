@@ -5,11 +5,11 @@ our $VERSION   = '0.07';
 our $AUTHORITY = 'cpan:STEVAN';
 
 has 'node_formatter' => (
-    is      => 'rw', 
+    is      => 'rw',
     isa     => 'CodeRef|Str',
     lazy    => 1,
-    default => sub { 
-        sub { (shift)->node  || 'undef' } 
+    default => sub {
+        sub { (shift)->node  || 'undef' }
     }
 );
 
@@ -33,7 +33,7 @@ __END__
 
 =head1 DESCRIPTION
 
-=head1 METHODS 
+=head1 METHODS
 
 =over 4
 
@@ -43,7 +43,7 @@ __END__
 
 =head1 BUGS
 
-All complex software has bugs lurking in it, and this module is no 
+All complex software has bugs lurking in it, and this module is no
 exception. If you find a bug please either email me, or add the bug
 to cpan-RT.
 
