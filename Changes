@@ -1,5 +1,24 @@
 Revision history for Perl extension Forest
 
+0.08 Wed. Jan. 13, 2010
+    *** MAJOR REFACTORINGS ***
+         (by nothingmuch)
+
+    + Forest::Tree::Pure
+    + Forest::Tree::Constructor
+    + Forest::Tree::Builder
+    + Forest::Tree::Builder::Callback
+    + Forest::Tree::Builder::SimpleTextFile
+      - added these packages as well as tests
+
+    * Forest::Tree
+      - this is now a subclass of Forest::Tree::Pure
+
+    - many other changes all over the place as well
+      as best we can tell this is still 100% back-compat
+      but if you experience anything to the contrary
+      please let us know ASAP. Thanks.
+
 0.07 Sat. July 18, 2009
     - Fix spelling of weak_ref in some
       attrs (cory watson)
