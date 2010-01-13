@@ -1,6 +1,9 @@
 package Forest::Tree::Builder::SimpleTextFile;
 use Moose;
 
+our $VERSION   = '0.08';
+our $AUTHORITY = 'cpan:STEVAN';
+
 use namespace::clean -except => 'meta';
 
 no warnings 'recursion';
@@ -21,7 +24,7 @@ has 'tab_width' => (
 
 has 'parser' => (
     is      => 'rw',
-    isa     => 'CodeRef',   
+    isa     => 'CodeRef',
     lazy    => 1,
     builder => 'build_parser',
 );
@@ -30,7 +33,7 @@ sub build_parser {
     return sub {
         my ($self, $line) = @_;
         my ($indent, $node) = ($line =~ /^(\s*)(.*)$/);
-        my $depth = ((length $indent) / $self->tab_width); 
+        my $depth = ((length $indent) / $self->tab_width);
         return ($depth, $node);
     }
 }
@@ -48,9 +51,9 @@ sub _build_subtrees {
     while ( defined(my $line = <$fh>) ) {
 
         chomp($line);
-        
+
         next if !$line || $line =~ /^#/;
-        
+
         my ($depth, $node, @rest) = $self->parse_line($line);
 
         if ( $depth > @stack ) {
@@ -58,8 +61,8 @@ sub _build_subtrees {
                 push @stack, $cur_children;
                 $cur_children = $cur_children->[-1]{children} = [];
             } else {
-                die "Parse Error : the difference between the depth ($depth) and " . 
-                    "the tree depth (" . scalar(@stack)  . ") is too much (" . 
+                die "Parse Error : the difference between the depth ($depth) and " .
+                    "the tree depth (" . scalar(@stack)  . ") is too much (" .
                     ($depth - @stack) . ") at line:\n'$line'";
             }
         } elsif ( $depth < @stack ) {

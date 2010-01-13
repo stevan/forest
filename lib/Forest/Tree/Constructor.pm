@@ -1,9 +1,12 @@
 package Forest::Tree::Constructor;
 use Moose::Role;
 
+our $VERSION   = '0.08';
+our $AUTHORITY = 'cpan:STEVAN';
+
 requires "tree_class";
 
-sub create_new_subtree { 
+sub create_new_subtree {
     my ($self, %options) = @_;
     my $node = $options{node};
 

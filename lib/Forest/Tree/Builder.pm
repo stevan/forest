@@ -1,6 +1,9 @@
 package Forest::Tree::Builder;
 use Moose::Role;
 
+our $VERSION   = '0.08';
+our $AUTHORITY = 'cpan:STEVAN';
+
 with qw(Forest::Tree::Constructor);
 
 has 'tree' => (

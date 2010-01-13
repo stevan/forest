@@ -1,13 +1,6 @@
 .*
 !.gitignore
-Makefile*
-!Makefile.PL
-META.yml
 blib
 inc
 pm_to_blib
-MANIFEST*
-!MANIFEST.SKIP
 Debian*
-README
-Forest-*

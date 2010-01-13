@@ -2,6 +2,9 @@ package Forest::Tree::Pure;
 use Moose;
 use MooseX::AttributeHelpers;
 
+our $VERSION   = '0.08';
+our $AUTHORITY = 'cpan:STEVAN';
+
 use Scalar::Util 'reftype', 'refaddr';
 use List::Util   'sum', 'max';
 
@@ -337,7 +340,7 @@ This class is strictly a DAG, wheras L<Forest::Tree> produces a graph with back 
 
 =item I<children>
 
-=over 4 
+=over 4
 
 =item B<get_child_at ($index)>
 
@@ -439,7 +442,7 @@ mutated C<$root>.
 
 =head1 BUGS
 
-All complex software has bugs lurking in it, and this module is no 
+All complex software has bugs lurking in it, and this module is no
 exception. If you find a bug please either email me, or add the bug
 to cpan-RT.
 
