@@ -29,17 +29,11 @@ __END__
 
 =head1 NAME
 
-=head1 SYNOPSIS
+Forest::Tree::Roles::HasNodeFormatter - Simple role for custom node formatters
 
 =head1 DESCRIPTION
 
-=head1 METHODS
-
-=over 4
-
-=item B<>
-
-=back
+Simple role for nodes that have custom formatters
 
 =head1 BUGS
 
@@ -53,7 +47,7 @@ Stevan Little E<lt>stevan.little@iinteractive.comE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2008-2009 Infinity Interactive, Inc.
+Copyright 2008-2010 Infinity Interactive, Inc.
 
 L<http://www.iinteractive.com>
 

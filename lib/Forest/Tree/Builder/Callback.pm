@@ -21,8 +21,37 @@ sub create_new_subtree {
     $self->$method(@args);
 }
 
-# ex: set sw=4 et:
-
-__PACKAGE__
+no Moose::Role; 1;
 
 __END__
+
+=pod
+
+=head1 NAME
+
+Forest::Tree::Builder::Callback - A Forest tree builder with a callback for subtree construction
+
+=head1 DESCRIPTION
+
+TODO
+
+=head1 BUGS
+
+All complex software has bugs lurking in it, and this module is no
+exception. If you find a bug please either email me, or add the bug
+to cpan-RT.
+
+=head1 AUTHOR
+
+Yuval Kogman
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright 2008-2010 Infinity Interactive, Inc.
+
+L<http://www.iinteractive.com>
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=cut

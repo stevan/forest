@@ -4,8 +4,6 @@ use Moose;
 our $VERSION   = '0.08';
 our $AUTHORITY = 'cpan:STEVAN';
 
-use namespace::clean -except => 'meta';
-
 no warnings 'recursion';
 
 with qw(Forest::Tree::Builder::Callback); # for compatibility with overriding create_new_subtree, otherwise invisible
@@ -89,9 +87,7 @@ sub _build_subtrees {
 
 __PACKAGE__->meta->make_immutable;
 
-# ex: set sw=4 et:
-
-__PACKAGE__
+no Moose; 1;
 
 __END__
 
@@ -139,5 +135,26 @@ The indentation level for the default parser. Defaults to 4, which means that
 four spaces equate to one level of nesting.
 
 =back
+
+=head1 BUGS
+
+All complex software has bugs lurking in it, and this module is no
+exception. If you find a bug please either email me, or add the bug
+to cpan-RT.
+
+=head1 AUTHOR
+
+Yuval Kogman
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright 2008-2010 Infinity Interactive, Inc.
+
+L<http://www.iinteractive.com>
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=cut
 
 

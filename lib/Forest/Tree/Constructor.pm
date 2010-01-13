@@ -76,3 +76,24 @@ This role provides the C<create_new_subtree> method as required by
 L<Forest::Tree::Builder> and L<Forest::Tree::Loader>/L<Forest::Tree::Reader>.
 
 See L<Forest::Tree::Builder> for the reccomended usage.
+
+=head1 BUGS
+
+All complex software has bugs lurking in it, and this module is no
+exception. If you find a bug please either email me, or add the bug
+to cpan-RT.
+
+=head1 AUTHOR
+
+Yuval Kogman
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright 2008-2010 Infinity Interactive, Inc.
+
+L<http://www.iinteractive.com>
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=cut

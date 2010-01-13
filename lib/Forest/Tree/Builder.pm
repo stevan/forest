@@ -107,3 +107,24 @@ Abstract method that should return an array ref of L<Forest::Tree::Pure> derived
 =head1 SEE ALSO
 
 L<Forest::Tree::Builder::SimpleTextFile>
+
+=head1 BUGS
+
+All complex software has bugs lurking in it, and this module is no
+exception. If you find a bug please either email me, or add the bug
+to cpan-RT.
+
+=head1 AUTHOR
+
+Yuval Kogman
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright 2008-2010 Infinity Interactive, Inc.
+
+L<http://www.iinteractive.com>
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=cut
