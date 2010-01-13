@@ -15,7 +15,7 @@ has 'index' => (
     is        => 'rw',
     isa       => 'HashRef[Forest::Tree::Pure]',
     lazy      => 1,
-    default   => sub { {} },    
+    default   => sub { {} },
     provides  => {
         'get'    => 'get_tree_at',
         'exists' => 'has_tree_at',
@@ -62,7 +62,7 @@ This is an abstract role for tree writers.
 
 =back
 
-=head1 REQUIRED METHODS 
+=head1 REQUIRED METHODS
 
 =over 4
 
@@ -70,7 +70,7 @@ This is an abstract role for tree writers.
 
 =back
 
-=head1 METHODS 
+=head1 METHODS
 
 =over 4
 
@@ -80,7 +80,7 @@ This is an abstract role for tree writers.
 
 =head1 BUGS
 
-All complex software has bugs lurking in it, and this module is no 
+All complex software has bugs lurking in it, and this module is no
 exception. If you find a bug please either email me, or add the bug
 to cpan-RT.
 

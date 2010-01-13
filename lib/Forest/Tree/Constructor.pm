@@ -55,3 +55,24 @@ sub create_new_subtree {
 no Moose::Role; 1;
 
 __END__
+
+=head1 NAME
+
+Forest::Tree::Constructor - An abstract role for tree factories
+
+=head1 SYNOPSIS
+
+    with qw(Forest::Tree::Constructor);
+
+    sub tree_class { ... }
+
+    sub foo {
+        $self->create_new_subtree( ... )
+    }
+
+=head1 DESCRIPTION
+
+This role provides the C<create_new_subtree> method as required by
+L<Forest::Tree::Builder> and L<Forest::Tree::Loader>/L<Forest::Tree::Reader>.
+
+See L<Forest::Tree::Builder> for the reccomended usage.

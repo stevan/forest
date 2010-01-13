@@ -18,7 +18,7 @@ has 'tab_width' => (
 
 has 'parser' => (
     is      => 'rw',
-    isa     => 'CodeRef',   
+    isa     => 'CodeRef',
     lazy    => 1,
     builder => 'build_parser',
 );
@@ -27,7 +27,7 @@ sub build_parser {
     return sub {
         my ($self, $line) = @_;
         my ($indent, $node) = ($line =~ /^(\s*)(.*)$/);
-        my $depth = ((length $indent) / $self->tab_width); 
+        my $depth = ((length $indent) / $self->tab_width);
         return ($depth, $node);
     }
 }
@@ -72,10 +72,12 @@ Forest::Tree::Reader::SimpleTextFile - A reader for Forest::Tree heirarchies
 
 =head1 DESCRIPTION
 
-This reads simple F<.tree> files, which are basically the tree represented
-as a tabbed heirarchy. 
+B<This module is deprecated>. You should use L<Forest::Tree::Builder::SimpleTextFile> instead.
 
-=head1 ATTRIBUTES 
+This reads simple F<.tree> files, which are basically the tree represented
+as a tabbed heirarchy.
+
+=head1 ATTRIBUTES
 
 =over 4
 
@@ -83,7 +85,7 @@ as a tabbed heirarchy.
 
 =back
 
-=head1 METHODS 
+=head1 METHODS
 
 =over 4
 
@@ -97,7 +99,7 @@ as a tabbed heirarchy.
 
 =head1 BUGS
 
-All complex software has bugs lurking in it, and this module is no 
+All complex software has bugs lurking in it, and this module is no
 exception. If you find a bug please either email me, or add the bug
 to cpan-RT.
 

@@ -10,7 +10,7 @@ with 'Forest::Tree::Writer',
 sub as_string {
     my ($self) = @_;
     my $out;
-    
+
     return join( "", map { "$_\n" }
         $self->tree->fmap_cont(sub {
             my ( $t, $cont, %args ) = @_;
@@ -43,7 +43,7 @@ Forest::Tree::Writer::SimpleASCII - A simple ASCII writer for Forest::Tree heira
 
 This is a simple writer which draws a tree in ASCII.
 
-=head1 METHODS 
+=head1 METHODS
 
 =over 4
 
@@ -53,7 +53,7 @@ This is a simple writer which draws a tree in ASCII.
 
 =head1 BUGS
 
-All complex software has bugs lurking in it, and this module is no 
+All complex software has bugs lurking in it, and this module is no
 exception. If you find a bug please either email me, or add the bug
 to cpan-RT.
 

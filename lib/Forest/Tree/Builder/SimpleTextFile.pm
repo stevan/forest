@@ -94,3 +94,50 @@ __PACKAGE__->meta->make_immutable;
 __PACKAGE__
 
 __END__
+
+=head1 NAME
+
+Forest::Tree::Builder::SimpleTextFile - Parse trees from indented ASCII files
+
+=head1 SYNOPSIS
+
+    use Path::Class;
+
+    my $file = file($path);
+
+    my $builder = Forest::Tree::Builder::SimpleTextFile->new(
+        fh => $file->openr,
+    );
+
+    my $tree = $builder->tree;
+
+=head1 DESCRIPTION
+
+This module replaces L<Forest::Tree::Reader::SimpleTextFile> with a declarative
+api instead of an imperative one.
+
+=head1 ATTRIBUTES
+
+=over 4
+
+=item fh
+
+The filehandle to read from.
+
+Required.
+
+=item parser
+
+A coderef that parses a single line from C<fh> and returns the node depth and
+its value.
+
+Defaults to space indented text. See also L</tab_width>.
+
+=item tab_width
+
+The indentation level for the default parser. Defaults to 4, which means that
+four spaces equate to one level of nesting.
+
+=back
+
+

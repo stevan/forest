@@ -9,32 +9,32 @@ with 'Forest::Tree::Writer',
 
 sub as_string {
     my ($self) = @_;
-    
-    my $out = '';    
+
+    my $out = '';
     my @vert_dashes;
-    
+
     $self->tree->traverse(sub {
         my $t = shift;
         $out .= $self->_process_node($t, \@vert_dashes);
     });
-    
+
     return $out;
 }
 
 sub _process_node {
     my ($self, $t, $vert_dashes) = @_;
-    
+
     my $depth         = $t->depth;
-    my $sibling_count = $t->is_root ? 1 : $t->parent->child_count;    
-    
+    my $sibling_count = $t->is_root ? 1 : $t->parent->child_count;
+
     my @indent = map {
         $vert_dashes->[$_] || "    "
     } 0 .. $depth - 1;
 
     @$vert_dashes = (
-        @indent, 
-        ($sibling_count == 1 
-            ? ("    ") 
+        @indent,
+        ($sibling_count == 1
+            ? ("    ")
             : ("   |"))
     );
 
@@ -42,10 +42,10 @@ sub _process_node {
         $vert_dashes->[$depth] = "    ";
     }
 
-    return ((join "" => @indent[1 .. $#indent]) 
-            . ($depth ? "   |---" : "") 
-            . $self->format_node($t) 
-            . "\n");    
+    return ((join "" => @indent[1 .. $#indent])
+            . ($depth ? "   |---" : "")
+            . $self->format_node($t)
+            . "\n");
 }
 
 __PACKAGE__->meta->make_immutable;
@@ -63,10 +63,10 @@ Forest::Tree::Writer::ASCIIWithBranches - A slightly more complex ASCII writer
 =head1 SYNOPSIS
 
   use Forest::Tree::Writer::ASCIIWithBranches;
-  
+
   my $w = Forest::Tree::Writer::ASCIIWithBranches->new(tree => $tree);
 
-  print $w->as_string; # outputs ....        
+  print $w->as_string; # outputs ....
   # root
   #    |---1.0
   #    |   |---1.1
@@ -77,11 +77,11 @@ Forest::Tree::Writer::ASCIIWithBranches - A slightly more complex ASCII writer
   #    |---3.0
   #    |---4.0
   #        |---4.1
-  #            |---4.1.1  
+  #            |---4.1.1
 
 =head1 DESCRIPTION
 
-=head1 METHODS 
+=head1 METHODS
 
 =over 4
 
@@ -91,7 +91,7 @@ Forest::Tree::Writer::ASCIIWithBranches - A slightly more complex ASCII writer
 
 =head1 BUGS
 
-All complex software has bugs lurking in it, and this module is no 
+All complex software has bugs lurking in it, and this module is no
 exception. If you find a bug please either email me, or add the bug
 to cpan-RT.
 

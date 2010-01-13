@@ -8,21 +8,21 @@ with 'Forest::Tree::Indexer';
 
 sub build_index {
     my $self  = shift;
-    my $root  = $self->get_root;    
+    my $root  = $self->get_root;
     my $index = $self->index;
 
     (!exists $index->{$root->uid})
         || confess "Tree root has already been indexed, you must clear it before re-indexing";
 
     $index->{$root->uid} = $root;
-    
+
     $root->traverse(sub {
         my $t = shift;
         (!exists $index->{$t->uid})
-            || confess "Duplicate tree id (" . $t->uid . ") found";        
-        $index->{$t->uid} = $t;        
+            || confess "Duplicate tree id (" . $t->uid . ") found";
+        $index->{$t->uid} = $t;
     });
-    
+
 };
 
 __PACKAGE__->meta->make_immutable;
@@ -41,7 +41,7 @@ Forest::Tree::Indexer::SimpleUIDIndexer - Indexes a Forest::Tree heiarchy by it'
 
 This creates an index of a Forest::Tree heiarchy using the UID as the key.
 
-=head1 METHODS 
+=head1 METHODS
 
 =over 4
 
@@ -51,7 +51,7 @@ This creates an index of a Forest::Tree heiarchy using the UID as the key.
 
 =head1 BUGS
 
-All complex software has bugs lurking in it, and this module is no 
+All complex software has bugs lurking in it, and this module is no
 exception. If you find a bug please either email me, or add the bug
 to cpan-RT.
 

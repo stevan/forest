@@ -40,13 +40,15 @@ __END__
 
 =head1 NAME
 
-Forest::Tree::Loader - An abstract role for loading trees 
+Forest::Tree::Loader - An abstract role for loading trees
 
 =head1 DESCRIPTION
 
-This is an abstract role to be used for loading trees from 
+B<This role should generally not be used, it has been largely superseded by Forest::Tree::Builder>.
 
-=head1 METHODS 
+This is an abstract role to be used for loading trees from
+
+=head1 METHODS
 
 =over 4
 
@@ -56,7 +58,7 @@ This is an abstract role to be used for loading trees from
 
 =head1 BUGS
 
-All complex software has bugs lurking in it, and this module is no 
+All complex software has bugs lurking in it, and this module is no
 exception. If you find a bug please either email me, or add the bug
 to cpan-RT.
 

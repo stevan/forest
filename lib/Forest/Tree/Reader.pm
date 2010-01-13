@@ -9,7 +9,7 @@ with 'Forest::Tree::Loader';
 requires 'read';
 
 # satisfy the Loader interface here ...
-sub load { 
+sub load {
     my $self = shift;
     $self->read(@_);
 }
@@ -22,14 +22,16 @@ __END__
 
 =head1 NAME
 
-Forest::Tree::Reader - An abstract role for tree reader
+Forest::Tree::Reader - An abstract role for top down tree reader
 
 =head1 DESCRIPTION
 
+B<This role should generally not be used, it has been largely superseded by Forest::Tree::Builder>.
+
 This is an abstract role for tree readers.
 
-Tree readers are also Tree loaders, that is why this module 
-also does the L<Forest::Tree::Loader> role. 
+Tree readers are also Tree loaders, that is why this module
+also does the L<Forest::Tree::Loader> role.
 
 =head1 ATTRIBUTES
 
@@ -39,7 +41,7 @@ also does the L<Forest::Tree::Loader> role.
 
 =back
 
-=head1 REQUIRED METHODS 
+=head1 REQUIRED METHODS
 
 =over 4
 
@@ -47,7 +49,7 @@ also does the L<Forest::Tree::Loader> role.
 
 =back
 
-=head1 METHODS 
+=head1 METHODS
 
 =over 4
 
@@ -59,7 +61,7 @@ This satisfies the L<Forest::Tree::Loader> interface.
 
 =head1 BUGS
 
-All complex software has bugs lurking in it, and this module is no 
+All complex software has bugs lurking in it, and this module is no
 exception. If you find a bug please either email me, or add the bug
 to cpan-RT.
 
