@@ -1,7 +1,7 @@
 package Forest;
 use Moose ();
 
-our $VERSION   = '0.08';
+our $VERSION   = '0.09';
 our $AUTHORITY = 'cpan:STEVAN';
 
 1;
@@ -29,7 +29,7 @@ starting with L<Forest::Tree>.
 
 =item More documentation
 
-This is 0.08 so it is (still) lacking quite a bit of docs (I am being really lazy sorry).
+This is 0.09 so it is (still) lacking quite a bit of docs (I am being really lazy sorry).
 Although I invite people to read the source, it is quite simple really.
 
 =item More tests

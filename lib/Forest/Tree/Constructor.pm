@@ -1,7 +1,7 @@
 package Forest::Tree::Constructor;
 use Moose::Role;
 
-our $VERSION   = '0.08';
+our $VERSION   = '0.09';
 our $AUTHORITY = 'cpan:STEVAN';
 
 requires "tree_class";

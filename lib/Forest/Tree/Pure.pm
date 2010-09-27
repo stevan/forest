@@ -2,7 +2,7 @@ package Forest::Tree::Pure;
 use Moose;
 use MooseX::AttributeHelpers;
 
-our $VERSION   = '0.08';
+our $VERSION   = '0.09';
 our $AUTHORITY = 'cpan:STEVAN';
 
 use Scalar::Util 'reftype', 'refaddr';

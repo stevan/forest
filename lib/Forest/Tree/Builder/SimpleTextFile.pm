@@ -1,7 +1,7 @@
 package Forest::Tree::Builder::SimpleTextFile;
 use Moose;
 
-our $VERSION   = '0.08';
+our $VERSION   = '0.09';
 our $AUTHORITY = 'cpan:STEVAN';
 
 no warnings 'recursion';

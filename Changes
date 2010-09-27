@@ -1,5 +1,8 @@
 Revision history for Perl extension Forest
 
+0.09 Mon. Sep. 27, 2010
+    - silence warnings on new Moose (doy)
+
 0.08 Wed. Jan. 13, 2010
     *** MAJOR REFACTORINGS ***
          (by nothingmuch)

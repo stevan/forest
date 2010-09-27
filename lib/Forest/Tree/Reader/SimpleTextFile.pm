@@ -1,7 +1,7 @@
 package Forest::Tree::Reader::SimpleTextFile;
 use Moose;
 
-our $VERSION   = '0.08';
+our $VERSION   = '0.09';
 our $AUTHORITY = 'cpan:STEVAN';
 
 use Forest::Tree::Builder::SimpleTextFile;

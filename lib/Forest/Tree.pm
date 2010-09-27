@@ -5,7 +5,7 @@ use MooseX::AttributeHelpers;
 use Scalar::Util 'reftype', 'refaddr';
 use List::Util   'sum', 'max';
 
-our $VERSION   = '0.08';
+our $VERSION   = '0.09';
 our $AUTHORITY = 'cpan:STEVAN';
 
 extends qw(Forest::Tree::Pure);
