@@ -1,6 +1,5 @@
 package Forest::Tree::Indexer;
 use Moose::Role;
-use MooseX::AttributeHelpers;
 
 our $VERSION   = '0.09';
 our $AUTHORITY = 'cpan:STEVAN';
@@ -11,16 +10,16 @@ has 'tree' => (
 );
 
 has 'index' => (
-    metaclass => 'Collection::Hash',
+    traits    => ['Hash'],
     is        => 'rw',
     isa       => 'HashRef[Forest::Tree::Pure]',
     lazy      => 1,
     default   => sub { {} },
-    provides  => {
-        'get'    => 'get_tree_at',
-        'exists' => 'has_tree_at',
-        'clear'  => 'clear_index',
-        'keys'   => 'get_index_keys',
+    handles   => {
+        get_tree_at    => 'get',
+        has_tree_at    => 'exists',
+        clear_index    => 'clear',
+        get_index_keys => 'keys',
     }
 );
 

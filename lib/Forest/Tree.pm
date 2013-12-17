@@ -1,6 +1,5 @@
 package Forest::Tree;
 use Moose;
-use MooseX::AttributeHelpers;
 
 use Scalar::Util 'reftype', 'refaddr';
 use List::Util   'sum', 'max';
@@ -41,15 +40,14 @@ has 'parent' => (
 #has '+children' => (
 #    is        => 'rw',
 has 'children' => (
-    traits    => [qw(Clone)],
-    metaclass => 'Collection::Array',
+    traits    => [qw(Array Clone)],
     is        => 'rw',
     isa       => 'ArrayRef[Forest::Tree]',
     lazy      => 1,
     default   => sub { [] },
-    provides  => {
-        'get'   => 'get_child_at',
-        'count' => 'child_count',
+    handles   => {
+        get_child_at => 'get',
+        child_count  => 'count',
     },
     trigger   => sub {
         my ($self, $children) = @_;
