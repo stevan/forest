@@ -1,5 +1,9 @@
 Revision history for Perl extension Forest
 
+0.10 Wed. Dec. 8th, 2013
+    - remove MooseX::AttributeHelpers
+      dependency (doy)
+
 0.09 Mon. Sep. 27, 2010
     - silence warnings on new Moose (doy)
 

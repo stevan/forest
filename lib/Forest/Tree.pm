@@ -4,7 +4,7 @@ use Moose;
 use Scalar::Util 'reftype', 'refaddr';
 use List::Util   'sum', 'max';
 
-our $VERSION   = '0.09';
+our $VERSION   = '0.10';
 our $AUTHORITY = 'cpan:STEVAN';
 
 extends qw(Forest::Tree::Pure);
@@ -365,7 +365,7 @@ Stevan Little E<lt>stevan.little@iinteractive.comE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2008-2010 Infinity Interactive, Inc.
+Copyright 2008-2014 Infinity Interactive, Inc.
 
 L<http://www.iinteractive.com>
 

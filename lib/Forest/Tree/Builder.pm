@@ -1,7 +1,7 @@
 package Forest::Tree::Builder;
 use Moose::Role;
 
-our $VERSION   = '0.09';
+our $VERSION   = '0.10';
 our $AUTHORITY = 'cpan:STEVAN';
 
 with qw(Forest::Tree::Constructor);
@@ -120,7 +120,7 @@ Yuval Kogman
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2008-2010 Infinity Interactive, Inc.
+Copyright 2008-2014 Infinity Interactive, Inc.
 
 L<http://www.iinteractive.com>
 
