@@ -18,7 +18,6 @@ This module requires these other modules and libraries:
 
     Moose
     MooseX::Clone
-    MooseX::AttributeHelpers
     List::Util
     Scalar::Util
 
