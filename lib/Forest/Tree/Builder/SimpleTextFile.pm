@@ -55,7 +55,7 @@ sub _build_subtrees {
         my ($depth, $node, @rest) = $self->parse_line($line);
 
         if ( $depth > @stack ) {
-            if ( $depth = @stack + 1 ) {
+            if ( $depth == @stack + 1 ) {
                 push @stack, $cur_children;
                 $cur_children = $cur_children->[-1]{children} = [];
             } else {
